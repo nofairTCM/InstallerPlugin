@@ -1,15 +1,17 @@
 local HTTP = game:GetService("HttpService");
 local Selection = game:GetService("Selection");
 
-return function (ROOT,UIHolder,url)
-    local MaterialUI = require(ROOT.Parent.libs.MaterialUI);
-    local AdvancedTween = require(ROOT.Parent.libs.AdvancedTween);
+-- 이거 테스팅 한번 돌려봐야됨
+
+return function (UIHolder,url)
+    local MaterialUI = require(script.Parent.Parent.libs.MaterialUI);
+    local AdvancedTween = require(script.Parent.Parent.libs.AdvancedTween);
     local new = MaterialUI.Create;
 
     -- 이미 HTTP 서비스가 켜져 있다면 리턴
     local pass,data;
     local function newTry()
-            pass,data = pcall(
+        pass,data = pcall(
             HTTP.GetAsync,
             HTTP, -- self 값을 추가해줌
             url
@@ -18,41 +20,40 @@ return function (ROOT,UIHolder,url)
     newTry();
 
     if pass then
-    --    return data;
+        return data;
     end
 
     local function report()
         local new = new("Frame",{
             Name = "HaveErrorHTTPMain";
-            BackgroundColor3 = Color3.fromRGB(45, 45, 45);
+            BackgroundColor3 = MaterialUI:GetColor("Background");
             BorderSizePixel = 0;
             Position = UDim2.new(1, 20, 0, 0);
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 8100;
+            ClipsDescendants = true;
         },{
-            new("Frame",{
-                Name = "topbar";
-                BackgroundColor3 = Color3.fromRGB(26, 26, 26);
+            topbar = new("Frame",{
+                BackgroundColor3 = MaterialUI:GetColor("TopBar");
                 BorderSizePixel = 0;
                 Size = UDim2.new(1, 0, 0, 46);
                 ZIndex = 8109;
             },{
-                new("TextLabel",{
-                    Name = "title";
-                    BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+                Shadow = new("Shadow");
+                title = new("TextLabel",{
                     BackgroundTransparency = 1;
                     Position = UDim2.new(0, 48, 0, 0);
                     Size = UDim2.new(1, 0, 1, 0);
                     ZIndex = 8109;
                     Font = Enum.Font.SourceSans;
                     Text = "오류 신고하기";
-                    TextColor3 = Color3.fromRGB(255, 255, 255);
+                    TextColor3 = MaterialUI:GetColor("TextColor");
                     TextSize = 18;
                     TextXAlignment = Enum.TextXAlignment.Left;
                 });
-                new("ImageLabel",{
+                icon = new("ImageLabel",{
+                    ImageColor3 = MaterialUI:GetColor("TextColor");
                     AnchorPoint = Vector2.new(0, 0.5);
-                    BackgroundColor3 = Color3.fromRGB(255, 255, 255);
                     BackgroundTransparency = 1;
                     Position = UDim2.new(0, 10, 0.5, 0);
                     Size = UDim2.new(0, 28, 0, 28);
@@ -61,9 +62,7 @@ return function (ROOT,UIHolder,url)
                 });
             });
             new("TextBox",{
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255);
                 BackgroundTransparency = 1;
-                BorderColor3 = Color3.fromRGB(27, 42, 53);
                 Position = UDim2.new(0, 0, 0, 46);
                 Size = UDim2.new(1, 0, 1, -46);
                 ZIndex = 8101;
@@ -77,7 +76,7 @@ return function (ROOT,UIHolder,url)
                     "=============== 오류 시작 ===============\n\n" ..
                     "error : \n" .. (data or "")
                 );
-                TextColor3 = Color3.fromRGB(255, 255, 255);
+                TextColor3 = MaterialUI:GetColor("TextColor");
                 TextEditable = false;
                 TextSize = 14;
                 TextXAlignment = Enum.TextXAlignment.Left;
@@ -96,11 +95,12 @@ return function (ROOT,UIHolder,url)
         },{
             Position = UDim2.new(0,0,0,0);
         });
+        return new;
     end
 
     -- 경고창을 띄운다
     local store = {};
-    local screen = new("Frame",{
+    new("Frame",{
         Name = "CheckHTTPMain";
         BackgroundColor3 = Color3.fromRGB(65, 65, 65);
         BorderSizePixel = 0;
@@ -151,8 +151,8 @@ return function (ROOT,UIHolder,url)
             AnchorPoint = Vector2.new(0.5, 0.5);
             BackgroundColor3 = Color3.fromRGB(255, 255, 255);
             BackgroundTransparency = 1;
-            Position = UDim2.new(0.5, 0, 0.5, -30);
-            Size = UDim2.new(1, -40, 0, 88);
+            Position = UDim2.new(0.5, 0, 0.5, -50);
+            Size = UDim2.new(1, -40, 0, 118);
             ZIndex = 8001;
             Font = Enum.Font.Gotham;
             Text = (
@@ -198,16 +198,23 @@ return function (ROOT,UIHolder,url)
             end;
         });
     });
-    screen.Parent = UIHolder;
+    store.this.Parent = UIHolder;
 
-    Selection:Set({HTTP}); -- 프로퍼티 창에 HTTP 서비스가 뜨도록 선택 해준다
     while true do
         -- 바뀔 때 까지 기다림
         wait(2);
+
+        -- 창이 떠있어야 리트레이 하도록 만듬
+        if not UIHolder.Enabled then
+            UIHolder:GetPropertyChangedSignal("Enabled"):Wait();
+        end
+
+        -- 다시 시도
         newTry();
 
         if pass then
-        --    return data;
+            store.this:Destroy();
+            return data;
         end
     end
-end
+end;
