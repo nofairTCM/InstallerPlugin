@@ -1,0 +1,31 @@
+{
+  "name": "Plugin",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "nofairTCM-Installer": {
+        "$className": "Folder",
+        "main": {
+          "$path": "src",
+          "$ignoreUnknownInstances": true
+        },
+        "libs": {
+          "$className": "Folder",
+          "AdvancedTween": {
+            "$path": "libs/AdvancedTween/src",
+            "$ignoreUnknownInstances": true
+          },
+          "MaterialUI": {
+            "$path": "libs/MaterialUI/src",
+            "$ignoreUnknownInstances": true
+          },
+          "ToolbarCombiner": {
+            "$path": "libs/ToolbarCombiner/src",
+            "$ignoreUnknownInstances": true
+          }
+        }
+      }
+    }
+  }
+}
