@@ -23,6 +23,7 @@ return function (UIHolder,url)
         return data;
     end
 
+    -- 리포트를 위해서 아웃풋 보여주기를 만든다
     local function report()
         local new = new("Frame",{
             Name = "HaveErrorHTTPMain";
@@ -32,14 +33,18 @@ return function (UIHolder,url)
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 8100;
             ClipsDescendants = true;
+            NotTagging = true;
         },{
             topbar = new("Frame",{
                 BackgroundColor3 = MaterialUI:GetColor("TopBar");
                 BorderSizePixel = 0;
                 Size = UDim2.new(1, 0, 0, 46);
                 ZIndex = 8109;
+                NotTagging = true;
             },{
-                Shadow = new("Shadow");
+                Shadow = new("Shadow",{
+                    NotTagging = true;
+                });
                 title = new("TextLabel",{
                     BackgroundTransparency = 1;
                     Position = UDim2.new(0, 48, 0, 0);
@@ -50,6 +55,7 @@ return function (UIHolder,url)
                     TextColor3 = MaterialUI:GetColor("TextColor");
                     TextSize = 18;
                     TextXAlignment = Enum.TextXAlignment.Left;
+                    NotTagging = true;
                 });
                 icon = new("ImageLabel",{
                     ImageColor3 = MaterialUI:GetColor("TextColor");
@@ -59,9 +65,11 @@ return function (UIHolder,url)
                     Size = UDim2.new(0, 28, 0, 28);
                     ZIndex = 8109;
                     Image = "http://www.roblox.com/asset/?id=6031071057";
+                    NotTagging = true;
                 });
             });
-            new("TextBox",{
+            output = new("TextBox",{
+                NotTagging = true;
                 BackgroundTransparency = 1;
                 Position = UDim2.new(0, 0, 0, 46);
                 Size = UDim2.new(1, 0, 1, -46);
@@ -82,9 +90,10 @@ return function (UIHolder,url)
                 TextXAlignment = Enum.TextXAlignment.Left;
                 TextYAlignment = Enum.TextYAlignment.Top;
             },{
-                new("UIPadding",{
+                padding = new("UIPadding",{
                     PaddingLeft = UDim.new(0, 4);
                     PaddingTop = UDim.new(0, 4);
+                    NotTagging = true;
                 });
             });
         });
