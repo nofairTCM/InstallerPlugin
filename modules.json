@@ -1,0 +1,28 @@
+{
+    "core": {
+        "moduleName": "core",
+        "moduleAuthor": "nofair",
+        "import": [],
+        "github": "https://github.com/nofairTCM/Core",
+        "lic": "MIT",
+        "info": "프로젝트에 가장 중심적인 코드를 담는 곳입니다, 모듈 로더-부트 로더 등이 포함됩니다",
+        "publishStatus": "BETA",
+        "version": "0.1.1",
+        "buildVersion": 1,
+        "type": "module",
+        "toolboxID": ""
+    },
+    "NPC-Chat": {
+        "moduleName": "NPC-Chat",
+        "moduleAuthor": "qwreey75",
+        "import": ["Lib-MaterialUI","Lib-AdvancedTween"],
+        "github": "https://github.com/nofairTCM/NPC-Chat",
+        "lic": "MIT",
+        "info": "npc 챗 부분을 담당하는 모듈입니다, https://github.com/qwreey75/RBX_UI_PROJECT 의 소스코드가 일부 포함되어 있습니다",
+        "publishStatus": "BETA",
+        "version": "0.1.12",
+        "buildVersion": 12,
+        "type": "module",
+        "toolboxID": ""
+    }
+}
