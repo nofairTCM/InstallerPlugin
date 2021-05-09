@@ -47,7 +47,7 @@ return function (UIHolder,url)
                 });
                 title = new("TextLabel",{
                     BackgroundTransparency = 1;
-                    Position = UDim2.new(0, 48, 0, 0);
+                    Position = UDim2.new(0, 42, 0, 0);
                     Size = UDim2.new(1, 0, 1, 0);
                     ZIndex = 8109;
                     Font = Enum.Font.SourceSans;
@@ -61,7 +61,7 @@ return function (UIHolder,url)
                     ImageColor3 = MaterialUI:GetColor("TextColor");
                     AnchorPoint = Vector2.new(0, 0.5);
                     BackgroundTransparency = 1;
-                    Position = UDim2.new(0, 10, 0.5, 0);
+                    Position = UDim2.new(0, 8, 0.5, 0);
                     Size = UDim2.new(0, 28, 0, 28);
                     ZIndex = 8109;
                     Image = "http://www.roblox.com/asset/?id=6031071057";

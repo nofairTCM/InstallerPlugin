@@ -81,7 +81,69 @@ local function main()
         MaterialUI.CurrentTheme = tostring(settings().Studio.Theme); -- 테마 설정함
         MaterialUI:UseDockWidget(Interface,plugin:GetMouse()); -- 위젯 등록함
 
-        delay(1,function () -- 로블이 알아서 잘 그리고 처리하도록 좀 시간을 줌
+        local store = {};
+        new("Frame",{ -- 보더 부분은 알아서 없어집니다 (MaterialUI 기본 처리)
+            BackgroundColor3 = MaterialUI:GetColor("Background");
+            Name = "main";
+            Size = UDim2.new(1,0,1,0);
+            WhenCreated = function (this)
+                store.this = this;
+            end;
+        },{
+            topbar = new("Frame",{
+                BackgroundColor3 = MaterialUI:GetColor("TopBar");
+                Size = UDim2.new(1,0,0,42);
+                ZIndex = 80;
+            },{
+                shadow = new("Shadow",{
+                    ZIndex = 80;
+                });
+                icon = new("ImageLabel",{
+                    AnchorPoint = Vector2.new(0, 0.5);
+                    Position = UDim2.new(0, 8, 0.5, 0);
+                    Size = UDim2.new(0, 28, 0, 28);
+                    ZIndex = 80;
+                    BackgroundTransparency = 1;
+                    Image = pluginIcon;
+                    ImageColor3 = MaterialUI:GetColor("TextColor");
+                });
+                title = new("TextLabel",{
+                    BackgroundTransparency = 1;
+                    Position = UDim2.new(0, 42, 0, 0);
+                    Size = UDim2.new(1, 0, 1, 0);
+                    ZIndex = 80;
+                    Font = Enum.Font.SourceSans;
+                    Text = "TCM 설치기";
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                    TextSize = 18;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    NotTagging = true;
+                });
+            });
+            holder = new("ScrollingFrame",{
+                BackgroundTransparency = 1;
+                Size = UDim2.new(1,0,1,-42);
+                Position = UDim2.fromOffset(0,42);
+                WhenCreated = function (this)
+                    store.holder = this;
+                end;
+            },{
+                list = new("UIListLayout",{
+                    WhenCreated = function (this)
+                        this:GetPropertyChangedSignal("ContentSize"):Connect(function ()
+                            store.holder.CanvasSize = UDim2.new(0,0,0,this.ContentSize.Y);
+                        end);
+                    end;
+                });
+            });
+        });
+
+        store.this.Parent = uiHolder;
+
+        
+        store.holder
+
+        delay(0.4,function () -- 로블이 알아서 잘 그리고 처리하도록 좀 시간을 줌
             closeSlashScreen();
         end);
     end
