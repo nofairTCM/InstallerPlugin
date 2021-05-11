@@ -1,3 +1,4 @@
+---@diagnostic disable:undefined-global
 local HTTP = game:GetService("HttpService");
 local Selection = game:GetService("Selection");
 

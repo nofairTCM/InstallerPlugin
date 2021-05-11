@@ -1,3 +1,4 @@
+---@diagnostic disable:undefined-global
 local module = {};
 
 local UpdateIcon = "http://www.roblox.com/asset/?id=6031225810";

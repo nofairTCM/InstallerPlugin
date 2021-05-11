@@ -1,3 +1,4 @@
+---@diagnostic disable:undefined-global
 local time = 0.28;
 return function (UIHolder,pluginIcon,version)
     local MaterialUI = require(script.Parent.Parent.libs.MaterialUI);

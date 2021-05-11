@@ -1,4 +1,4 @@
-
+---@diagnostic disable:undefined-global
 -- 모듈 다운로더 / 관리자입니다
 
 -- 플러그인 개체 가져옴
