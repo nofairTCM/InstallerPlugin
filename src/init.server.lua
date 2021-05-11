@@ -68,7 +68,7 @@ local function main()
     local closeSlashScreen = splashScreen(uiHolder,pluginIcon,version);
 
     -- 모듈 정보를 깃허브에서 읽어옴
-    local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/InstallerPlugin/master/modules.json");
+    local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/InstallerPlugin/master/data/main.json");
     moduleData = HTTP:JSONDecode(moduleData);
 
     -- 메인 렌더 부분
@@ -130,8 +130,8 @@ local function main()
             },{
                 list = new("UIListLayout",{
                     WhenCreated = function (this)
-                        this:GetPropertyChangedSignal("ContentSize"):Connect(function ()
-                            store.holder.CanvasSize = UDim2.new(0,0,0,this.ContentSize.Y);
+                        this:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function ()
+                            store.holder.CanvasSize = UDim2.new(0,0,0,this.AbsoluteContentSize.Y);
                         end);
                     end;
                 });
