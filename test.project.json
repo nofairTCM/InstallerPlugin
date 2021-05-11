@@ -4,7 +4,7 @@
     "$className": "DataModel",
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "nofairTCM-Installer": {
+      "nofairTCM_Installer": {
         "$className": "Folder",
         "main": {
           "$path": "src",
@@ -13,11 +13,11 @@
         "libs": {
           "$className": "Folder",
           "AdvancedTween": {
-            "$path": "libs/AdvancedTween/src",
+            "$path": "libs/AdvancedTween/src/client/AdvancedTween",
             "$ignoreUnknownInstances": true
           },
           "MaterialUI": {
-            "$path": "libs/MaterialUI/src",
+            "$path": "libs/MaterialUI/src/client/MaterialUI",
             "$ignoreUnknownInstances": true
           },
           "ToolbarCombiner": {

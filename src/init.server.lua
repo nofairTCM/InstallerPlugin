@@ -12,9 +12,10 @@ local pluginIconBlack = "http://www.roblox.com/asset/?id=6790472987";
 local HTTP = game:GetService("HttpService");
 
 -- 플러그인 모듈들을 가져옵니다
-local getModulesData = require(script.getModulesData);
-local splashScreen = require(script.splashScreen);
-local toolbar = require(script.Parent.libs.ToolbarCombiner);
+local getModulesData = require(script.getModulesData); --[[자동완성]] if not true then getModulesData = require("src.getModulesData") end
+local splashScreen = require(script.splashScreen); --[[자동완성]] if not true then splashScreen = require("src.splashScreen") end
+local toolbar = require(script.Parent.libs.ToolbarCombiner); --[[자동완성]] if not true then toolbar = require("libs.ToolbarCombiner") end
+local installer = require(script.installer); --[[자동완성]] if not true then installer = require("src.installer") end
 
 -- 플러그인 불러오기 부분
 local function main()
@@ -70,6 +71,8 @@ local function main()
     -- 모듈 정보를 깃허브에서 읽어옴
     local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/InstallerPlugin/master/data/main.json");
     moduleData = HTTP:JSONDecode(moduleData);
+    installer:setDB(moduleData);
+    _G.installer = installer;
 
     -- 메인 렌더 부분
     local function render()
