@@ -68,7 +68,7 @@ local function main()
     local closeSlashScreen = splashScreen(uiHolder,pluginIcon,version);
 
     -- 모듈 정보를 깃허브에서 읽어옴
-    local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/Plugin/main/modules.json");
+    local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/InstallerPlugin/master/modules.json");
     moduleData = HTTP:JSONDecode(moduleData);
 
     -- 메인 렌더 부분
