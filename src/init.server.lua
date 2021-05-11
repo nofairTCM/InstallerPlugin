@@ -140,8 +140,7 @@ local function main()
 
         store.this.Parent = uiHolder;
 
-        
-        store.holder
+        --store.holder
 
         delay(0.4,function () -- 로블이 알아서 잘 그리고 처리하도록 좀 시간을 줌
             closeSlashScreen();
