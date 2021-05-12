@@ -23,6 +23,9 @@
           "ToolbarCombiner": {
             "$path": "libs/ToolbarCombiner/src",
             "$ignoreUnknownInstances": true
+          },
+          "termRBLX": {
+            "$path": "libs/termRBLX"
           }
         }
       }
