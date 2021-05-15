@@ -57,6 +57,9 @@ jobs:
         run: |
           go get -u github.com/tcnksm/ghr
 
+      - name: make output dir
+        run: mkdir out
+
       - name: Download output
         uses: actions/download-artifact@v2
         with:
