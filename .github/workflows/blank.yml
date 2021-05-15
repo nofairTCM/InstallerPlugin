@@ -1,4 +1,4 @@
-name: plugin build/publish
+name: release
 
 on:
   workflow_dispatch:
@@ -21,6 +21,7 @@ jobs:
     env:
       ARTIFACTS: ${{ github.workspace }}/artifacts
       VERSION: ${{ needs.setup.outputs.version }}
+      THIS: build
     runs-on: windows-latest
     steps:
       - name: Checkout this repo
@@ -31,28 +32,22 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          cd ${{ github.workspace }}
+          cd ${{ env.ARTIFACTS }}
+          mkdir &{{ env.THIS }}
+          cd &{{ env.THIS }}
           ./action.ps1
 
       - uses: actions/upload-artifact@v2
         with:
-          name: build
-          path: ${{ env.ARTIFACTS }}/build
+          name: out
+          path: ${{ env.ARTIFACTS }}/&{{ env.THIS }}/out/*
 
   release:
-    needs: [setup, plugin]
+    needs: [setup, build]
     env:
-      ARTIFACTS: ${{ github.workspace }}/artifacts
       VERSION: ${{ needs.setup.outputs.version }}
     runs-on: ubuntu-latest
     steps:
-      - name: show files
-        run: |
-          ls ${{ env.ARTIFACTS }} -l
-
-      - name: Checkout truemedian/luvit-bin
-        uses: actions/checkout@v2
-
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
@@ -61,15 +56,13 @@ jobs:
       - name: Setup GHR
         run: |
           go get -u github.com/tcnksm/ghr
-      - name: Download Artifacts
+
+      - name: Download output
         uses: actions/download-artifact@v2
         with:
-          path: ${{ env.ARTIFACTS }}
+          name: out
+          path: .\out
 
-      - name: Collect Artifacts
-        run: |
-          mkdir -p releases/
-          cp ${{ env.ARTIFACTS }}/* releases/
       - name: Upload Plugin Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,4 +71,4 @@ jobs:
             -replace \
             -n "PLUGIN / ${{ env.VERSION }}" \
             -b "깃허브 워크플로우에 의해 자동 업로드됨" \
-            "${{ env.VERSION }}" releases/
+            "${{ env.VERSION }}" out/

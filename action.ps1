@@ -1,11 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = "SilentlyContinue"
 
-# dir
-Write-Host cd
-Write-Host "Workspace tree :"
-tree
-
 # build plugin . . .
 Write-Host "Build plugin . . ."
 Start-Process -FilePath "./build.bat" -Wait -NoNewWindow
