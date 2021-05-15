@@ -21,7 +21,6 @@ jobs:
     env:
       ARTIFACTS: ${{ github.workspace }}/artifacts
       VERSION: ${{ needs.setup.outputs.version }}
-      THIS: build
     runs-on: windows-latest
     steps:
       - name: Checkout this repo
@@ -37,8 +36,8 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.THIS }}
-          path: ${{ env.ARTIFACTS }}/${{ env.THIS }}
+          name: build
+          path: ${{ env.ARTIFACTS }}/build
 
   release:
     needs: [setup, plugin]

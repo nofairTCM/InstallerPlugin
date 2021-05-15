@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = "SilentlyContinue"
 
 # dir
-Write-Host $THIS
+Write-Host cd
 Write-Host "Workspace tree :"
 tree
 
