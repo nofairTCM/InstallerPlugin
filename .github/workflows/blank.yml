@@ -1,16 +1,11 @@
-# This is a basic workflow that is manually triggered
-
 name: plugin build/publish
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
   workflow_dispatch:
   push:
     branches:
     - master
-  
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -21,11 +16,12 @@ jobs:
     outputs:
       version: ${{ env.VERSION }}
 
-  plugin:
+  build:
     needs: setup
     env:
       ARTIFACTS: ${{ github.workspace }}/artifacts
       VERSION: ${{ needs.setup.outputs.version }}
+      THIS: build
     runs-on: windows-latest
     steps:
       - name: Checkout this repo
@@ -36,12 +32,13 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
+          cd ${{github.workspace}}
           ./action.ps1
 
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.TARBALL }}
-          path: ${{ env.ARTIFACTS }}/${{ env.TARBALL }}
+          name: ${{ env.THIS }}
+          path: ${{ env.ARTIFACTS }}/${{ env.THIS }}
 
   release:
     needs: [setup, plugin]

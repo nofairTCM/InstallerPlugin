@@ -1,12 +1,10 @@
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = "SilentlyContinue"
 
-# tree
+# dir
+Write-Host $THIS
 Write-Host "Workspace tree :"
-cd
-tree ../
-Write-Host "$ARTIFACTS"
-tree.com $ARTIFACTS
+tree
 
 # build plugin . . .
 Write-Host "Build plugin . . ."
@@ -14,7 +12,8 @@ Start-Process -FilePath "./build.bat" -Wait -NoNewWindow
 
 # Move plugin to artifacts
 Write-Host "Move plugin to artifacts . . ."
-Copy-Item -Path "./plugin.rbxmx" -Destination "$ARTIFACTS/plugin.rbxmx"
+mkdir "out"
+Move-Item -Path "./plugin.rbxmx" -Destination "./out/plugin.rbxmx"
 
 # exit
 Write-Host "Builds Complete"
