@@ -5,7 +5,7 @@ $REPO = "InstallerPlugin.git"
 
 # build plugin . . .
 Write-Host "Build plugin . . ."
-Set-Location = $REPO
+Set-Location -Path $REPO
 Start-Process -FilePath "./build.bat" -Wait -NoNewWindow
 
 # Move plugin to artifacts
