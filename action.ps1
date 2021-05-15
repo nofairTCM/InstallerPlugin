@@ -4,6 +4,8 @@ $ProgressPreference = "SilentlyContinue"
 # tree
 Write-Host "Workspace tree :"
 tree
+Write-Host "$ARTIFACTS"
+tree.com $ARTIFACTS
 
 # build plugin . . .
 Write-Host "Build plugin . . ."
