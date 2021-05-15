@@ -5,6 +5,7 @@ $REPO = "InstallerPlugin"
 
 # build plugin . . .
 Write-Host "Build plugin . . ."
+Get-ChildItem -Path $ARTIFACTS
 Set-Location -Path $REPO
 Start-Process -FilePath "./build.bat" -Wait -NoNewWindow
 
