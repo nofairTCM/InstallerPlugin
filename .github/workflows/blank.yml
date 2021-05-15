@@ -28,9 +28,7 @@ jobs:
 
       - name: Build
         shell: pwsh
-        run: |
-          cd ${{ github.workspace }}
-          ./action.ps1
+        run: ./action.ps1
 
       - uses: actions/upload-artifact@v2
         with:
@@ -64,7 +62,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: out
-          path: .\out
+          path: out
 
       - name: show status
         run: ls
