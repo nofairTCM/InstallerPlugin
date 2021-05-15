@@ -1,37 +1,42 @@
 ---@diagnostic disable:undefined-global
 -- 모듈 다운로더 / 관리자입니다
 
--- 플러그인 개체 가져옴
-local plugin = plugin;
-local version = "1.11.1";
-local pluginID = "nofairTCM.plugin.installer";
-local pluginIcon = "http://www.roblox.com/asset/?id=6031302931";
-local pluginIconBlack = "http://www.roblox.com/asset/?id=6790472987";
-local term;
-
--- 로블 기본 서비스를 가져옵니다
-local HTTP = game:GetService("HttpService");
-
--- 플러그인 모듈들을 가져옵니다
-local getModulesData = require(script.getModulesData); --[[자동완성]] if not true then getModulesData = require("src.getModulesData") end
-local splashScreen = require(script.splashScreen); --[[자동완성]] if not true then splashScreen = require("src.splashScreen") end
-local toolbar = require(script.Parent.libs.ToolbarCombiner); --[[자동완성]] if not true then toolbar = require("libs.ToolbarCombiner.src") end
-local installer = require(script.installer); --[[자동완성]] if not true then installer = require("src.installer") end
-local termRBLX = require(script.Parent.libs.termRBLX); --[[자동완성]] if not true then installer = require("libs.termRBLX") end
-
--- 설정
-local globalFont = Enum.Font.Gotham;
-local tobBarSizeY = 42;
-local tabSizeY = 64;
-local white = Color3.fromRGB(255,255,255);
-local menuSize = UDim2.fromOffset(140,180);
-local menuCloseSize = UDim2.fromOffset(70,70);
-
 -- 플러그인 불러오기 부분
-local function main()
+local function main(plugin)
+    -- 플러그인 개체 가져옴
+    local version = "1.11.1";
+    local pluginID = "nofairTCM.plugin.installer";
+    local pluginIcon = "http://www.roblox.com/asset/?id=6031302931";
+    local pluginIconBlack = "http://www.roblox.com/asset/?id=6790472987";
+    local assets = {
+        "http://www.roblox.com/asset/?id=6804828747",
+        "http://www.roblox.com/asset/?id=6804829062",
+        "http://www.roblox.com/asset/?id=6804829958",
+        "http://www.roblox.com/asset/?id=6031302931",
+        "http://www.roblox.com/asset/?id=6031104648",
+        "http://www.roblox.com/asset/?id=6031302931",
+        "http://www.roblox.com/asset/?id=4668069300",
+        "rbxassetid://1316045217",
+    };
 
-    -- 터미널을 불러서 init 넘김
-    term = term or termRBLX.init {
+    -- 로블 기본 서비스를 가져옴
+    local HTTP = game:GetService("HttpService");
+
+    -- 플러그인 모듈들을 가져옴
+    local getModulesData = require(script.getModulesData); --[[자동완성]] if not true then getModulesData = require("src.getModulesData") end
+    local splashScreenRender = require(script.splashScreen); --[[자동완성]] if not true then splashScreen = require("src.splashScreen") end
+    local toolbar = require(script.Parent.libs.ToolbarCombiner); --[[자동완성]] if not true then toolbar = require("libs.ToolbarCombiner.src") end
+    local installer = require(script.installer); --[[자동완성]] if not true then installer = require("src.installer") end
+    local termRBLX = require(script.Parent.libs.termRBLX); --[[자동완성]] if not true then installer = require("libs.termRBLX") end
+
+    -- 설정
+    local globalFont = Enum.Font.Gotham;
+    local tobBarSizeY = 42;
+    local tabSizeY = 64;
+    local white = Color3.fromRGB(255,255,255);
+    local menuSize = UDim2.fromOffset(140,180);
+    local menuCloseSize = UDim2.fromOffset(70,70);
+    local termTCM = termRBLX.init { -- 터미널을 불러서 init 넘김
         runtimeType = "screen";
         holder = nil;
         disableBlock = false;
@@ -39,72 +44,78 @@ local function main()
         path = plugin;
     };
 
-    -- UI 를 만듬
-    local uiHolder = plugin:CreateDockWidgetPluginGui(
+    local lastMouse; -- 마우스 저장
+
+    local uiHolder = plugin:CreateDockWidgetPluginGui( -- 창을 만듬
         pluginID,
         DockWidgetPluginGuiInfo.new(
-			Enum.InitialDockState.Float,
-			true,
-			false,
-			280,
-			300,
-			280,
-			300
-		)
+            Enum.InitialDockState.Float,
+            true,
+            false,
+            280,
+            300,
+            280,
+            300
+        )
     );
     uiHolder.Name = pluginID;
     uiHolder.Title = "nofairTCM Installer";
 
-    -- 툴바를 만들고 버튼을 만들어옴
-    local sharedToolbar = toolbar:CreateToolbar(
+    local sharedToolbar = toolbar:CreateToolbar( -- 툴바를 만듬
         "nofairTCM",
         pluginID
     );
-    local thisButton = sharedToolbar:CreateButton(
+    local thisButton = sharedToolbar:CreateButton( -- 버튼을 만듬
         pluginID .. ".openWindow",
         "open installer",
         (tostring(settings().Studio.Theme) == "Dark") and
             pluginIcon or pluginIconBlack, -- 테마에 맞게 아이콘 수정
         "Installer"
     );
-
-    -- 버튼의 클릭 이벤트를 받아서 창의 보이기를 편집
-    thisButton.Click:Connect(function ()
+    thisButton.ClickableWhenViewportHidden = true;
+    thisButton.Click:Connect(function () -- 버튼의 클릭 이벤트를 받아서 창의 열림 상태를 편집
         uiHolder.Enabled = not uiHolder.Enabled;
     end)
-
-    -- 버튼 켜짐 꺼짐 상태 지정
-    local function setButtonStatus()
+    local function setButtonStatus() -- 버튼 켜짐 꺼짐 상태 지정
         thisButton:SetActive(uiHolder.Enabled);
     end
     uiHolder:GetPropertyChangedSignal("Enabled"):Connect(setButtonStatus);
     setButtonStatus();
 
-    -- 창이 열릴 때 까지 기다림
-    if not uiHolder.Enabled then
+    if not uiHolder.Enabled then -- 창이 열릴 때 까지 기다림
         uiHolder:GetPropertyChangedSignal("Enabled"):Wait();
     end
-
-    -- 로딩 스크린 만듬
-    local closeSlashScreen = splashScreen(uiHolder,pluginIcon,version);
+    local slashScreen = splashScreenRender(uiHolder,pluginIcon,version); -- 로딩 스크린 만듬
+    slashScreen:setStatus("initialize ...");
 
     -- 모듈 정보를 깃허브에서 읽어옴
+    slashScreen:setStatus("fetch data from github ...");
     local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/InstallerPlugin/master/data/main.json");
     moduleData = HTTP:JSONDecode(moduleData);
     installer:setDB(moduleData);
-    _G.installer = installer;
 
     -- 메인 렌더 부분
     local function render()
+        slashScreen = slashScreen or (splashScreenRender(uiHolder,pluginIcon,version));
+
+        slashScreen:setStatus("load plugin assets ...");
+        game.ContentProvider:PreloadAsync(assets)
+
+        slashScreen:setStatus("startup rendering ...");
         local AdvancedTween = require(script.Parent.libs.AdvancedTween) --[[자동완성]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
         local MaterialUI = require(script.Parent.libs.MaterialUI) --[[자동완성]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
         local new = MaterialUI.Create;
-        term.uiHost.holder.Parent = plugin;
+        termTCM.uiHost.holder.Parent = plugin;
 
         MaterialUI:CleanUp(); -- 한번 싹 클린업함
         MaterialUI.CurrentTheme = tostring(settings().Studio.Theme); -- 테마 설정함
-        local mouse = MaterialUI:UseDockWidget(uiHolder,plugin:GetMouse()); -- 위젯 등록함
+        if lastMouse and lastMouse.Obj then
+            lastMouse.Obj:Destroy();
+        end
+        local mouse = MaterialUI:UseDockWidget(uiHolder,plugin:GetMouse()); -- 위젯 등록함 (마우스 가져옴)
+        lastMouse = mouse;
 
+        slashScreen:setStatus("rendering ui ...");
         -- 컬러 생성
         local tabColor = MaterialUI.CurrentTheme == "Dark"
             and Color3.fromRGB(65,150,255) or Color3.fromRGB(255,255,255);
@@ -367,13 +378,18 @@ local function main()
         });
 
         --store.this.Parent = uiHolder;
-        term.uiHost.holder.Parent = store.holder;
-        term.uiHost.holder.Position = UDim2.fromScale(0.6666,0);
-        term.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
+        termTCM.uiHost.holder.Parent = store.holder;
+        termTCM.uiHost.holder.Position = UDim2.fromScale(0.6666,0);
+        termTCM.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
         --store.holder
 
+        slashScreen:setStatus("wait for rblx ...");
         delay(0.4,function () -- 로블이 알아서 잘 그리고 처리하도록 좀 시간을 줌
-            closeSlashScreen();
+            if not slashScreen then
+                return;
+            end
+            slashScreen:close();
+            slashScreen = nil;
         end);
     end
     render(); -- 렌더를 한번 돌림
@@ -390,4 +406,6 @@ local function main()
     end);
 end
 
-return main();
+return {
+    run = main;
+};
