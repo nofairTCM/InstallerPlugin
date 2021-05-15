@@ -32,7 +32,7 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          cd ${{github.workspace}}
+          cd ${{ github.workspace }}
           ./action.ps1
 
       - uses: actions/upload-artifact@v2
