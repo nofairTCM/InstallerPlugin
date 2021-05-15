@@ -44,6 +44,11 @@ jobs:
       VERSION: ${{ needs.setup.outputs.version }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
@@ -64,8 +69,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ghr out/
-            -u qwreey75
-            -r nofairTCM/InstallerPlugin
             -replace \
             -n "PLUGIN / ${{ env.VERSION }}" \
             -b "깃허브 워크플로우에 의해 자동 업로드됨" \
