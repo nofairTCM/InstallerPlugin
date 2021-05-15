@@ -48,7 +48,7 @@ jobs:
 #        run: |
 #          Write-Output "C:\Program Files\NASM" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Build
-        shell: cmd
+        shell: pwsh
         run: |
           ./action.ps1
       - uses: actions/upload-artifact@v2
