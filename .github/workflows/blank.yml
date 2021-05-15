@@ -49,6 +49,10 @@ jobs:
       VERSION: ${{ needs.setup.outputs.version }}
     runs-on: ubuntu-latest
     steps:
+      - name: show files
+        run: |
+          ls -l
+
       - name: Checkout truemedian/luvit-bin
         uses: actions/checkout@v2
 
