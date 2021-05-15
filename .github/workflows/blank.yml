@@ -67,4 +67,4 @@ jobs:
       - name: Upload Plugin Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ghr ${{ env.VERSION }} out/ -n "PLUGIN / ${{ env.VERSION }}" -b "깃허브 워크플로우에 의해 자동 업로드됨"
+        run: ghr -n "PLUGIN / ${{ env.VERSION }}" -b "깃허브 워크플로우에 의해 자동 업로드됨" ${{ env.VERSION }} out/
