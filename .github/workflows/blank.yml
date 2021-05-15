@@ -51,7 +51,7 @@ jobs:
     steps:
       - name: show files
         run: |
-          ls -l
+          ls ${{ env.ARTIFACTS }} -l
 
       - name: Checkout truemedian/luvit-bin
         uses: actions/checkout@v2
@@ -72,7 +72,7 @@ jobs:
       - name: Collect Artifacts
         run: |
           mkdir -p releases/
-          cp ${{ env.ARTIFACTS }}/**/* releases/
+          cp ${{ env.ARTIFACTS }}/* releases/
       - name: Upload Plugin Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
