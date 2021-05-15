@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create Version
-        run: |
-          echo "VERSION=$(date +%Y%m%d)" >> $GITHUB_ENV
+        run: echo "VERSION=$(date +%Y%m%d)" >> $GITHUB_ENV
     outputs:
       version: ${{ env.VERSION }}
 
@@ -63,6 +62,12 @@ jobs:
         with:
           name: out
           path: .\out
+
+      - name: show status
+        run: ls
+      
+      - name: show status2
+        run: ls out
 
       - name: Upload Plugin Release
         env:
