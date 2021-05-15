@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = "SilentlyContinue"
 $ARTIFACTS = Resolve-Path -Path .
-$REPO = "InstallerPlugin.git"
+$REPO = "InstallerPlugin"
 
 # build plugin . . .
 Write-Host "Build plugin . . ."
