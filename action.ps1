@@ -3,7 +3,8 @@ $ProgressPreference = "SilentlyContinue"
 
 # tree
 Write-Host "Workspace tree :"
-tree ../../\
+cd
+tree ../
 Write-Host "$ARTIFACTS"
 tree.com $ARTIFACTS
 
