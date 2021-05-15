@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = "SilentlyContinue"
 
 # tree
-Write_Host "Workspace tree :"
+Write-Host "Workspace tree :"
 tree
 
 # build plugin . . .
