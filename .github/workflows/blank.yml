@@ -69,6 +69,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ghr out/
-            -replace \
             -n "PLUGIN / ${{ env.VERSION }}" \
             -b "깃허브 워크플로우에 의해 자동 업로드됨" \
