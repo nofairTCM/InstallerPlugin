@@ -37,6 +37,7 @@ jobs:
         shell: pwsh
         run: |
           ./action.ps1
+
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ env.TARBALL }}
