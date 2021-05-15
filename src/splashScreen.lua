@@ -1,6 +1,6 @@
 ---@diagnostic disable:undefined-global
 local time = 0.28;
-return function (UIHolder,pluginIcon,version)
+return function (UIHolder,pluginIcon,version,termTCM)
     local MaterialUI = require(script.Parent.Parent.libs.MaterialUI);
     local AdvancedTween = require(script.Parent.Parent.libs.AdvancedTween);
     local new = MaterialUI.Create;
@@ -123,6 +123,7 @@ return function (UIHolder,pluginIcon,version)
         end
         info.Text = str;
         info.Size = UDim2.new(0,info.TextBounds.X,1,0);
+        termTCM.output("Plugin Core : " .. str .. "\n");
         wait();
     end
 

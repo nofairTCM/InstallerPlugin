@@ -85,7 +85,7 @@ local function main(plugin)
     if not uiHolder.Enabled then -- 창이 열릴 때 까지 기다림
         uiHolder:GetPropertyChangedSignal("Enabled"):Wait();
     end
-    local slashScreen = splashScreenRender(uiHolder,pluginIcon,version); -- 로딩 스크린 만듬
+    local slashScreen = splashScreenRender(uiHolder,pluginIcon,version,termTCM); -- 로딩 스크린 만듬
     slashScreen:setStatus("initialize ...");
 
     -- 모듈 정보를 깃허브에서 읽어옴
@@ -96,7 +96,7 @@ local function main(plugin)
 
     -- 메인 렌더 부분
     local function render()
-        slashScreen = slashScreen or (splashScreenRender(uiHolder,pluginIcon,version));
+        slashScreen = slashScreen or (splashScreenRender(uiHolder,pluginIcon,version,termTCM));
 
         slashScreen:setStatus("load plugin assets ...");
         game.ContentProvider:PreloadAsync(assets)
@@ -230,6 +230,18 @@ local function main(plugin)
             if store.menu.Visible and (not store.menuMouseEnter) then
                 closeMenu();
             end
+        end
+
+        local listItems = {};
+        local function listItem(data)
+            --data.id : id of item
+            --data.icon : icon of item
+            --data.title : title of item
+            --data.
+            local item = listItem[data.id] or new({
+
+            });
+
         end
 
         new("Frame",{ -- 보더 부분은 알아서 없어집니다 (MaterialUI 기본 처리)
