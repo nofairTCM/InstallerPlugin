@@ -19,9 +19,7 @@ jobs:
   build:
     needs: setup
     env:
-      ARTIFACTS: ${{ github.workspace }}/artifacts
       VERSION: ${{ needs.setup.outputs.version }}
-      THIS: build
     runs-on: windows-latest
     steps:
       - name: Checkout this repo
@@ -32,15 +30,13 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          cd ${{ env.ARTIFACTS }}
-          mkdir &{{ env.THIS }}
-          cd &{{ env.THIS }}
+          cd ${{ github.workspace }}
           ./action.ps1
 
       - uses: actions/upload-artifact@v2
         with:
           name: out
-          path: ${{ env.ARTIFACTS }}/&{{ env.THIS }}/out/*
+          path: ${{ github.workspace }}/out/*
 
   release:
     needs: [setup, build]
