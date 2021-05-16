@@ -67,7 +67,7 @@ jobs:
           path: ${{ github.workspace }}/out/*
 
   release:
-    needs: [setup]
+    needs: [setup, build]
     env:
       VERSION: ${{ needs.setup.outputs.version }}
     runs-on: ubuntu-latest
