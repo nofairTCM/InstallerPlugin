@@ -2,6 +2,8 @@ name: release
 
 on:
   workflow_dispatch:
+#  schedule:
+#    - cron: '0 5 * * *'
   push:
     branches:
     - master
@@ -29,6 +31,10 @@ jobs:
       - name: Build
         shell: pwsh
         run: ./action.ps1
+
+      - name: Publish to rblx
+        shell: cmd
+        run: rojo --asset_id ${{ SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
 
       - uses: actions/upload-artifact@v2
         with:
