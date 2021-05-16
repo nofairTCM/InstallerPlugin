@@ -1,9 +1,21 @@
----@diagnostic disable:undefined-global
--- 모듈 다운로더 / 관리자입니다
 
--- 플러그인 불러오기 부분
+--[[
+    # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
+    # Create Time   : 2021-05-11 18:57:26
+    # Modified by   : Qwreey
+    # Modified time : 2021-05-16 18:22:04
+    # Description   : |
+        Time format = yyy-mm-dd hh:mm:ss
+        Time zone = GMT+9
+
+        모듈 다운로더 / 관리자입니다
+  ]]
+
 local function main(plugin)
-    -- 플러그인 개체 가져옴
+---@diagnostic disable:undefined-global
+--#region [전체바탕/베이스] 플러그인 기본 베이스 가져옴 / 로블 기본 서비스를 가져옴
+
+    -- 플러그인 베이스
     local version = "1.11.1";
     local pluginID = "nofairTCM.plugin.installer";
     local pluginIcon = "http://www.roblox.com/asset/?id=6031302931";
@@ -19,37 +31,47 @@ local function main(plugin)
         "rbxassetid://1316045217",
     };
 
-    -- 로블 기본 서비스를 가져옴
+    -- 로블록스 서비스
     local HTTP = game:GetService("HttpService");
 
-    -- 플러그인 모듈들을 가져옴
-    local getModulesData = require(script.getModulesData); --[[자동완성]] if not true then getModulesData = require("src.getModulesData") end
-    local splashScreenRender = require(script.splashScreen); --[[자동완성]] if not true then splashScreen = require("src.splashScreen") end
-    local toolbar = require(script.Parent.libs.ToolbarCombiner); --[[자동완성]] if not true then toolbar = require("libs.ToolbarCombiner.src") end
-    local installer = require(script.installer); --[[자동완성]] if not true then installer = require("src.installer") end
-    local termRBLX = require(script.Parent.libs.termRBLX); --[[자동완성]] if not true then installer = require("libs.termRBLX") end
+--#endregion
+--#region [모듈 임포팅] 플러그인 모듈들을 불러옴 / 기초 설정을 만듬
 
-    -- 설정
-    local globalFont = Enum.Font.Gotham;
-    local tobBarSizeY = 42;
-    local tabSizeY = 64;
-    local white = Color3.fromRGB(255,255,255);
-    local menuSize = UDim2.fromOffset(140,180);
-    local menuCloseSize = UDim2.fromOffset(70,70);
-    local termTCM = termRBLX.init { -- 터미널을 불러서 init 넘김
+    -- 플러그인 모듈들을 가져옴
+    local getModulesData = require(script.getModulesData); --[[자동완성]] if not true then getModulesData = require("src.getModulesData"); end
+    local splashScreenRender = require(script.splashScreen); --[[자동완성]] if not true then splashScreenRender = require("src.splashScreen"); end
+    local toolbar = require(script.Parent.libs.ToolbarCombiner); --[[자동완성]] if not true then toolbar = require("libs.ToolbarCombiner.src"); end
+    local installer = require(script.installer); --[[자동완성]] if not true then installer = require("src.installer"); end
+    local termRBLX = require(script.Parent.libs.termRBLX); --[[자동완성]] if not true then termRBLX = require("libs.termRBLX"); end
+    local commands = require(script.commands); --[[자동완성]] if not true then commands = require("scr.commands"); end
+
+    -- 기초 설정
+    local globalFont = Enum.Font.Gotham; -- 전체 폰트
+    local tobBarSizeY = 42; -- 탑바 Y 높이
+    local tabSizeY = 64; -- 탭 Y 높이
+    local white = Color3.fromRGB(255,255,255); -- 흰색
+    local menuSize = UDim2.fromOffset(140,180); -- 메뉴 열린 크기
+    local menuCloseSize = UDim2.fromOffset(70,70); -- 매뉴 닫히는 크기
+    local termTCM = termRBLX.init { -- 터미널을 하나 만듬
         runtimeType = "screen";
         holder = nil;
         disableBlock = false;
         prompt = "$termTCM | ";
         path = plugin;
     };
-    termTCM.output(
-        ("type \"tcmi --help\" for get information of tcm installer\ntcm 설치기에 대한 설명을 얻으려면 \"tcmi --help\" 를 입력하세요\nTCM INSTALLER VERSION : %s\n\n")
+    termTCM.output( -- 정보를 stdout 에 띄워줌
+        ("type \"tcmi --help\" for get information of tcm installer\ntcm 설치기에 대한 설명을 얻으려면 \"tcmi --help\" 를 입력하세요\nTCM INSTALLER VERSION : %s\n\n-----------------Setup!-----------------\n")
         :format(version)
     );
+    termTCM.loadCmd( -- 커맨드를 불러와서 레지스터에 등록해둠
+        commands()
+    );
 
+--#endregion
+--#region [플러그인 바탕] 플러그인 UI / 플러그인 마우스 / 플러그인 탭 / 플러그인 버튼을 만듬
+
+    -- 플러그인 창
     local lastMouse; -- 마우스 저장
-
     local uiHolder = plugin:CreateDockWidgetPluginGui( -- 창을 만듬
         pluginID,
         DockWidgetPluginGuiInfo.new(
@@ -62,9 +84,10 @@ local function main(plugin)
             300
         )
     );
-    uiHolder.Name = pluginID;
-    uiHolder.Title = "nofairTCM Installer";
+    uiHolder.Name = pluginID; -- 플러그인 창 이름 정하기
+    uiHolder.Title = "nofairTCM Installer"; -- 플러그인 창 이름(실제로 표시 되는) 정하기
 
+    -- 툴바/버튼
     local sharedToolbar = toolbar:CreateToolbar( -- 툴바를 만듬
         "nofairTCM",
         pluginID
@@ -76,7 +99,7 @@ local function main(plugin)
             pluginIcon or pluginIconBlack, -- 테마에 맞게 아이콘 수정
         "Installer"
     );
-    thisButton.ClickableWhenViewportHidden = true;
+    thisButton.ClickableWhenViewportHidden = true; -- 창이 가려져 있어도 버튼을 누를 수 있음
     thisButton.Click:Connect(function () -- 버튼의 클릭 이벤트를 받아서 창의 열림 상태를 편집
         uiHolder.Enabled = not uiHolder.Enabled;
     end)
@@ -86,6 +109,9 @@ local function main(plugin)
     uiHolder:GetPropertyChangedSignal("Enabled"):Connect(setButtonStatus);
     setButtonStatus();
 
+--#endregion
+--#region [데이터 로드] 데이터 불러오기 / 유저 기다리기
+
     if not uiHolder.Enabled then -- 창이 열릴 때 까지 기다림
         uiHolder:GetPropertyChangedSignal("Enabled"):Wait();
     end
@@ -94,11 +120,12 @@ local function main(plugin)
 
     -- 모듈 정보를 깃허브에서 읽어옴
     slashScreen:setStatus("fetch data from github ...");
-    local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/InstallerPlugin/master/data/main.json");
+    local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/Data/master/data/main.json");
     moduleData = HTTP:JSONDecode(moduleData);
     installer:setDB(moduleData);
 
-    --termTCM.addCommand
+--#endregion
+--#region [UI 렌더] ui 렌더하기 / 테마 변경 이밴트 캐칭
 
     -- 메인 렌더 부분
     local function render()
@@ -409,6 +436,7 @@ local function main(plugin)
             end
             slashScreen:close();
             slashScreen = nil;
+            termTCM.output("Plugin Core : loaded!\n----------------------------------------\n\n");
         end);
     end
     render(); -- 렌더를 한번 돌림
@@ -423,6 +451,8 @@ local function main(plugin)
         thisButton.Icon = (tostring(settings().Studio.Theme) == "Dark") and
             pluginIcon or pluginIconBlack; -- 테마에 맞게 아이콘 수정  
     end);
+
+--#endregion
 end
 
 return {

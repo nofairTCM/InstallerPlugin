@@ -1,3 +1,16 @@
+
+--[[
+    # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
+    # Create Time   : 2021-05-11 18:57:26
+    # Modified by   : Qwreey
+    # Modified time : 2021-05-16 17:58:32
+    # Description   : |
+        Time format = yyy-mm-dd hh:mm:ss
+        Time zone = GMT+9
+
+        스플레시 스크린을 구성합니다
+  ]]
+
 ---@diagnostic disable:undefined-global
 local time = 0.28;
 return function (UIHolder,pluginIcon,version,termTCM)

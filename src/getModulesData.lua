@@ -1,3 +1,17 @@
+
+--[[
+    # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
+    # Create Time   : 2021-05-11 18:57:26
+    # Modified by   : Qwreey
+    # Modified time : 2021-05-16 17:56:15
+    # Description   : |
+        Time format = yyy-mm-dd hh:mm:ss
+        Time zone = GMT+9
+
+        모듈 데이터를 github 로 부터 가져옵니다, http 오류를 직접 처리합니다
+  ]]
+
+
 ---@diagnostic disable:undefined-global
 local HTTP = game:GetService("HttpService");
 local Selection = game:GetService("Selection");

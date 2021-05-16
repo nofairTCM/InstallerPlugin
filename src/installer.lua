@@ -1,3 +1,16 @@
+
+--[[
+    # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
+    # Create Time   : 2021-05-11 20:24:44
+    # Modified by   : Qwreey
+    # Modified time : 2021-05-16 17:57:03
+    # Description   : |
+        Time format = yyy-mm-dd hh:mm:ss
+        Time zone = GMT+9
+
+        설치 관리자입니다
+  ]]
+
 ---@diagnostic disable:undefined-global
 local module = {};
 local ServerStorage = game:GetService("ServerStorage");

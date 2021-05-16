@@ -1,3 +1,16 @@
+
+--[[
+    # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
+    # Create Time   : 2021-05-11 19:24:06
+    # Modified by   : Qwreey
+    # Modified time : 2021-05-16 17:56:45
+    # Description   : |
+        Time format = yyy-mm-dd hh:mm:ss
+        Time zone = GMT+9
+
+        리스트 아이템을 렌더링합니다, init 에 의해서 호출됩니다
+  ]]
+
 ---@diagnostic disable:undefined-global
 local module = {};
 
