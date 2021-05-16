@@ -21,6 +21,8 @@ jobs:
     needs: setup
     env:
       VERSION: ${{ needs.setup.outputs.version }}
+      SECRETS_RBLXASSET: ${{ secrets.SECRETS_RBLXASSET }}
+      SECRETS_RBLXTOKEN: ${{ secrets.SECRETS_RBLXTOKEN }}
     runs-on: windows-latest
     steps:
       - name: Checkout this repo
@@ -34,7 +36,9 @@ jobs:
 
       - name: Publish to rblx
         shell: cmd
-        run: rojo --asset_id ${{ secrets.SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
+        run: |
+          @echo off
+          rojo --asset_id %SECRETS_RBLXASSET% --cookie "%SECRETS_RBLXTOKEN%"
 
       - uses: actions/upload-artifact@v2
         with:
