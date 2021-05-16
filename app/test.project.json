@@ -7,25 +7,25 @@
       "nofairTCM_Installer": {
         "$className": "Folder",
         "main": {
-          "$path": "src",
+          "$path": "../src",
           "$ignoreUnknownInstances": true
         },
         "libs": {
           "$className": "Folder",
           "AdvancedTween": {
-            "$path": "libs/AdvancedTween/src/client/AdvancedTween",
+            "$path": "../libs/AdvancedTween/src/client/AdvancedTween",
             "$ignoreUnknownInstances": true
           },
           "MaterialUI": {
-            "$path": "libs/MaterialUI/src/client/MaterialUI",
+            "$path": "../libs/MaterialUI/src/client/MaterialUI",
             "$ignoreUnknownInstances": true
           },
           "ToolbarCombiner": {
-            "$path": "libs/ToolbarCombiner/src",
+            "$path": "../libs/ToolbarCombiner/src",
             "$ignoreUnknownInstances": true
           },
           "termRBLX": {
-            "$path": "libs/termRBLX"
+            "$path": "../libs/termRBLX"
           }
         }
       }

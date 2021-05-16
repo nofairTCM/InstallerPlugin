@@ -1,1 +1,1 @@
-rojo upload build.project.json --asset_id 6801472559
+app\rojo.exe upload app\build.project.json --asset_id 6801472559

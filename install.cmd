@@ -1,1 +1,1 @@
-rojo build build.project.json -o C:\Users\Administrator\AppData\Local\Roblox\Plugins\nofairTCM_Installer.rbxmx
+app\rojo.exe build app\build.project.json -o %AppData%\..\Local\Roblox\Plugins\nofairTCM_Installer.rbxmx

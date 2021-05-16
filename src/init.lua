@@ -43,6 +43,10 @@ local function main(plugin)
         prompt = "$termTCM | ";
         path = plugin;
     };
+    termTCM.output(
+        ("type \"tcmi --help\" for get information of tcm installer\ntcm 설치기에 대한 설명을 얻으려면 \"tcmi --help\" 를 입력하세요\nTCM INSTALLER VERSION : %s\n\n")
+        :format(version)
+    );
 
     local lastMouse; -- 마우스 저장
 
@@ -93,6 +97,8 @@ local function main(plugin)
     local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/InstallerPlugin/master/data/main.json");
     moduleData = HTTP:JSONDecode(moduleData);
     installer:setDB(moduleData);
+
+    --termTCM.addCommand
 
     -- 메인 렌더 부분
     local function render()
@@ -392,6 +398,7 @@ local function main(plugin)
         --store.this.Parent = uiHolder;
         termTCM.uiHost.holder.Parent = store.holder;
         termTCM.uiHost.holder.Position = UDim2.fromScale(0.6666,0);
+        termTCM.uiHost.holder.Size = UDim2.fromScale(0.3,1);
         termTCM.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
         --store.holder
 
