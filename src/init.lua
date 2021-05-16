@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-16 18:22:04
+    # Modified time : 2021-05-16 23:19:35
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -60,12 +60,12 @@ local function main(plugin)
         path = plugin;
     };
     termTCM.output( -- 정보를 stdout 에 띄워줌
-        ("type \"tcmi --help\" for get information of tcm installer\ntcm 설치기에 대한 설명을 얻으려면 \"tcmi --help\" 를 입력하세요\nTCM INSTALLER VERSION : %s\n\n-----------------Setup!-----------------\n")
+        ("type \"tcmi help\" for get information of tcm installer\ntcm 설치기에 대한 설명을 얻으려면 \"tcmi help\" 를 입력하세요\nTCM INSTALLER VERSION : %s\n\n-----------------Setup!-----------------\n")
         :format(version)
     );
-    termTCM.loadCmd( -- 커맨드를 불러와서 레지스터에 등록해둠
-        commands()
-    );
+    for _,command in pairs(commands()) do -- 커맨드를 불러와서 레지스터에 등록해둠
+        termTCM.loadCmd(command);
+    end
 
 --#endregion
 --#region [플러그인 바탕] 플러그인 UI / 플러그인 마우스 / 플러그인 탭 / 플러그인 버튼을 만듬
@@ -123,6 +123,7 @@ local function main(plugin)
     local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/Data/master/data/main.json");
     moduleData = HTTP:JSONDecode(moduleData);
     installer:setDB(moduleData);
+    termTCM.moduleData = moduleData;
 
 --#endregion
 --#region [UI 렌더] ui 렌더하기 / 테마 변경 이밴트 캐칭
