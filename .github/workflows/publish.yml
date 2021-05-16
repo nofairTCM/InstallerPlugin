@@ -38,7 +38,7 @@ jobs:
         shell: cmd
         run: |
           @echo off
-          rojo --asset_id %SECRETS_RBLXASSET% --cookie "%SECRETS_RBLXTOKEN%"
+          rojo upload build.project.json --asset_id %SECRETS_RBLXASSET% --cookie "%SECRETS_RBLXTOKEN%"
 
       - uses: actions/upload-artifact@v2
         with:

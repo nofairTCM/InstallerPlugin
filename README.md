@@ -1,3 +1,6 @@
+[![release](https://github.com/nofairTCM/InstallerPlugin/actions/workflows/publish.yml/badge.svg)](https://github.com/nofairTCM/InstallerPlugin/actions/workflows/publish.yml)
+
+
 # Plugin
 인스톨러 플러그인입니다, 각 모듈을 받고 관리하는데 사용될 수 있습니다  
 **주의사항 : 아래 이외의 방법으로 플러그인을 얻는것은 위험을 초례합니다, 이 방법들 이외의 방법으로 플러그인을 얻고 실행함으로써 발생한 피해는 모두 본인의 책임입니다**
