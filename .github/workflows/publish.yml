@@ -34,7 +34,7 @@ jobs:
 
       - name: Publish to rblx
         shell: cmd
-        run: rojo --asset_id ${{ SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
+        run: rojo --asset_id ${{ secrets.SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
 
       - uses: actions/upload-artifact@v2
         with:
