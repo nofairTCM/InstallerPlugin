@@ -34,7 +34,7 @@ jobs:
       - name: Download database repo
         uses: actions/checkout@v2
         with:
-          repository: nofair/Data
+          repository: nofairTCM/Data
           path: db
 
       - name: database update
