@@ -42,6 +42,20 @@ jobs:
         run: |
           db\app\luvit.exe ab\moduleUpdate.lua -n ${{ needs.setup.moduleName }} -i src\version.txt
 
+      - name: commit database
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -C db -m "Add changes" -a
+
+      - name: push database
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          directory: db
+          repository: nofair/Data
+
       - name: Build to rbxmx file
         shell: cmd
         run: |
