@@ -78,7 +78,7 @@ jobs:
   release:
     needs: [setup, build]
     env:
-      VERSION: ${{ needs.setup.outputs.version }}
+      VERSION: ${{ needs.setup.outputs.version }}.${{ env.GITHUB_RUN_NUMBER }}
     runs-on: ubuntu-latest
     steps:
 #      - name: Download repo
@@ -108,8 +108,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: out/*
-          name: PLUGIN / ${{ env.VERSION }}.${{ env.GITHUB_RUN_NUMBER }}
-          tag_name: ${{ env.VERSION }}.${{ env.GITHUB_RUN_NUMBER }}
+          name: PLUGIN / ${{ env.VERSION }}
+          tag_name: ${{ env.VERSION }}
 
 #      - name: Upload Plugin Release
 #        env:
