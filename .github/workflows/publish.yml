@@ -40,7 +40,7 @@ jobs:
       - name: database update
         shell: cmd
         run: |
-          db\app\luvit.exe ab\moduleUpdate.lua -n ${{ needs.setup.moduleName }} -i src\version.txt
+          db\app\luvit.exe db\moduleUpdate.lua -- -n ${{ needs.setup.moduleName }} -i src\version.txt
 
       - name: commit database
         run: |
