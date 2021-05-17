@@ -103,6 +103,15 @@ jobs:
           path: out
 
       - name: Upload Plugin Release
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ghr -n "PLUGIN / ${{ env.VERSION }}.${{ env.GITHUB_RUN_NUMBER }}" -b "깃허브 워크플로우에 의해 자동 업로드됨\n안정성을 위해 RBXMX 파일을 받는것을 추천합니다" ${{ env.VERSION }}.${{ env.GITHUB_RUN_NUMBER }} out/
+        with:
+          files: out/*
+          name: PLUGIN / ${{ env.VERSION }}.${{ env.GITHUB_RUN_NUMBER }}
+          tag_name: ${{ env.VERSION }}.${{ env.GITHUB_RUN_NUMBER }}
+
+#      - name: Upload Plugin Release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: ghr -n "PLUGIN / ${{ env.VERSION }}.${{ env.GITHUB_RUN_NUMBER }}" -b "깃허브 워크플로우에 의해 자동 업로드됨\n안정성을 위해 RBXMX 파일을 받는것을 추천합니다" ${{ env.VERSION }}.${{ env.GITHUB_RUN_NUMBER }} out/
