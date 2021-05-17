@@ -35,6 +35,8 @@ jobs:
         with:
           repository: nofairTCM/Data
           path: db
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: database update
         shell: cmd
