@@ -63,12 +63,6 @@ jobs:
           mkdir out
           app\rojo.exe build app\build.project.json -o out\nofairTCM_Installer.rbxmx
 
-      - name: Build to rbxm file
-        shell: cmd
-        run: |
-          mkdir out
-          app\rojo.exe build app\build.project.json -o out\nofairTCM_Installer.rbxm
-
       - name: Publish to rblx asset
         shell: cmd
         run: |
