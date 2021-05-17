@@ -81,20 +81,20 @@ jobs:
       VERSION: ${{ needs.setup.outputs.version }}
     runs-on: ubuntu-latest
     steps:
-      - name: Download repo
-        uses: actions/checkout@v2
-
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: '^1.15.0'
-
-      - name: Setup GHR (for upload files)
-        run: |
-          go get -u github.com/tcnksm/ghr
-
-      - name: make output dir
-        run: mkdir out
+#      - name: Download repo
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Go
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: '^1.15.0'
+#
+#      - name: Setup GHR (for upload files)
+#        run: |
+#          go get -u github.com/tcnksm/ghr
+#
+#      - name: make output dir
+#        run: mkdir out
 
       - name: Download output
         uses: actions/download-artifact@v2
