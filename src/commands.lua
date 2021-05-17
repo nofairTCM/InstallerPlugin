@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-05-16 23:35:08
+    # Modified time : 2021-05-16 23:45:06
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -46,7 +46,7 @@ local cmds = {
             local nowLine = 1;
             local function checkLine()
                 if minLine < nowLine then
-                    content
+                    
                 end
                 nowLine = nowLine + 1;
             end
