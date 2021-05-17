@@ -2,8 +2,6 @@ name: release
 
 on:
   workflow_dispatch:
-#  schedule:
-#    - cron: '0 5 * * *'
   push:
     branches:
     - master
@@ -16,11 +14,12 @@ jobs:
         run: echo "VERSION=$(date +%Y%m%d)" >> $GITHUB_ENV
     outputs:
       version: ${{ env.VERSION }}
-      moduleName: InstallerPlugin
+      obj: InstallerPlugin
 
   build:
     needs: setup
     env:
+      OBJ: ${{ needs.setup.outputs.obj }}
       VERSION: ${{ needs.setup.outputs.version }}
       SECRETS_RBLXASSET: ${{ secrets.SECRETS_RBLXASSET }}
       SECRETS_RBLXTOKEN: ${{ secrets.SECRETS_RBLXTOKEN }}
@@ -40,7 +39,7 @@ jobs:
       - name: database update
         shell: cmd
         run: |
-          db\app\luvit.exe db\moduleUpdate.lua -n ${{ needs.setup.moduleName }} -i src\version.txt
+          db\app\luvit.exe db\moduleUpdate.lua -n %OBJ% -i src\version.txt
 
       - name: commit database
         run: |
