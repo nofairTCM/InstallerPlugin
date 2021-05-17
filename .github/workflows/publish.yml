@@ -78,7 +78,7 @@ jobs:
   release:
     needs: [setup, build]
     env:
-      VERSION: ${{ needs.setup.outputs.version }}.${{ env.GITHUB_RUN_NUMBER }}
+      VERSION: ${{ needs.setup.outputs.version }}.${{ github.run_number }}
     runs-on: ubuntu-latest
     steps:
 #      - name: Download repo
