@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-16 23:19:35
+    # Modified time : 2021-05-19 20:19:33
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -12,7 +12,6 @@
   ]]
 
 local function main(plugin)
----@diagnostic disable:undefined-global
 --#region [전체바탕/베이스] 플러그인 기본 베이스 가져옴 / 로블 기본 서비스를 가져옴
 
     -- 플러그인 베이스
@@ -44,6 +43,9 @@ local function main(plugin)
     local installer = require(script.installer); --[[자동완성]] if not true then installer = require("src.installer"); end
     local termRBLX = require(script.Parent.libs.termRBLX); --[[자동완성]] if not true then termRBLX = require("libs.termRBLX"); end
     local commands = require(script.commands); --[[자동완성]] if not true then commands = require("scr.commands"); end
+    local AdvancedTween = require(script.Parent.libs.AdvancedTween) --[[자동완성]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
+    local MaterialUI = require(script.Parent.libs.MaterialUI) --[[자동완성]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
+    local new = MaterialUI.Create;
 
     -- 기초 설정
     local globalFont = Enum.Font.Gotham; -- 전체 폰트
@@ -115,7 +117,16 @@ local function main(plugin)
     if not uiHolder.Enabled then -- 창이 열릴 때 까지 기다림
         uiHolder:GetPropertyChangedSignal("Enabled"):Wait();
     end
-    local slashScreen = splashScreenRender(uiHolder,pluginIcon,version,termTCM); -- 로딩 스크린 만듬
+    local slashScreen = (splashScreenRender
+        :setAdvancedTween(AdvancedTween)
+        :setMaterialUI(MaterialUI)
+        :setPluginIcon(pluginIcon)
+        :setUIHolder(uiHolder)
+        :setPluginIcon(pluginIcon)
+        :setVersion(version)
+        :setTermTCM(termTCM)
+        :render(uiHolder,pluginIcon,version,termTCM)
+    ); -- 로딩 스크린 만듬
     slashScreen:setStatus("initialize ...");
 
     -- 모듈 정보를 깃허브에서 읽어옴
@@ -136,9 +147,6 @@ local function main(plugin)
         game.ContentProvider:PreloadAsync(assets)
 
         slashScreen:setStatus("startup rendering ...");
-        local AdvancedTween = require(script.Parent.libs.AdvancedTween) --[[자동완성]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
-        local MaterialUI = require(script.Parent.libs.MaterialUI) --[[자동완성]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
-        local new = MaterialUI.Create;
         termTCM.uiHost.holder.Parent = plugin;
 
         MaterialUI:CleanUp(); -- 한번 싹 클린업함
@@ -178,7 +186,7 @@ local function main(plugin)
                     or tabButtonOff.TextTransparency;
                 Name = prop.Name;
                 Text = prop.Name;
-                TextSize = 14;
+                TextSize = 15;
                 Font = globalFont;
                 TextColor3 = tabColor;
                 ZIndex = 82;

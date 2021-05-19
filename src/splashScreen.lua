@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-16 17:58:32
+    # Modified time : 2021-05-19 19:44:56
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -11,11 +11,41 @@
         스플레시 스크린을 구성합니다
   ]]
 
----@diagnostic disable:undefined-global
+local module = {};
+
+function module:setMaterialUI(MaterialUI)
+    self.MaterialUI = MaterialUI;
+    return self;
+end
+
+function module:setAdvancedTween(AdvancedTween)
+    self.AdvancedTween = AdvancedTween;
+    return self;
+end
+
+function module:setUIHolder(UIHolder)
+    self.UIHolder = UIHolder;
+    return self;
+end
+
+function module:setPluginIcon(pluginIcon)
+    self.pluginIcon = pluginIcon;
+    return self;
+end
+
+function module:setVersion(version)
+    self.version = version;
+    return self;
+end
+
+function module:setTermTCM(termTCM)
+    self.termTCM = termTCM;
+    return self;
+end
+
 local time = 0.28;
-return function (UIHolder,pluginIcon,version,termTCM)
-    local MaterialUI = require(script.Parent.Parent.libs.MaterialUI);
-    local AdvancedTween = require(script.Parent.Parent.libs.AdvancedTween);
+function module:render()
+    local UIHolder,pluginIcon,version,termTCM,MaterialUI,AdvancedTween = self.UIHolder,self.pluginIcon,self.version,self.termTCM,self.MaterialUI,self.AdvancedTween;
     local new = MaterialUI.Create;
     MaterialUI.CurrentTheme = tostring(settings().Studio.Theme);
 
@@ -141,4 +171,6 @@ return function (UIHolder,pluginIcon,version,termTCM)
     end
 
     return this;
-end;
+end
+
+return module;
