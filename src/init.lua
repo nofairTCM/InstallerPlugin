@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-19 20:19:33
+    # Modified time : 2021-05-20 23:58:02
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -15,7 +15,6 @@ local function main(plugin)
 --#region [전체바탕/베이스] 플러그인 기본 베이스 가져옴 / 로블 기본 서비스를 가져옴
 
     -- 플러그인 베이스
-    local version = "1.11.1";
     local pluginID = "nofairTCM.plugin.installer";
     local pluginIcon = "http://www.roblox.com/asset/?id=6031302931";
     local pluginIconBlack = "http://www.roblox.com/asset/?id=6790472987";
@@ -33,6 +32,11 @@ local function main(plugin)
     -- 로블록스 서비스
     local HTTP = game:GetService("HttpService");
 
+    -- 이 플러그인 버전 가져오기
+    local verInfo = HTTP:JSONDecode(script.version.Value);
+    local version = verInfo.version;
+    local publishVersion = verInfo.publishVersion;
+
 --#endregion
 --#region [모듈 임포팅] 플러그인 모듈들을 불러옴 / 기초 설정을 만듬
 
@@ -45,6 +49,7 @@ local function main(plugin)
     local commands = require(script.commands); --[[자동완성]] if not true then commands = require("scr.commands"); end
     local AdvancedTween = require(script.Parent.libs.AdvancedTween) --[[자동완성]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
     local MaterialUI = require(script.Parent.libs.MaterialUI) --[[자동완성]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
+    local pluginUpdateDialogRender = require(script.pluginUpdateDialog) --[[자동완성]] if not true then pluginUpdateDialogRender = require("src.pluginUpdateDialogRender") end
     local new = MaterialUI.Create;
 
     -- 기초 설정
@@ -56,7 +61,7 @@ local function main(plugin)
     local menuCloseSize = UDim2.fromOffset(70,70); -- 매뉴 닫히는 크기
     local termTCM = termRBLX.init { -- 터미널을 하나 만듬
         runtimeType = "screen";
-        holder = nil;
+        holder = plugin;
         disableBlock = false;
         prompt = "$termTCM | ";
         path = plugin;
@@ -136,21 +141,25 @@ local function main(plugin)
     installer:setDB(moduleData);
     termTCM.moduleData = moduleData;
 
+    local showUpdateDialog = moduleData.InstallerPlugin.publishVersion ~= publishVersion;
+
 --#endregion
 --#region [UI 렌더] ui 렌더하기 / 테마 변경 이밴트 캐칭
 
-    -- 메인 렌더 부분
-    local function render()
+    local killRender;
+    local function render() -- 메인 렌더 부분
+        if killRender then
+            killRender();
+            killRender = nil;
+        end
+
+        MaterialUI.CurrentTheme = tostring(settings().Studio.Theme); -- 테마 설정함
         slashScreen = slashScreen or (splashScreenRender(uiHolder,pluginIcon,version,termTCM));
 
         slashScreen:setStatus("load plugin assets ...");
         game.ContentProvider:PreloadAsync(assets)
-
         slashScreen:setStatus("startup rendering ...");
-        termTCM.uiHost.holder.Parent = plugin;
 
-        MaterialUI:CleanUp(); -- 한번 싹 클린업함
-        MaterialUI.CurrentTheme = tostring(settings().Studio.Theme); -- 테마 설정함
         if lastMouse and lastMouse.Obj then
             lastMouse.Obj:Destroy();
         end
@@ -164,22 +173,22 @@ local function main(plugin)
 
         local store = {tabButtons = {}};
 
-        local tabButtonOn = {TextTransparency = 0};
-        local tabButtonOff = {TextTransparency = 0.4};
-        local tabIconOn = {ImageTransparency = 0};
-        local tabIconOff = {ImageTransparency = 0.4};
-        local tabTrans = {
+        local tabButtonOn = {TextTransparency = 0}; -- 탭 버튼 켜져있을때 / 텍스트
+        local tabButtonOff = {TextTransparency = 0.4}; -- 탭 버튼 꺼져있을때 / 텍스트
+        local tabIconOn = {ImageTransparency = 0}; -- 탭 버튼 켜져있을때 / 이미지
+        local tabIconOff = {ImageTransparency = 0.4}; -- 탭 버튼 꺼져있을때 / 이미지
+        local tabTrans = { -- 탭 transition 데이터
             Time = 0.52;
             Easing = AdvancedTween.EasingFunctions.Exp2;
             Direction = AdvancedTween.EasingDirection.Out;
         };
-        local menuTrans = {
+        local menuTrans = { -- 매뉴 transition 데이터
             Time = 0.32;
             Easing = AdvancedTween.EasingFunctions.Exp2;
             Direction = AdvancedTween.EasingDirection.Out;
         };
 
-        local function newTabButton(prop)
+        local function newTabButton(prop) -- 탭 버튼 클레싱
             return new("TextButton",{
                 TextTransparency = prop.Enabled
                     and tabButtonOn.TextTransparency
@@ -237,7 +246,7 @@ local function main(plugin)
             });
         end
 
-        local function closeMenu()
+        local function closeMenu() -- 메뉴 닫기 함수
             if AdvancedTween:IsTweening(store.menu) then
                 return;
             end
@@ -253,7 +262,7 @@ local function main(plugin)
             end);
         end
 
-        local function openMenu()
+        local function openMenu() -- 메뉴 열기 함수
             if AdvancedTween:IsTweening(store.menu) then
                 return;
             end
@@ -268,7 +277,7 @@ local function main(plugin)
             });
         end
 
-        local function menuMouseCheck()
+        local function menuMouseCheck() -- 메뉴 마우스 확인
             if store.menu.Visible and (not store.menuMouseEnter) then
                 closeMenu();
             end
@@ -446,11 +455,26 @@ local function main(plugin)
             slashScreen:close();
             slashScreen = nil;
             termTCM.output("Plugin Core : loaded!\n----------------------------------------\n\n");
-        end);
-    end
-    render(); -- 렌더를 한번 돌림
 
-    -- 테마 변경됨
+            -- 만약 플러그인이 업데이트가 필요하면 확인창을 띄워줌
+            if showUpdateDialog then
+                showUpdateDialog = false;
+                pluginUpdateDialogRender
+                    :setMaterialUI(MaterialUI)
+                    :setAdvancedTween(AdvancedTween)
+                    :setUIHolder(uiHolder)
+                    :render();
+            end
+        end);
+
+        killRender = function () -- 렌더 해제하는 함수 지정
+            termTCM.uiHost.holder.Parent = plugin; -- termTCM 을 옮김
+            MaterialUI:CleanUp(); -- 한번 싹 클린업함
+        end;
+    end
+
+    render(); -- 렌더를 한번 돌림
+    -- 테마 변경됨에 따라 다시 한번 리로드
     settings().Studio.ThemeChanged:Connect(function ()
         -- 다시 렌더 돌림
         render();
