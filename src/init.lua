@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-20 23:58:02
+    # Modified time : 2021-05-21 19:48:27
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -41,6 +41,7 @@ local function main(plugin)
 --#region [모듈 임포팅] 플러그인 모듈들을 불러옴 / 기초 설정을 만듬
 
     -- 플러그인 모듈들을 가져옴
+    local dialog = require(script.dialog); --[[자동완성]] if not true then dialog = require("scr.dialog"); end
     local getModulesData = require(script.getModulesData); --[[자동완성]] if not true then getModulesData = require("src.getModulesData"); end
     local splashScreenRender = require(script.splashScreen); --[[자동완성]] if not true then splashScreenRender = require("src.splashScreen"); end
     local toolbar = require(script.Parent.libs.ToolbarCombiner); --[[자동완성]] if not true then toolbar = require("libs.ToolbarCombiner.src"); end
