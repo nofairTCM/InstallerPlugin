@@ -3,22 +3,24 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-21 19:48:27
+    # Modified time : 2021-05-21 20:20:49
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
 
         모듈 다운로더 / 관리자입니다
+        짅자ㅣ안ㄶ희ㅣㄴㄱ깃ㅅ헙브 넘뭏흐ㄴ네
+        ㄷ돋덷ㅊ채 몇ㅊㅊ벊흘ㄹㄹ실ㄿ펱ㅌ뜬ㄴㄴㄷㄴ냑ㄱㄱ오
   ]]
 
 local function main(plugin)
 --#region [전체바탕/베이스] 플러그인 기본 베이스 가져옴 / 로블 기본 서비스를 가져옴
 
     -- 플러그인 베이스
-    local pluginID = "nofairTCM.plugin.installer";
-    local pluginIcon = "http://www.roblox.com/asset/?id=6031302931";
-    local pluginIconBlack = "http://www.roblox.com/asset/?id=6790472987";
-    local assets = {
+    local pluginID = "nofairTCM.plugin.installer"; -- 플러그인 ID
+    local pluginIcon = "http://www.roblox.com/asset/?id=6031302931"; -- 플러그인 아이콘 (다크 테마를 위한)
+    local pluginIconBlack = "http://www.roblox.com/asset/?id=6790472987"; -- 플러그인 아이콘 (라이트 테마를 위한)
+    local assets = { -- 프리로드를 위한 에셋 인덱싱
         "http://www.roblox.com/asset/?id=6804828747",
         "http://www.roblox.com/asset/?id=6804829062",
         "http://www.roblox.com/asset/?id=6804829958",
@@ -30,12 +32,12 @@ local function main(plugin)
     };
 
     -- 로블록스 서비스
-    local HTTP = game:GetService("HttpService");
+    local HTTP = game:GetService("HttpService"); -- HTTP 접근 서비스 / json 인코더-디코더
 
     -- 이 플러그인 버전 가져오기
     local verInfo = HTTP:JSONDecode(script.version.Value);
-    local version = verInfo.version;
-    local publishVersion = verInfo.publishVersion;
+    local version = verInfo.version; -- 플러그인 버전 (x.xxx.x)
+    local publishVersion = verInfo.publishVersion; -- 퍼블리시 버전
 
 --#endregion
 --#region [모듈 임포팅] 플러그인 모듈들을 불러옴 / 기초 설정을 만듬
@@ -60,6 +62,8 @@ local function main(plugin)
     local white = Color3.fromRGB(255,255,255); -- 흰색
     local menuSize = UDim2.fromOffset(140,180); -- 메뉴 열린 크기
     local menuCloseSize = UDim2.fromOffset(70,70); -- 매뉴 닫히는 크기
+
+    -- 터미널 셋업
     local termTCM = termRBLX.init { -- 터미널을 하나 만듬
         runtimeType = "screen";
         holder = plugin;
@@ -75,11 +79,23 @@ local function main(plugin)
         termTCM.loadCmd(command);
     end
 
+    -- 모듈들이 필요로 하는것들 넘겨줌
+    splashScreenRender
+        :setAdvancedTween(AdvancedTween)
+        :setMaterialUI(MaterialUI)
+        :setPluginIcon(pluginIcon)
+        :setPluginIcon(pluginIcon)
+        :setVersion(version)
+        :setTermTCM(termTCM);
+    dialog
+        :setAdvancedTween(AdvancedTween)
+        :setMaterialUI(MaterialUI);
+
 --#endregion
 --#region [플러그인 바탕] 플러그인 UI / 플러그인 마우스 / 플러그인 탭 / 플러그인 버튼을 만듬
 
-    -- 플러그인 창
-    local lastMouse; -- 마우스 저장
+    -- 플러그인 창을 만듬
+    local lastMouse; -- 마우스 저장을 위한 선언
     local uiHolder = plugin:CreateDockWidgetPluginGui( -- 창을 만듬
         pluginID,
         DockWidgetPluginGuiInfo.new(
@@ -96,10 +112,7 @@ local function main(plugin)
     uiHolder.Title = "nofairTCM Installer"; -- 플러그인 창 이름(실제로 표시 되는) 정하기
 
     -- 툴바/버튼
-    local sharedToolbar = toolbar:CreateToolbar( -- 툴바를 만듬
-        "nofairTCM",
-        pluginID
-    );
+    local sharedToolbar = toolbar:CreateToolbar("nofairTCM",pluginID); -- 툴바를 만듬
     local thisButton = sharedToolbar:CreateButton( -- 버튼을 만듬
         pluginID .. ".openWindow",
         "open installer",
@@ -117,22 +130,17 @@ local function main(plugin)
     uiHolder:GetPropertyChangedSignal("Enabled"):Connect(setButtonStatus);
     setButtonStatus();
 
+    -- uiHolder 를 모듈들에 넘겨줌
+    splashScreenRender:setUIHolder(uiHolder);
+    dialog:setUIHolder(uiHolder);
+
 --#endregion
 --#region [데이터 로드] 데이터 불러오기 / 유저 기다리기
 
     if not uiHolder.Enabled then -- 창이 열릴 때 까지 기다림
         uiHolder:GetPropertyChangedSignal("Enabled"):Wait();
     end
-    local slashScreen = (splashScreenRender
-        :setAdvancedTween(AdvancedTween)
-        :setMaterialUI(MaterialUI)
-        :setPluginIcon(pluginIcon)
-        :setUIHolder(uiHolder)
-        :setPluginIcon(pluginIcon)
-        :setVersion(version)
-        :setTermTCM(termTCM)
-        :render(uiHolder,pluginIcon,version,termTCM)
-    ); -- 로딩 스크린 만듬
+    local slashScreen = splashScreenRender:render(); -- 스플레시 스크린을 만듬 (로드중을 띄우기 위해)
     slashScreen:setStatus("initialize ...");
 
     -- 모듈 정보를 깃허브에서 읽어옴
@@ -142,38 +150,36 @@ local function main(plugin)
     installer:setDB(moduleData);
     termTCM.moduleData = moduleData;
 
-    local showUpdateDialog = moduleData.InstallerPlugin.publishVersion ~= publishVersion;
+    local showUpdateDialog = moduleData.InstallerPlugin.publishVersion ~= publishVersion; -- 플러그인이 업데이트가 필요한지 확인하기 위함
 
 --#endregion
 --#region [UI 렌더] ui 렌더하기 / 테마 변경 이밴트 캐칭
 
     local killRender;
     local function render() -- 메인 렌더 부분
-        if killRender then
+
+        if killRender then -- 이전의 UI 가 있으면 지움
             killRender();
             killRender = nil;
         end
 
         MaterialUI.CurrentTheme = tostring(settings().Studio.Theme); -- 테마 설정함
-        slashScreen = slashScreen or (splashScreenRender(uiHolder,pluginIcon,version,termTCM));
+        slashScreen = slashScreen or splashScreenRender:render(); -- 스플레시 스크린을 가져옴 (없으면 만듬)
 
         slashScreen:setStatus("load plugin assets ...");
-        game.ContentProvider:PreloadAsync(assets)
+        game.ContentProvider:PreloadAsync(assets) -- 에셋을 프리로드해옴
         slashScreen:setStatus("startup rendering ...");
 
-        if lastMouse and lastMouse.Obj then
-            lastMouse.Obj:Destroy();
-        end
+        -- 마우스를 만듬
         local mouse = MaterialUI:UseDockWidget(uiHolder,plugin:GetMouse()); -- 위젯 등록함 (마우스 가져옴)
         lastMouse = mouse;
 
         slashScreen:setStatus("rendering ui ...");
-        -- 컬러 생성
-        local tabColor = MaterialUI.CurrentTheme == "Dark"
-            and Color3.fromRGB(65,150,255) or Color3.fromRGB(255,255,255);
-
         local store = {tabButtons = {}};
 
+        -- 탭 설정 생성
+        local tabColor = MaterialUI.CurrentTheme == "Dark"
+            and Color3.fromRGB(65,150,255) or Color3.fromRGB(255,255,255);
         local tabButtonOn = {TextTransparency = 0}; -- 탭 버튼 켜져있을때 / 텍스트
         local tabButtonOff = {TextTransparency = 0.4}; -- 탭 버튼 꺼져있을때 / 텍스트
         local tabIconOn = {ImageTransparency = 0}; -- 탭 버튼 켜져있을때 / 이미지
@@ -247,6 +253,7 @@ local function main(plugin)
             });
         end
 
+        -- 메뉴 함수 생성
         local function closeMenu() -- 메뉴 닫기 함수
             if AdvancedTween:IsTweening(store.menu) then
                 return;
@@ -379,6 +386,7 @@ local function main(plugin)
                 });
             });
             menuBG = new("TextButton",{
+                Text = "";
                 Visible = false;
                 Size = UDim2.fromScale(1,1);
                 ZIndex = 85;
@@ -441,15 +449,14 @@ local function main(plugin)
             });
         });
 
-        --store.this.Parent = uiHolder;
+        -- 터미널 창을 가져옴
         termTCM.uiHost.holder.Parent = store.holder;
         termTCM.uiHost.holder.Position = UDim2.fromScale(0.6666,0);
-        termTCM.uiHost.holder.Size = UDim2.fromScale(0.3,1);
+        termTCM.uiHost.holder.Size = UDim2.fromScale(0.3333,1);
         termTCM.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
-        --store.holder
 
         slashScreen:setStatus("wait for rblx ...");
-        delay(0.4,function () -- 로블이 알아서 잘 그리고 처리하도록 좀 시간을 줌
+        delay(0.25,function () -- 로블이 알아서 잘 그리고 처리하도록 좀 시간을 줌
             if not slashScreen then
                 return;
             end
@@ -469,8 +476,12 @@ local function main(plugin)
         end);
 
         killRender = function () -- 렌더 해제하는 함수 지정
+            if mouse and mouse.Obj then -- 마우스가 있으면 지움
+                mouse.Obj:Destroy();
+            end
             termTCM.uiHost.holder.Parent = plugin; -- termTCM 을 옮김
             MaterialUI:CleanUp(); -- 한번 싹 클린업함
+            termTCM.output("-----------------Reload-----------------");
         end;
     end
 
