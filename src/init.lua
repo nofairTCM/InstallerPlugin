@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-21 20:20:49
+    # Modified time : 2021-05-21 21:37:43
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -90,6 +90,10 @@ local function main(plugin)
     dialog
         :setAdvancedTween(AdvancedTween)
         :setMaterialUI(MaterialUI);
+    pluginUpdateDialogRender
+        :setDialog(dialog)
+        :setMaterialUI(MaterialUI)
+        :setAdvancedTween(AdvancedTween);
 
 --#endregion
 --#region [플러그인 바탕] 플러그인 UI / 플러그인 마우스 / 플러그인 탭 / 플러그인 버튼을 만듬
@@ -150,7 +154,7 @@ local function main(plugin)
     installer:setDB(moduleData);
     termTCM.moduleData = moduleData;
 
-    local showUpdateDialog = moduleData.InstallerPlugin.publishVersion ~= publishVersion; -- 플러그인이 업데이트가 필요한지 확인하기 위함
+    local showUpdateDialog = moduleData.InstallerPlugin.publishVersion > publishVersion; -- 플러그인이 업데이트가 필요한지 확인하기 위함
 
 --#endregion
 --#region [UI 렌더] ui 렌더하기 / 테마 변경 이밴트 캐칭
@@ -467,11 +471,7 @@ local function main(plugin)
             -- 만약 플러그인이 업데이트가 필요하면 확인창을 띄워줌
             if showUpdateDialog then
                 showUpdateDialog = false;
-                pluginUpdateDialogRender
-                    :setMaterialUI(MaterialUI)
-                    :setAdvancedTween(AdvancedTween)
-                    :setUIHolder(uiHolder)
-                    :render();
+                pluginUpdateDialogRender:render(); -- 다이어로그 렌더러를 부름
             end
         end);
 
@@ -494,7 +494,7 @@ local function main(plugin)
         -- 툴바 아이콘 리컬러링
         thisButton.Icon = ""; wait();
         thisButton.Icon = (tostring(settings().Studio.Theme) == "Dark") and
-            pluginIcon or pluginIconBlack; -- 테마에 맞게 아이콘 수정  
+            pluginIcon or pluginIconBlack; -- 테마에 맞게 아이콘 수정
     end);
 
 --#endregion

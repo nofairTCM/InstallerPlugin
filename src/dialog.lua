@@ -1,3 +1,16 @@
+
+--[[
+    # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
+    # Create Time   : 2021-05-21 19:34:57
+    # Modified by   : Qwreey
+    # Modified time : 2021-05-21 21:36:56
+    # Description   : |
+        Time format = yyy-mm-dd hh:mm:ss
+        Time zone = GMT+9
+
+        다이어로그를 위한 기틀을 만듭니다
+  ]]
+
 local module = {};
 
 function module:setMaterialUI(MaterialUI)
@@ -38,7 +51,7 @@ end
 --    };
 function module:render(data)
     local data = data or {};
-    local UIHolder,MaterialUI,AdvancedTween = self.UIHolder,self.MaterialUI,self.MaterialUI;
+    local UIHolder,MaterialUI,AdvancedTween = self.UIHolder,self.MaterialUI,self.AdvancedTween;
     local new = MaterialUI.Create;
 
     local openScale  = data.openScale or 1;
@@ -50,7 +63,7 @@ function module:render(data)
     local closeAnchorPoint = data.closeAnchorPoint or Vector2.new(0.5,0);
     local openAnchorPoint = data.openAnchorPoint or Vector2.new(0.5,0.5);
 
-    local openBackgroundTransparency = data.openBackgroundTransparency or 0.6;
+    local openBackgroundTransparency = data.openBackgroundTransparency or 0.7;
     local closeBackgroundTransparency = data.closeBackgroundTransparency or 1;
 
     local store = {};
@@ -109,19 +122,22 @@ function module:render(data)
         end);
     end
 
-    new("Frame",{
+    new("TextButton",{
         Parent = UIHolder;
         Name = "UpdatePluginPopup";
         Size = UDim2.fromScale(1,1);
-        ZIndex = 10000;
+        ZIndex = 799;
         BackgroundColor3 = Color3.fromRGB(0,0,0);
         BackgroundTransparency = closeBackgroundTransparency;
+        Text = "";
+        AutoButtonColor = false;
         WhenCreated = function (this)
             store.this = this;
         end;
     },{
         popup = new("ImageLabel",{
             AnchorPoint = closeAnchorPoint;
+            BackgroundTransparency = 1;
             Position = closePosition;
             ImageColor3 = MaterialUI:GetColor("Background");
             WhenCreated = function (this)
@@ -129,6 +145,7 @@ function module:render(data)
                 store.popup = this;
             end;
             Size = data.size or UDim2.fromOffset(246,158);
+            ZIndex = 800;
         },{
             scale = new("UIScale",{
                 Scale = closeScale;
@@ -142,7 +159,7 @@ function module:render(data)
                 BorderSizePixel = 0;
                 Position = UDim2.new(0.5, 0, 0, -3);
                 Size = UDim2.new(1, 18, 1, 18);
-                ZIndex = 800;
+                ZIndex = 799;
                 Image = "rbxassetid://1316045217";
                 ImageColor3 = Color3.fromRGB(0, 0, 0);
                 ImageTransparency = 0.71;
@@ -154,6 +171,7 @@ function module:render(data)
         open = open;
         close = close;
         holder = store.popup;
+        background = store.this;
     };
 end
 

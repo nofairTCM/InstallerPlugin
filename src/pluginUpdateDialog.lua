@@ -1,5 +1,22 @@
 
+--[[
+    # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
+    # Create Time   : 2021-05-18 18:59:18
+    # Modified by   : Qwreey
+    # Modified time : 2021-05-21 21:37:30
+    # Description   : |
+        Time format = yyy-mm-dd hh:mm:ss
+        Time zone = GMT+9
+
+        플러그인 업데이트가 있을 때 뜨는 다이어로그를 만듭니다
+  ]]
+
 local module = {};
+
+function module:setDialog(dialog)
+    self.dialog = dialog;
+    return self;
+end
 
 function module:setMaterialUI(MaterialUI)
     self.MaterialUI = MaterialUI;
@@ -11,128 +28,73 @@ function module:setAdvancedTween(AdvancedTween)
     return self;
 end
 
-function module:setUIHolder(UIHolder)
-    self.UIHolder = UIHolder;
-    return self;
-end
+local padding = UDim.new();
+local globalFont = Enum.Font.Gotham;
 
 function module:render()
-    local UIHolder,MaterialUI,AdvancedTween = self.UIHolder,self.MaterialUI,self.MaterialUI;
+    local dialog,MaterialUI,AdvancedTween = self.dialog,self.MaterialUI,self.AdvancedTween;
     local new = MaterialUI.Create;
 
-    local openScale  = 1;
-    local closeScale = 0.75;
-
-    local openPosition = UDim2.fromScale(0.5,0.5);
-    local closePosition = UDim2.fromScale(0.5,1);
-
-    local closeAnchorPoint = Vector2.new(0.5,0);
-    local openAnchorPoint = Vector2.new(0.5,0.5);
-
-    local openBackgroundTransparency = 0.6;
-    local closeBackgroundTransparency = 1;
-
-    local store = {};
-
-    local backgroundTrans = {
-        Time = 0.48;
-        Easing = AdvancedTween.EasingFunctions.Linear;
-        Direction = AdvancedTween.EasingDirection.Out;
+    local thisDialog = dialog:render {
+        size = UDim2.fromOffset(246,158);
     };
-    local popupTrans = {
-        Time = 0.6;
-        Easing = AdvancedTween.EasingFunctions.Exp2;
-        Direction = AdvancedTween.EasingDirection.Out;
-    };
+    thisDialog.open();
+    local holder = thisDialog.holder;
 
-    local function open()
-        AdvancedTween:StopTween(store.this);
-        AdvancedTween:StopTween(store.popup);
-        AdvancedTween:StopTween(store.scale);
-        store.this.BackgroundTransparency = closeBackgroundTransparency;
-        AdvancedTween:RunTween(store.this,backgroundTrans,{
-            BackgroundTransparency = openBackgroundTransparency;
-        });
-        store.popup.Position = closePosition;
-        store.popup.AnchorPoint = closeAnchorPoint;
-        AdvancedTween:RunTween(store.popup,popupTrans,{
-            Position = openPosition;
-            AnchorPoint = openAnchorPoint;
-        });
-        store.scale.Scale = closeScale;
-        AdvancedTween:RunTween(store.scale,popupTrans,{
-            Scale = openScale;
-        });
-    end
-
-    local function close()
-        AdvancedTween:StopTween(store.this);
-        AdvancedTween:StopTween(store.popup);
-        AdvancedTween:StopTween(store.scale);
-        store.this.BackgroundTransparency = openBackgroundTransparency;
-        AdvancedTween:RunTween(store.this,backgroundTrans,{
-            BackgroundTransparency = closeBackgroundTransparency;
-        });
-        store.popup.Position = openPosition;
-        store.popup.AnchorPoint = openAnchorPoint;
-        AdvancedTween:RunTween(store.popup,popupTrans,{
-            Position = closePosition;
-            AnchorPoint = closeAnchorPoint;
-        });
-        store.scale.Scale = openScale;
-        AdvancedTween:RunTween(store.scale,popupTrans,{
-            Scale = closeScale;
-        });
-        delay(0.7,function()
-            store.this:Destroy();
-        end);
-    end
-
-    new("Frame",{
-        Parent = UIHolder;
-        Name = "UpdatePluginPopup";
-        Size = UDim2.fromScale(1,1);
-        ZIndex = 10000;
-        BackgroundColor3 = Color3.fromRGB(0,0,0);
-        BackgroundTransparency = closeBackgroundTransparency;
-        WhenCreated = function (this)
-            store.this = this;
-        end;
-    },{
-        popup = new("ImageLabel",{
-            AnchorPoint = closeAnchorPoint;
-            Position = closePosition;
-            ImageColor3 = MaterialUI:GetColor("Background");
-            WhenCreated = function (this)
-                MaterialUI:SetRound(this,8);
-                store.popup = this;
-            end;
-            Size = UDim2.fromOffset(246,158);
-        },{
-            scale = new("UIScale",{
-                Scale = closeScale;
-                WhenCreated = function (this)
-                    store.scale = this;
-                end;
-            });
-            shadow = new("ImageLabel",{
-                AnchorPoint = Vector2.new(0.5, 0);
-                BackgroundTransparency = 1;
-                BorderSizePixel = 0;
-                Position = UDim2.new(0.5, 0, 0, -3);
-                Size = UDim2.new(1, 18, 1, 18);
-                ZIndex = 800;
-                Image = "rbxassetid://1316045217";
-                ImageColor3 = Color3.fromRGB(0, 0, 0);
-                ImageTransparency = 0.71;
-            });
-        });
+    local padding = UDim.new(0,10);
+    new("UIPadding",{ -- 내부 padding
+        Name = "padding";
+        Parent = holder;
+        PaddingBottom = padding;
+        PaddingLeft = padding;
+        PaddingRight = padding;
+        PaddingTop = padding;
     });
 
-    return {
-        open = open;
-        close = close;
-    };
+    new("Button",{ -- 무시 버튼
+        Name = "ignoreButton";
+        Parent = holder;
+        Style = MaterialUI.CEnum.ButtonStyle.Text;
+        AnchorPoint = Vector2.new(1,1);
+        Position = UDim2.fromScale(1,1);
+        Text = "IGNORE";
+        Size = UDim2.fromOffset(82,32);
+        MouseButton1Click = thisDialog.close;
+        ZIndex = 801
+    });
+
+    new("TextLabel",{
+        Size = UDim2.fromScale(1,1);
+        Position = UDim2.fromOffset(10,10);
+        BackgroundTransparency = 1;
+        Name = "title";
+        Text = "Update";
+        TextSize = 18;
+        TextXAlignment = Enum.TextXAlignment.Left;
+        TextYAlignment = Enum.TextYAlignment.Top;
+        TextColor3 = MaterialUI:GetColor("TextColor");
+        Font = globalFont;
+        Parent = holder;
+        ZIndex = 801
+    });
+
+    new("TextLabel",{
+        Size = UDim2.new(1,-32,1,-70);
+        Position = UDim2.fromOffset(16,38);
+        BackgroundTransparency = 1;
+        Name = "title";
+        Text = "설치기 플러그인의 새로운 버전이 감지되었습니다\n플러그인 관리자에서 플러그인을 업데이트 할 수 있습니다";
+        TextWrapped = true;
+        TextSize = 15;
+        TextXAlignment = Enum.TextXAlignment.Left;
+        TextYAlignment = Enum.TextYAlignment.Top;
+        TextColor3 = MaterialUI:GetColor("TextColor");
+        Font = globalFont;
+        Parent = holder;
+        ZIndex = 801
+    });
+
+    return dialog;
 end
 
 return module;

@@ -47,7 +47,7 @@ jobs:
         run: |
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git -C db commit -m "data base updated by github workflow (%OBJ%)" -a
+          git -C db commit -m "data base updated by github workflow (${{ needs.setup.outputs.obj }})" -a
 
       - name: push database
         uses: ad-m/github-push-action@master
