@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-05-19 20:45:24
+    # Modified time : 2021-05-22 00:47:30
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -38,7 +38,10 @@ you can install or manage tcm module/library
 이 커맨드는 tcm 설치기를 실행합니다
 이 커맨드를 이용하면 모듈/라이브러리를 설치하거나 관리 할 수 있습니다
 
-명령어에 대한 자세한 사항은 아래의 메시지를 참조해주세요]] .. "\n\n";
+명령어에 대한 자세한 사항은 아래의 메시지를 참조해주세요
+
+tcmi help ]] .. "[commandName]\n" .. [[
+  show command info]] .. "\n\n";
 
 local cmds = {
     showdb = {
@@ -47,26 +50,29 @@ tcmi showdb [option]
   show database
 
   option
-    -f : fetch and show]];
-        exe = function (args,content,self)
+    -f (--fetch) : fetch and show database, (http require)]];
+        options = {
+            ["-f"] = "fetch";
+            ["--fetch"] = "fetch";
+        };
+        exe = function (args,options,content,self)
+            if options.fetch then
+              content.fetchDB();
+            end
+
             local moduleData = content.moduleData;
             local minLine = 16;
             local nowLine = 1;
-            local function checkLine()
-                if minLine < nowLine then
-                    
-                end
-                nowLine = nowLine + 1;
-            end
             for _,object in pairs(moduleData) do
-                checkLine() content.output("\n"); waitHeart();
+                content.output("\n"); waitHeart();
                 content.output(object.name); waitHeart();
                 for _,index in pairs(props) do
-                    checkLine() content.output("\n  "); waitHeart();
+                    content.output("\n  "); waitHeart();
                     content.output(index .. " : " .. tostring(object[index])); waitHeart();
                 end
-                checkLine() content.output("\n"); waitHeart();
+                content.output("\n"); waitHeart();
             end
+            content.output("\n");
         end;
     };
 }
@@ -80,7 +86,13 @@ for _,command in pairs(cmds) do
     helpMSG = helpMSG .. command.info;
 end
 
-return function ()
+local helpCommand = {
+    ["-h"] = true;
+    ["--help"] = true;
+    help = true;
+};
+
+return function (decode)
     return {
         {
             names = {"tcmi"};
@@ -139,9 +151,37 @@ return function ()
 
             ]];
             exe = function (str,content,self,cmdprefix)
-                content.output(helpMSG .. "\n\n");
-                --string.match("^")
-                --cmds.showdb.exe(str,content,self);
+                local commandName = string.match(str,"[^%s]+");
+
+                if (not commandName) or commandName == "" then
+                    content.output(helpMSG .. "\n\n");
+                    return;
+                elseif helpCommand[commandName] then
+                    local which = string.match(string.sub(str,#commandName+1,-1),"[^%s]+");
+                    local cmd = which and cmds[which];
+                    if cmd then
+                        content.output("\n" .. cmd.info .. "\n\n");
+                    else
+                        content.output(helpMSG .. "\n\n");
+                    end
+                    return;
+                end
+
+                local cmd = cmds[commandName];
+                if not cmd then
+                    content.output(("error : command %s does not exist, check help to get some information!"):format(commandName));
+                    return
+                end
+
+                local argStr = string.sub(str,#commandName + 1,-1);
+                local pass,arg,opt = pcall(decode,argStr,cmd.options);
+
+                if not pass then
+                    content.output(arg);
+                    return;
+                end
+
+                return cmd.exe(arg,opt,content,cmd);
             end;
         };
     };

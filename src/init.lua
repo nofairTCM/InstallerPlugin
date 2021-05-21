@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-21 21:37:43
+    # Modified time : 2021-05-22 00:35:04
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -43,6 +43,7 @@ local function main(plugin)
 --#region [모듈 임포팅] 플러그인 모듈들을 불러옴 / 기초 설정을 만듬
 
     -- 플러그인 모듈들을 가져옴
+    local commandArg = require(script.commandArg) --[[자동완성]] if not true then commandArg = require("src.commandArg"); end
     local dialog = require(script.dialog); --[[자동완성]] if not true then dialog = require("scr.dialog"); end
     local getModulesData = require(script.getModulesData); --[[자동완성]] if not true then getModulesData = require("src.getModulesData"); end
     local splashScreenRender = require(script.splashScreen); --[[자동완성]] if not true then splashScreenRender = require("src.splashScreen"); end
@@ -75,7 +76,7 @@ local function main(plugin)
         ("type \"tcmi help\" for get information of tcm installer\ntcm 설치기에 대한 설명을 얻으려면 \"tcmi help\" 를 입력하세요\nTCM INSTALLER VERSION : %s\n\n-----------------Setup!-----------------\n")
         :format(version)
     );
-    for _,command in pairs(commands()) do -- 커맨드를 불러와서 레지스터에 등록해둠
+    for _,command in pairs(commands(commandArg.decode)) do -- 커맨드를 불러와서 레지스터에 등록해둠
         termTCM.loadCmd(command);
     end
 
@@ -149,10 +150,19 @@ local function main(plugin)
 
     -- 모듈 정보를 깃허브에서 읽어옴
     slashScreen:setStatus("fetch data from github ...");
-    local moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/Data/master/data/main.json");
-    moduleData = HTTP:JSONDecode(moduleData);
-    installer:setDB(moduleData);
-    termTCM.moduleData = moduleData;
+    local moduleData;
+    local reloadList;
+    local function fetch()
+        moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/Data/master/data/main.json");
+        moduleData = HTTP:JSONDecode(moduleData);
+        installer:setDB(moduleData);
+        termTCM.moduleData = moduleData;
+        if reloadList then
+            reloadList();
+        end
+    end;
+    termTCM.fetchDB = fetch;
+    fetch();
 
     local showUpdateDialog = moduleData.InstallerPlugin.publishVersion > publishVersion; -- 플러그인이 업데이트가 필요한지 확인하기 위함
 

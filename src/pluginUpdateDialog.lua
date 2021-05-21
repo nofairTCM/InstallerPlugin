@@ -3,12 +3,13 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-18 18:59:18
     # Modified by   : Qwreey
-    # Modified time : 2021-05-21 21:37:30
+    # Modified time : 2021-05-21 21:42:03
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
 
         플러그인 업데이트가 있을 때 뜨는 다이어로그를 만듭니다
+        * 이스터에그 : 여러분은 git 플로우 쓸 때 브런치 확인 똑바로 하고 에딧 합시다,,, 그림 그릴 때 배경 레이어에서 색칠중인거랑 똑같은짓
   ]]
 
 local module = {};
