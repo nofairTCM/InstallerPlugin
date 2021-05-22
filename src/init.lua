@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-22 00:35:04
+    # Modified time : 2021-05-22 16:46:32
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -160,8 +160,10 @@ local function main(plugin)
         if reloadList then
             reloadList();
         end
+        return moduleData;
     end;
     termTCM.fetchDB = fetch;
+    termTCM.installer = installer;
     fetch();
 
     local showUpdateDialog = moduleData.InstallerPlugin.publishVersion > publishVersion; -- 플러그인이 업데이트가 필요한지 확인하기 위함

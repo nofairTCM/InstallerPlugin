@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-05-16 17:57:03
+    # Modified time : 2021-05-22 16:24:50
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -15,6 +15,7 @@
 local module = {};
 local ServerStorage = game:GetService("ServerStorage");
 local ReplicatedStorage = game:GetService("ReplicatedStorage");
+local HTTP = game:GetService("HttpService");
 
 local props = {
     "name",
@@ -96,7 +97,6 @@ function module:getClientSideStorage()
     };
 end
 
-
 -- set database (github)
 function module:setDB(newDB)
     self.db = newDB;
@@ -150,6 +150,15 @@ function module:install(name)
     local obj = game:GetObjects(thing.toolboxID)[1];
 
     if obj then
+        local version = obj:FindFirstChild("version");
+        if not version then
+            error("version file was not found from asset");
+        end
+        version = HTTP:JSONDecode(version);
+        if version.publishVersion ~= thing.publishVersion then
+            error("asset publish version and github publish version does not match!, please wait for github user content refreshing");
+        end
+
         local __setup = obj:FindFirstChild("__setup");
         if __setup then -- for custom setup codes
             require(__setup)();
@@ -223,6 +232,11 @@ function module:install(name)
             });
         end
     end
+end
+
+-- get installed object
+function module:getInstalledObjs()
+    return self.db;
 end
 
 return module;
