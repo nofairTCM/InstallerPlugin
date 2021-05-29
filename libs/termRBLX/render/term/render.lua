@@ -1,5 +1,3 @@
----@diagnostic disable:undefined-global
-
 local module = {};
 
 local function new(ClassName,prop)
@@ -29,15 +27,13 @@ local function new(ClassName,prop)
 end
 
 function module.Import(ClassName)
-    local lastName = "";
-    local function name(prop)
-        prop.Name = lastName;
-        return new(ClassName,prop);
-    end
     return function (prop)
         if type(prop) == "string" then
-            lastName = prop;
-            return name;
+            local lastName = prop;
+            return function (nprop)
+                nprop.Name = lastName;
+                return new(ClassName,nprop);
+            end;
         end
         return new(ClassName,prop);
     end;
