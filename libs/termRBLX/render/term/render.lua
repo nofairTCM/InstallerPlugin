@@ -11,7 +11,7 @@ local function new(ClassName,prop)
         -- child
         if indexType ~= "string" and valueType == "Instance" then
             value.Parent = new;
-        elseif value == "function" then
+        elseif valueType == "function" then
             -- connect event
             if index ~= "whenCreated" then
                 new[index]:Connect(value);
