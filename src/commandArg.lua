@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-21 21:43:18
     # Modified by   : Qwreey
-    # Modified time : 2021-05-22 00:45:51
+    # Modified time : 2021-05-29 12:48:25
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -15,9 +15,6 @@
   ]]
 
 local module = {};
-
-
--- quote 상태는 2 비트로 저장
 
 local function splitStr(str)
     local tmp = "";
