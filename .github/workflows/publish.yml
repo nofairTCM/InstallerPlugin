@@ -43,7 +43,7 @@ jobs:
           mkdir out
           Package\bin\luvit.exe Package build --project %PROJECT% --output out\nofairTCM_Installer.rbxmx
           Package\bin\luvit.exe Package upload --project %PROJECT% --assetId ${{ secrets.SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
-          Package\bin\luvit.exe Package updateList --info %INFO% --name %NAME% --verAdd 1
+          Package\bin\luvit.exe Package updateList --info %INFO% --name %NAME%
 
       - name: push package list
         uses: ad-m/github-push-action@master
