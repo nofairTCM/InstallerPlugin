@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-16 17:56:15
+    # Modified time : 2021-06-05 01:20:25
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -95,7 +95,7 @@ return function (UIHolder,url)
                     "아래의 오류를 복사해서 관리자 이메일로 제보하거나\n" ..
                     "깃허브를 통해서 이 오류를 제보해주세요\n" ..
                     "(또는 카페를 통해서 제보해주세요)\n\n" ..
-                    "깃허브 링크 : https://github.com/nofairTCM/Plugin/issues/new\n\n"  ..
+                    "깃허브 링크 : https://github.com/nofairTCM/InstallerPlugin/issues/new\n\n"  ..
                     "=============== 오류 시작 ===============\n\n" ..
                     "error : \n" .. (data or "")
                 );
