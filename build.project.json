@@ -1,0 +1,31 @@
+{
+  "name": "Plugin",
+  "tree": {
+    "$className": "Folder",
+    "$properties": {
+      "Name": "nofairTCM_Installer"
+    },
+    "main": {
+      "$path": "src",
+      "$ignoreUnknownInstances": true
+    },
+    "libs": {
+      "$className": "Folder",
+      "AdvancedTween": {
+        "$path": "libs/AdvancedTween/src/client/AdvancedTween",
+        "$ignoreUnknownInstances": true
+      },
+      "MaterialUI": {
+        "$path": "libs/MaterialUI/src/client/MaterialUI",
+        "$ignoreUnknownInstances": true
+      },
+      "ToolbarCombiner": {
+        "$path": "libs/ToolbarCombiner/src",
+        "$ignoreUnknownInstances": true
+      },
+      "termRBLX": {
+        "$path": "libs/termRBLX"
+      }
+    }
+  }
+}

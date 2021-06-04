@@ -1,1 +1,0 @@
-app\rojo.exe build app\build.project.json -o %AppData%\..\Local\Roblox\Plugins\nofairTCM_Installer.rbxmx --watch

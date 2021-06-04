@@ -14,60 +14,44 @@ jobs:
         run: echo "VERSION=$(date +%Y%m%d)" >> $GITHUB_ENV
     outputs:
       version: ${{ env.VERSION }}
-      obj: InstallerPlugin
 
   build:
     needs: setup
     env:
-      OBJ: ${{ needs.setup.outputs.obj }}
-      VERSION: ${{ needs.setup.outputs.version }}
-      SECRETS_RBLXASSET: ${{ secrets.SECRETS_RBLXASSET }}
-      SECRETS_RBLXTOKEN: ${{ secrets.SECRETS_RBLXTOKEN }}
+      NAME: InstallerPlugin
+      PROJECT: build.project.json
+      INFO: src\version.txt
     runs-on: windows-latest
     steps:
       - name: Download this repo
         uses: actions/checkout@v2
         with:
           submodules: recursive
+          fetch-depth: 0
 
-      - name: Download database repo
+      - name: Download package handler repo
         uses: actions/checkout@v2
         with:
-          repository: nofairTCM/Data
-          path: db
+          repository: nofairTCM/Package
+          path: Package
           persist-credentials: false
           fetch-depth: 0
 
-      - name: database update
+      - name: build / upload / update package list
         shell: cmd
         run: |
-          db\app\luvit.exe db\moduleUpdate.lua -n %OBJ% -i src\version.txt
+          mkdir out
+          Package\bin\luvit.exe Package build --project %PROJECT% --output out\nofairTCM_Installer.rbxmx
+          Package\bin\luvit.exe Package upload --project %PROJECT% --assetId ${{ secrets.SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
+          Package\bin\luvit.exe Package updateList --info %INFO% --name %NAME% --verAdd 1
 
-      - name: commit database
-        run: |
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git -C db commit -m "data base updated by github workflow (${{ needs.setup.outputs.obj }})" -a
-
-      - name: push database
+      - name: push package list
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.SECRETS_GHDBTOKEN }}
           branch: ${{ github.ref }}
-          directory: db
-          repository: nofairTCM/Data
-
-      - name: Build to rbxmx file
-        shell: cmd
-        run: |
-          mkdir out
-          app\rojo.exe build app\build.project.json -o out\nofairTCM_Installer.rbxmx
-
-      - name: Publish to rblx asset
-        shell: cmd
-        run: |
-          @echo off
-          app\rojo.exe upload app\build.project.json --asset_id %SECRETS_RBLXASSET% --cookie "%SECRETS_RBLXTOKEN%"
+          directory: Package
+          repository: nofairTCM/Package
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2

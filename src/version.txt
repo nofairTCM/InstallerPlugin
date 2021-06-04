@@ -1,5 +1,6 @@
 {
-    "version": "1.3.52",
+    "version": "1.13.182",
     "buildVersion": 182,
-    "publishVersion": 13
+    "publishVersion": 13,
+    "majorVersion": 1,
 }
