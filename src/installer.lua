@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 21:26:53
+    # Modified time : 2021-06-05 21:28:39
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -338,7 +338,7 @@ function module:install(name,log,indent,force)
     local importStr = "";
     if import then
         for _,v in pairs(import) do
-            importStr = i .. ";";
+            importStr = v .. ";";
         end
     end
     new("StringValue",{
