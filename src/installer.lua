@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 20:53:07
+    # Modified time : 2021-06-05 20:53:59
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -243,7 +243,7 @@ function module:install(name,log,indent,force)
         error("version file was not found from asset");
     end
     version = HTTP:JSONDecode(versionObj.Value);
-    if version.publishVersion ~= thing.publishVersion then
+    if version.publishVersion ~= thing.publishVersion and (not force) then
         error("asset publish version and github publish version does not match!, please wait for github user content refreshing");
     end
 
