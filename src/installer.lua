@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 21:21:30
+    # Modified time : 2021-06-05 21:24:04
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -63,10 +63,10 @@ end
 local function replace(parent,t,log)
     log = log or void;
     local str = "";
-    log("decodeing table . . .");
+    log("decodeing table . . .\n");
     for _,o in pairs(t) do
         local oName = o.Name;
-        log(("replaced object %s"):format(oName));
+        log(("replaced object %s\n"):format(oName));
         local find = parent:FindFirstChild(oName);
         if find then
             find:Destroy();
