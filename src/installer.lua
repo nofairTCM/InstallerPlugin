@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 21:24:04
+    # Modified time : 2021-06-05 21:26:53
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -155,10 +155,10 @@ function module:checkUpdate(name)
 end
 
 -- uninstall
-function module:uninstall(name,log)
+function module:uninstall(name,log,indent)
     local elog = log or void;
-    local indent = indent or "";
-    local log = function(str)
+    indent = indent or "";
+    log = function(str)
         wait();
         elog(indent .. str);
     end
@@ -214,8 +214,8 @@ end
 -- install item
 function module:install(name,log,indent,force)
     local elog = log or void;
-    local indent = indent or "";
-    local log = function(str)
+    indent = indent or "";
+    log = function(str)
         wait();
         elog(indent .. str);
     end
@@ -248,7 +248,7 @@ function module:install(name,log,indent,force)
             return;
         end
         log("already installed old version, try to uninstall and update\n");
-        self:uninstall(name,elog);
+        self:uninstall(name,elog,indent);
         log(("# try to update %s\n"):format(tostring(name)));
     end
 
