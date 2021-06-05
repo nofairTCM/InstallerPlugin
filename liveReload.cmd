@@ -1,1 +1,2 @@
-rojo build gui.project.json -o %AppData%\..\Local\Roblox\Plugins\nofairTCM_Installer.rbxmx --watch
+start rojo build gui.project.json -o %AppData%\..\Local\Roblox\Plugins\nofairTCM_Installer.rbxmx --watch
+start rojo build cli.project.json -o %AppData%\..\Local\Roblox\Plugins\nofairTCM_Installer_CLI.rbxmx --watch
