@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 13:58:14
+    # Modified time : 2021-06-05 16:46:19
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -60,7 +60,7 @@ local function new(ClassName,Property)
     return this;
 end
 
-local function replace(Parent,t)
+local function replace(parent,t)
     local str = "";
     for _,o in pairs(t) do
         local oName = o.Name;
@@ -73,6 +73,28 @@ local function replace(Parent,t)
     end
 
     return str;
+end
+
+local function remove(parent,t,log)
+    log = log or void;
+    if (not t) or (not parent) then
+        return;
+    elseif type(t) == "string" then
+        log("decoding string . . .\n")
+        local tmp = {};
+        for str in string.gmatch(t,"[^;]+") do
+            table.insert(tmp,str);
+        end
+        t = tmp;
+    end
+    log(("try to remove items from %s\n"):format(parent.Name));
+    for _,v in pairs(t) do
+        local obj = parent:FindFirstChild(v);
+        if obj then
+            obj:Destroy();
+            log(("removed %s\n"):format(v));
+        end
+    end
 end
 
 -- get server side storage
@@ -114,25 +136,69 @@ end
 
 -- check is installed
 function module:isInstalled(name)
-    local thing = self:getThing(name);
     local server = self:getServerSideStorage();
-
-    return server.__installer:FindFirstChild(thing.name);
+    return server.__installer:FindFirstChild(name);
 end
 
 -- check update
 function module:checkUpdate(name)
     local thing = self:getThing(name);
-    local status = isInstalled(name);
+    local status = self:isInstalled(name);
     if not status then
         error(("module/lib/plugin was not found! (got : %s)"):format(name));
     end
     return thing.publishVersion > status.Value;
 end
 
+-- uninstall
+function module:uninstall(name,log)
+    local elog = log or void;
+    local indent = indent or "";
+    local log = function(str)
+        wait();
+        elog(indent .. str);
+    end
+
+    log(("# try to uninstall %s\n"):format(tostring(name)));
+    local server = self:getServerSideStorage();
+    local client = self:getClientSideStorage();
+
+    local isInstalled = self:isInstalled(name);
+    if not isInstalled then
+        log(("%s not installed! (or not found)"):format(name));
+        return;
+    end
+
+    local installedClient = isInstalled:FindFirstChild("client");
+    local installedServer = isInstalled:FindFirstChild("server");
+    local installedClientInit = isInstalled:FindFirstChild("clientInit");
+    local installedServerInit = isInstalled:FindFirstChild("serverInit");
+
+    installedClient = installedClient and installedClient.Value;
+    installedServer = installedServer and installedServer.Value;
+    installedClientInit = installedClientInit and installedClientInit.Value;
+    installedServerInit = installedServerInit and installedServerInit.Value;
+
+    remove(client.this,installedClient,log);
+    remove(server.this,installedServer,log);
+    remove(client.init,installedClientInit,log);
+    remove(server.init,installedServerInit,log);
+
+    log("remove meta data . . .\n");
+    isInstalled:Destroy();
+    log(("Remove %s ended!\n"):format(name));
+end
+
 -- install item
-function module:install(name,log)
-    local log = log or void;
+function module:install(name,log,indent)
+    local elog = log or void;
+    local indent = indent or "";
+    local log = function(str)
+        wait();
+        elog(indent .. str);
+    end
+
+    log(("# try to install %s\n"):format(tostring(name)));
     log("find object from database . . .\n")
     local thing = self:getThing(name);
 
@@ -141,22 +207,25 @@ function module:install(name,log)
     local client = self:getClientSideStorage();
 
     local thisName = thing.name;
-    local isInstalled = self:isInstalled(thisName);
+    local isInstalled = self:isInstalled(thisName) ~= nil;
 
     -- 하위 모듈들을 받아온다
     log("install submodules . . .\n");
     local import = thing.import;
     if import then
         for _,name in pairs(import) do
-            self:install(name,log);
+            self:install(name,elog,indent .. string.rep("\32",2));
         end
     end
 
-    -- 이미 업데이트됨
-    log("install . . .\n");
-    if isInstalled and not(self:checkUpdate(thisName)) then
-        log("is latest version already!\n")
-        return;
+    log("try to install objects . . .\n");
+    -- 이미 있으면 지움
+    if isInstalled then
+        if not self:checkUpdate(thisName) then-- 이미 업데이트됨
+            log("is latest version already!\n")
+            return;
+        end
+        self:uninstall(name,elog);
     end
 
     -- 오브젝트 가져오기
@@ -169,17 +238,17 @@ function module:install(name,log)
 
     -- 버전 파일 확인
     log("checking version . . .\n");
-    local version = obj:FindFirstChild("version");
-    if not version then
+    local versionObj = obj:FindFirstChild("version");
+    if not versionObj then
         error("version file was not found from asset");
     end
-    version = HTTP:JSONDecode(version);
+    version = HTTP:JSONDecode(versionObj.Value);
     if version.publishVersion ~= thing.publishVersion then
         error("asset publish version and github publish version does not match!, please wait for github user content refreshing");
     end
 
     -- setup 이 있으면 실행
-    log("execute __setup script . . .\n");
+    log("execute __setup script (before install) . . .\n");
     local __setup = obj:FindFirstChild("__setup");
     if __setup then
         local before = require(__setup).before;
@@ -188,13 +257,13 @@ function module:install(name,log)
         end
     end
 
-    -- 오브젝트들 배치하기
     local clientObj = obj:FindFirstChild("client");
     local serverObj = obj:FindFirstChild("server");
     local serverInitObj = obj:FindFirstChild("serverInit");
     local clientInitObj = obj:FindFirstChild("clientInit");
 
     -- 설치 상태 저장소 만들기
+    log("init status objects . . .\n");
     local status = new("IntValue",{
         Name = thisName;
         Parent = server.__installer;
@@ -245,7 +314,7 @@ function module:install(name,log)
     log("saving import list . . .\n");
     local importStr = "";
     if import then
-        for i,_ in paris(import) do
+        for _,v in pairs(import) do
             importStr = i .. ";";
         end
     end
@@ -260,6 +329,18 @@ function module:install(name,log)
     local __uninstall = obj:FindFirstChild("__uninstall");
     if __uninstall then
         __uninstall.Parent = status;
+    end
+
+    -- version 파일 이동
+    versionObj.Parent = status;
+
+    -- setup 이 있으면 실행
+    log("execute __setup script (after install) . . .\n");
+    if __setup then
+        local after = require(__setup).after;
+        if after then
+            after(server,client,self);
+        end
     end
 
     log(("Install '%s' ended!\n"):format(thisName));

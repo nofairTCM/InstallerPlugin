@@ -1,0 +1,41 @@
+{
+    "name": "Plugin",
+    "tree": {
+        "$className": "Folder",
+        "$properties": {
+            "Name": "nofairTCM_Installer_CLI"
+        },
+        "main": {
+            "$path": "src/cli.lua",
+            "commandArg": {
+                "$path": "src/commandArg.lua"
+            },
+            "commands": {
+                "$path": "src/commands.lua"
+            },
+            "installer": {
+                "$path": "src/installer.lua"
+            },
+            "runtime": {
+                "$path": "src/runtime.server.lua"
+            },
+            "version": {
+                "$path": "src/version.txt"
+            }
+        },
+        "libs": {
+            "$className": "Folder",
+            "AdvancedTween": {
+                "$path": "libs/AdvancedTween/src/client/AdvancedTween",
+                "$ignoreUnknownInstances": true
+            },
+            "ToolbarCombiner": {
+                "$path": "libs/ToolbarCombiner/src",
+                "$ignoreUnknownInstances": true
+            },
+            "termRBLX": {
+                "$path": "libs/termRBLX"
+            }
+        }
+    }
+}

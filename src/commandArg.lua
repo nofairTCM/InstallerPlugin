@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-21 21:43:18
     # Modified by   : Qwreey
-    # Modified time : 2021-05-29 12:48:25
+    # Modified time : 2021-06-05 16:21:12
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -70,16 +70,16 @@ function module.decode(str,optionList,optionNotFound)
     local tableInsert = table.insert;
     for i,this in ipairs(split) do
         if i >= 1 then
-            if lastOpt then -- set option
-                option[lastOpt] = this;
-                lastOpt = nil;
-            elseif strSub(this,1,1) == "-" then -- this = option
+            if strSub(this,1,1) == "-" then -- this = option
                 local optName = optionList[this];
                 if not optName then
                     error((optionNotFound or "option %s was not found, -h for see info"):format(this));
                 end
                 option[optName] = true;
                 lastOpt = optName;
+            elseif lastOpt then -- set option
+                option[lastOpt] = this;
+                lastOpt = nil;
             else
                 tableInsert(args,this);
             end

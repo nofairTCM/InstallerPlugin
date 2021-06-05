@@ -19,7 +19,6 @@ jobs:
     needs: setup
     env:
       NAME: InstallerPlugin
-      PROJECT: build.project.json
       INFO: src\version.txt
     runs-on: windows-latest
     steps:
@@ -41,8 +40,9 @@ jobs:
         shell: cmd
         run: |
           mkdir out
-          Package\bin\luvit.exe Package build --project %PROJECT% --output out\nofairTCM_Installer.rbxmx
-          Package\bin\luvit.exe Package upload --project %PROJECT% --assetId ${{ secrets.SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
+          Package\bin\luvit.exe Package build --project gui.project.json --output out\nofairTCM_Installer_GUIversion.rbxmx
+          Package\bin\luvit.exe Package upload --project gui.project.json --assetId ${{ secrets.SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
+          Package\bin\luvit.exe Package build --project cli.project.json --output out\nofairTCM_Installer_CLIversion.rbxmx
           Package\bin\luvit.exe Package updateList --info %INFO% --name %NAME%
 
       - name: push package list
@@ -79,3 +79,10 @@ jobs:
           files: out/*
           name: PLUGIN / ${{ env.VERSION }}
           tag_name: ${{ env.VERSION }}
+          body: |
+            CLI 버전 : 터미널만 포함된 빌드입니다, 기본적으로 GUI 보다 빠르게 로드가 가능하며 가볍습니다
+            GUI 버전 : 인터패이스가 포함된 빌드입니다, 더 친숙한 조작이 가능합니다 (초보자의 경우 이 버전을 추천합니다)
+
+            더 많은 정보를 얻으려면 README.md 를 확인해주세요
+
+            [이 빌드는 github workflows 에 의해 생성되었습니다] 

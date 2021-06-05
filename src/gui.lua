@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 09:48:47
+    # Modified time : 2021-06-05 17:27:51
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -422,7 +422,7 @@ local function main(plugin)
                     ZIndex = 85;
                     BackgroundColor3 = tabColor;
                     Position = UDim2.fromScale(0,1);
-                    Size = UDim2.new(0.3333,0,0,3);
+                    Size = UDim2.new(0.5,0,0,3);
                     AnchorPoint = Vector2.new(0,1);
                     WhenCreated = function (this)
                         store.tabPointer = this;
@@ -430,32 +430,32 @@ local function main(plugin)
                 });
                 newTabButton({
                     Name = "modules";
-                    SizeX = 0.3333;
+                    SizeX = 0.5;
                     PositionX = 0;
                     PagePositionX = 0;
                     Image = "http://www.roblox.com/asset/?id=6804829062";
                     Enabled = true;
                 });
-                newTabButton({
+--[[                 newTabButton({
                     Name = "libs";
                     SizeX = 0.3333;
                     PositionX = 0.3333;
                     PagePositionX = -1;
                     Image = "http://www.roblox.com/asset/?id=6804829958";
                     Enabled = false;
-                });
+                }); ]]
                 newTabButton({
                     Name = "terminal";
-                    SizeX = 0.3333;
-                    PositionX = 0.6666;
-                    PagePositionX = -2;
+                    SizeX = 0.5;
+                    PositionX = 0.5;
+                    PagePositionX = -1;
                     Image = "http://www.roblox.com/asset/?id=6804828747";
                     Enabled = false;
                 });
             });
             holder = new("Frame",{
                 BackgroundTransparency = 1;
-                Size = UDim2.new(3,0,1,-tobBarSizeY + -tabSizeY);
+                Size = UDim2.new(2,0,1,-tobBarSizeY + -tabSizeY);
                 Position = UDim2.fromOffset(0,tobBarSizeY + tabSizeY);
                 WhenCreated = function (this)
                     store.holder = this;
@@ -467,8 +467,8 @@ local function main(plugin)
 
         -- 터미널 창을 가져옴
         termTCM.uiHost.holder.Parent = store.holder;
-        termTCM.uiHost.holder.Position = UDim2.fromScale(0.6666,0);
-        termTCM.uiHost.holder.Size = UDim2.fromScale(0.3333,1);
+        termTCM.uiHost.holder.Position = UDim2.fromScale(0.5,0);
+        termTCM.uiHost.holder.Size = UDim2.fromScale(0.5,1);
         termTCM.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
 
         slashScreen:setStatus("wait for rblx ...");

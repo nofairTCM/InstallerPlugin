@@ -1,0 +1,60 @@
+{
+    "name": "Plugin",
+    "tree": {
+        "$className": "Folder",
+        "$properties": {
+            "Name": "nofairTCM_Installer"
+        },
+        "main": {
+            "$path": "src/gui.lua",
+            "commandArg": {
+                "$path": "src/commandArg.lua"
+            },
+            "commands": {
+                "$path": "src/commands.lua"
+            },
+            "dialog": {
+                "$path": "src/dialog.lua"
+            },
+            "getModulesData": {
+                "$path": "src/getModulesData.lua"
+            },
+            "holderItem": {
+                "$path": "src/holderItem.lua"
+            },
+            "installer": {
+                "$path": "src/installer.lua"
+            },
+            "pluginUpdateDialog": {
+                "$path": "src/pluginUpdateDialog.lua"
+            },
+            "runtime": {
+                "$path": "src/runtime.server.lua"
+            },
+            "splashScreen": {
+                "$path": "src/splashScreen.lua"
+            },
+            "version": {
+                "$path": "src/version.txt"
+            }
+        },
+        "libs": {
+            "$className": "Folder",
+            "AdvancedTween": {
+                "$path": "libs/AdvancedTween/src/client/AdvancedTween",
+                "$ignoreUnknownInstances": true
+            },
+            "MaterialUI": {
+                "$path": "libs/MaterialUI/src/client/MaterialUI",
+                "$ignoreUnknownInstances": true
+            },
+            "ToolbarCombiner": {
+                "$path": "libs/ToolbarCombiner/src",
+                "$ignoreUnknownInstances": true
+            },
+            "termRBLX": {
+                "$path": "libs/termRBLX"
+            }
+        }
+    }
+}

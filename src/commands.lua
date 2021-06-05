@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 13:55:32
+    # Modified time : 2021-06-05 17:33:50
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -66,12 +66,12 @@ end
 
 local props = {
     "author";
-    "type";
     "info";
     "version";
     "publishVersion";
     "publishStatus";
     "buildVersion";
+    "majorVersion";
     "import";
     "github";
     "lic";
@@ -93,7 +93,7 @@ local cmds = {
     info = {
         info = (
             "tcmi info [objectId] [options]\n" ..
-            "  show object info from databast\n" ..
+            "  show object info from database\n" ..
             "  options :\n" ..
             "    -f (--fetch) : fetch and show database, (http require)\n" ..
             "    -q (--quiet) : return data only, do not show info on stdout"
@@ -122,8 +122,11 @@ local cmds = {
                     return object;
                 end
 
-                local checkInstalled = content.installer.isInstalled;
-                local isInstalled = pcall(checkInstalled,checkInstalled,id);
+                local isPass,isInstalled = pcall(content.installer.isInstalled,content.installer,id);
+                if not isPass then
+                    content.output(("ERROR : %s\nan error occurred; ignore and continue . . .\n"):format(isInstalled));
+                end
+                isInstalled = isInstalled ~= nil;
 
                 content.output("\n" .. object.name .. (" (id : %s)"):format(id)); waitHeart();
                 content.output("\n  isInstalled : " .. tostring(isInstalled));
@@ -167,25 +170,29 @@ local cmds = {
             local nameOnly = options.nameOnly;
             local moduleData = content.moduleData;
             local installedOnly = options.installed;
-            local checkInstalled = content.installer.isInstalled;
 
             if not options.quiet then
                 for id,object in pairs(moduleData) do
-                    local isInstalled = pcall(checkInstalled,checkInstalled,id);
+                    local isPass,isInstalled = pcall(content.installer.isInstalled,content.installer,id);
+                    if not isPass then
+                        content.output(("ERROR : %s\nan error occurred; ignore and continue . . .\n"):format(isInstalled));
+                    end
+                    isInstalled = isInstalled ~= nil;
+
                     if (not installedOnly) or isInstalled then
-                        content.output("\n" .. object.name .. (" (id : %s)"):format(id)); waitHeart();
+                        content.output("\n" .. object.name .. (" (id : %s)"):format(id));
                         if not nameOnly then
                             content.output("\n  isInstalled : " .. tostring(isInstalled));
                             for _,index in pairs(props) do
-                                content.output("\n  " .. index .. " : " .. tostring(object[index])); waitHeart();
+                                content.output("\n  " .. index .. " : " .. tostring(object[index]));
                             end
-                            content.output("\n"); waitHeart();
+                            content.output("\n");
                         end
                     end
                 end
 
                 if nameOnly then
-                    content.output("\n"); waitHeart();
+                    content.output("\n");
                 end
             end
             content.output("\n");
@@ -197,7 +204,7 @@ local cmds = {
             "tcmi fetch [options]\n" ..
             "  fetch database from github\n" ..
             "  options :\n" ..
-            "    -b (--background) : fetch databast in background mode (coroutine)"
+            "    -b (--background) : fetch database in background mode (coroutine)"
         );
         options = {
             ["-b"] = "background";
@@ -226,6 +233,7 @@ local cmds = {
             ["--quiet"] = "quiet";
         };
         exe = function (args,options,content,self)
+            content.fetchDB();
             -- module name in arg
             local moduleName = args[1];
             local quiet = options.quiet;
@@ -239,7 +247,45 @@ local cmds = {
 
                 local isPass,errmsg = pcall(content.installer.install,content.installer,moduleName,(not quiet) and content.output);
                 if not isPass then
-                    content.output(errmsg .. "\n");
+                    content.output("ERROR : " .. errmsg .. "\n");
+                end
+                if not quiet then
+                    content.output("\n");
+                end
+
+                return object;
+            else
+                content.output("arg 1 [objectId] is missing! please check command arg and try again!\n\n");
+                return;
+            end
+        end;
+    };
+    uninstall = {
+        info = (
+            "tcmi uninstall [objectId] [options]\n" ..
+            "  uninstall object from this place\n" ..
+            "  options :\n" ..
+            "    -q (--quiet) : return data only, do not show info on stdout"
+        );
+        options = {
+            ["-q"] = "quiet";
+            ["--quiet"] = "quiet";
+        };
+        exe = function (args,options,content,self)
+            -- module name in arg
+            local moduleName = args[1];
+            local quiet = options.quiet;
+            if moduleName then
+                local object = content.moduleData[moduleName];
+
+                if not object then
+                    content.output(("object '%s' was not found from database! please check command arg and try again!\n\n"):format(moduleName));
+                    return;
+                end
+
+                local isPass,errmsg = pcall(content.installer.uninstall,content.installer,moduleName,(not quiet) and content.output);
+                if not isPass then
+                    content.output("ERROR : " .. errmsg .. "\n");
                 end
                 if not quiet then
                     content.output("\n");
@@ -263,7 +309,7 @@ local cmds = {
             local isPass,errmsg = pcall(content.installer.init,content.installer);
 
             if not isPass then
-                content.output(errmsg .. "\n");
+                content.output("ERROR : " .. errmsg .. "\n");
                 return false;
             end
             return true;
