@@ -84,6 +84,12 @@ jobs:
             CLI 버전 : 터미널만 포함된 빌드입니다, 기본적으로 GUI 보다 빠르게 로드가 가능하며 가볍습니다
             GUI 버전 : 인터패이스가 포함된 빌드입니다, 더 친숙한 조작이 가능합니다 (초보자의 경우 이 버전을 추천합니다)
 
+            CLI 가 GUI 보다 용량 단위로는 15 배 정도 가볍고 로드속도로는 5~10 배 정도 빠릅니다
+            필요에 따라 골라서 사용하세요
+
+            CLI 버전은 여기에서도 설치가 가능합니다 https://www.roblox.com/library/6912288435/nofairTCM-Installer-CLI
+            GUI 버전은 여기에서도 설치가 가능합니다 https://www.roblox.com/library/6801472559/nofairTCM-Installer
+
             더 많은 정보를 얻으려면 README.md 를 확인해주세요
 
             [이 빌드는 github workflows 에 의해 생성되었습니다] 
