@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-05-22 16:48:43
+    # Modified time : 2021-06-05 13:55:32
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -96,7 +96,7 @@ local cmds = {
             "  show object info from databast\n" ..
             "  options :\n" ..
             "    -f (--fetch) : fetch and show database, (http require)\n" ..
-            "    -q (--quiet) : return data only, do not show info on stdout\n"
+            "    -q (--quiet) : return data only, do not show info on stdout"
         );
         options = {
             ["-f"] = "fetch";
@@ -110,19 +110,22 @@ local cmds = {
             end
 
             -- module name in arg
-            local moduleName = args[1];
-            if moduleName then
-                local object = content.moduleData[moduleName];
+            local id = args[1];
+            if id then
+                local object = content.moduleData[id];
 
                 if not object then
-                    content.output(("object '%s' was not found from database! please check command arg and try again!\n\n"):format(moduleName));
+                    content.output(("object '%s' was not found from database! please check command arg and try again!\n\n"):format(id));
                     return;
                 end
                 if options.quiet then
                     return object;
                 end
 
-                content.output("\n" .. object.name .. (" (id : %s)"):format(moduleName)); waitHeart();
+                local checkInstalled = content.installer.isInstalled;
+                local isInstalled = pcall(checkInstalled,checkInstalled,id);
+
+                content.output("\n" .. object.name .. (" (id : %s)"):format(id)); waitHeart();
                 content.output("\n  isInstalled : " .. tostring(isInstalled));
                 for _,index in pairs(props) do
                     content.output("\n  " .. index .. " : " .. tostring(object[index])); waitHeart();
@@ -210,11 +213,62 @@ local cmds = {
             return content.fetchDB();
         end;
     };
-    --install = {
-    --    info = (
+    install = {
+        info = (
+            "tcmi install [objectId] [options]\n" ..
+            "  install object from rblx asset / github repo\n" ..
+            "  THIS ACTION IS CALL FETCHING DATABASE!\n" ..
+            "  options :\n" ..
+            "    -q (--quiet) : return data only, do not show info on stdout"
+        );
+        options = {
+            ["-q"] = "quiet";
+            ["--quiet"] = "quiet";
+        };
+        exe = function (args,options,content,self)
+            -- module name in arg
+            local moduleName = args[1];
+            local quiet = options.quiet;
+            if moduleName then
+                local object = content.moduleData[moduleName];
 
-    --    )
-    --};
+                if not object then
+                    content.output(("object '%s' was not found from database! please check command arg and try again!\n\n"):format(moduleName));
+                    return;
+                end
+
+                local isPass,errmsg = pcall(content.installer.install,content.installer,moduleName,(not quiet) and content.output);
+                if not isPass then
+                    content.output(errmsg .. "\n");
+                end
+                if not quiet then
+                    content.output("\n");
+                end
+
+                return object;
+            else
+                content.output("arg 1 [objectId] is missing! please check command arg and try again!\n\n");
+                return;
+            end
+        end;
+    };
+    init = {
+        info = (
+            "tcmi init\n" ..
+            "  init tcm object storage\n" ..
+            "  this command is auto executing by other commands!"
+        );
+        options = {};
+        exe = function (args,options,content,self)
+            local isPass,errmsg = pcall(content.installer.init,content.installer);
+
+            if not isPass then
+                content.output(errmsg .. "\n");
+                return false;
+            end
+            return true;
+        end;
+    };
 }
 
 local helpMSG = header;
