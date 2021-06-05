@@ -2,5 +2,5 @@
     "version": "1.14.221",
     "buildVersion": 221,
     "publishVersion": 14,
-    "majorVersion": 1,
+    "majorVersion": 1
 }

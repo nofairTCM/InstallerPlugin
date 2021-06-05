@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 01:16:33
+    # Modified time : 2021-06-05 09:41:55
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -154,6 +154,7 @@ local function main(plugin)
     local reloadList;
     local function fetch()
         moduleData = getModulesData(uiHolder,"https://raw.githubusercontent.com/nofairTCM/Package/master/packageList.json");
+        print(moduleData)
         moduleData = HTTP:JSONDecode(moduleData);
         installer:setDB(moduleData);
         termTCM.moduleData = moduleData;
