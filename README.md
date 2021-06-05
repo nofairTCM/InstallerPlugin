@@ -3,8 +3,6 @@
 
 # 목차
 
-<!-- TOC -->autoauto- [Plugin](#plugin)auto    - [설명](#설명)auto    - [설치 방법](#설치-방법)auto        - [툴박스에서 받기](#툴박스에서-받기)auto        - [github workflow 에 의해 빌드된 파일 받기](#github-workflow-에-의해-빌드된-파일-받기)auto        - [빌드하기](#빌드하기)auto- [저장소 설명](#저장소-설명)auto    - [워크플로우 설명](#워크플로우-설명)auto    - [브런치 설명](#브런치-설명)autoauto<!-- /TOC -->
-
 # Plugin
 
 ## 설명
@@ -38,10 +36,13 @@ GUI 버전의 경우 인터패이스를 통해 사용이 가능하며 cli 도 �
 
 일단 빌드하기 위해서 이 저장소를 복사해와야 합니다. win64 기준으로 cmd 를 적합한 위치에서 연 후  
 > git clone --recursive https://github.com/nofairTCM/InstallerPlugin.git  
+
 다음과 같이 입력해서 이 저장소를 복사해오세요  
+주의사항 : 이 저장소는 큰 기록을 담고 있으므로 `--deep 1` 을 이용해서 필요 부분만 받아와야 합니다  
 
 그 후 복사된 폴더로 이동합니다  
 > cd InstallerPlugin  
+
 이제 cmd 창을 닫지 말고 아래 단계로 내려가세요  
 
 일단 rojo 가 없는 경우 [rojo](https://github.com/rojo-rbx/rojo/releases) 를 받아서 지금 폴더로 옮깁니다 (압축을 푼 후)  
@@ -49,6 +50,7 @@ GUI 버전의 경우 인터패이스를 통해 사용이 가능하며 cli 도 �
 
 그런 다름 cmd 라인에서 (주의 : 기기 성능에 따라서 0.2초 에서 최대 20초 이상의 시간이 걸립니다)  
 > rojo build build.project.json --output plugin.rbxmx  
+
 를 입력하고 새로 생겨난 plugin.rbxmx 파일을 로블록스 스튜디오 플러그인 폴더로 옮깁니다 (스튜디오/플러그인 탭/플러그인 폴더)  
 
 다 끝났습니다! 스튜디오를 한번 재시작 하면 플러그인이 정상적으로 깔려 있는것을 확인 할 수 있습니다  
