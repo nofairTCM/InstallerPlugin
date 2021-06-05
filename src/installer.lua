@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 16:46:19
+    # Modified time : 2021-06-05 20:53:07
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -190,7 +190,7 @@ function module:uninstall(name,log)
 end
 
 -- install item
-function module:install(name,log,indent)
+function module:install(name,log,indent,force)
     local elog = log or void;
     local indent = indent or "";
     local log = function(str)
@@ -214,13 +214,13 @@ function module:install(name,log,indent)
     local import = thing.import;
     if import then
         for _,name in pairs(import) do
-            self:install(name,elog,indent .. string.rep("\32",2));
+            self:install(name,elog,indent .. string.rep("\32",2),force);
         end
     end
 
     log("try to install objects . . .\n");
     -- 이미 있으면 지움
-    if isInstalled then
+    if isInstalled and (not force) then
         if not self:checkUpdate(thisName) then-- 이미 업데이트됨
             log("is latest version already!\n")
             return;

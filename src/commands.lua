@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 17:33:50
+    # Modified time : 2021-06-05 20:51:53
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -226,11 +226,14 @@ local cmds = {
             "  install object from rblx asset / github repo\n" ..
             "  THIS ACTION IS CALL FETCHING DATABASE!\n" ..
             "  options :\n" ..
-            "    -q (--quiet) : return data only, do not show info on stdout"
+            "    -q (--quiet) : return data only, do not show info on stdout\n" ..
+            "    -f (--force) : ignore version data and force to install objects"
         );
         options = {
             ["-q"] = "quiet";
             ["--quiet"] = "quiet";
+            ["-f"] = "force";
+            ["--force"] = "force";
         };
         exe = function (args,options,content,self)
             content.fetchDB();
@@ -245,7 +248,7 @@ local cmds = {
                     return;
                 end
 
-                local isPass,errmsg = pcall(content.installer.install,content.installer,moduleName,(not quiet) and content.output);
+                local isPass,errmsg = pcall(content.installer.install,content.installer,moduleName,(not quiet) and content.output,nil,options.force);
                 if not isPass then
                     content.output("ERROR : " .. errmsg .. "\n");
                 end
