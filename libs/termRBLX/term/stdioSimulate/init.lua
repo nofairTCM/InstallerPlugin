@@ -11,7 +11,13 @@ local module = {};
 function stdioMeta:lineCheck() -- check lines and clear old lines
 end
 function stdioMeta:updateScreen() -- update screen
-    local withoutInput = self.output .. (self.lockInput and emptyStr or self.prompt)
+    local output = self.output;
+    if #output > 13000 then -- it cause overflow, so, force clean output;
+        self.output = "";
+        self.updateScreen();
+        return;
+    end
+    local withoutInput = output .. (self.lockInput and emptyStr or self.prompt)
     self.withoutInput = withoutInput;
     local new = withoutInput .. self.input;
     self.lastScreen = new;
