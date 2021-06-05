@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 21:18:15
+    # Modified time : 2021-06-05 21:21:30
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -74,7 +74,7 @@ local function replace(parent,t,log)
         o.Parent = parent;
         str = str .. oName .. ";";
     end
-    log("remove task replaced!");
+    log("remove task replaced!\n");
     return str;
 end
 
@@ -98,7 +98,7 @@ local function remove(parent,t,log)
             log(("removed %s\n"):format(v));
         end
     end
-    log("remove task ended!");
+    log("remove task ended!\n");
 end
 
 -- get server side storage
@@ -256,8 +256,7 @@ function module:install(name,log,indent,force)
     log("get objects from rblx asset . . .\n");
     local obj = game:GetObjects(thing.toolboxID)[1];
     if not obj then
-        log("object not found");
-        return;
+        error("object not found\n");
     end
 
     -- 버전 파일 확인
@@ -266,7 +265,7 @@ function module:install(name,log,indent,force)
     if not versionObj then
         error("version file was not found from asset");
     end
-    version = HTTP:JSONDecode(versionObj.Value);
+    local version = HTTP:JSONDecode(versionObj.Value);
     if version.publishVersion ~= thing.publishVersion and (not force) then
         error("asset publish version and github publish version does not match!, please wait for github user content refreshing");
     end
