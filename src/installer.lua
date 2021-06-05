@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 20:53:59
+    # Modified time : 2021-06-05 20:57:56
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -220,8 +220,8 @@ function module:install(name,log,indent,force)
 
     log("try to install objects . . .\n");
     -- 이미 있으면 지움
-    if isInstalled and (not force) then
-        if not self:checkUpdate(thisName) then-- 이미 업데이트됨
+    if isInstalled then
+        if not self:checkUpdate(thisName) and (not force) then-- 이미 업데이트됨
             log("is latest version already!\n")
             return;
         end
