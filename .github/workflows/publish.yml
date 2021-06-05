@@ -43,6 +43,7 @@ jobs:
           Package\bin\luvit.exe Package build --project gui.project.json --output out\nofairTCM_Installer_GUIversion.rbxmx
           Package\bin\luvit.exe Package upload --project gui.project.json --assetId ${{ secrets.SECRETS_RBLXASSET }} --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
           Package\bin\luvit.exe Package build --project cli.project.json --output out\nofairTCM_Installer_CLIversion.rbxmx
+          Package\bin\luvit.exe Package upload --project cli.project.json --assetId 6912288435 --cookie "${{ secrets.SECRETS_RBLXTOKEN }}"
           Package\bin\luvit.exe Package updateList --info %INFO% --name %NAME%
 
       - name: push package list
