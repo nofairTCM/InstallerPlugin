@@ -1,8 +1,6 @@
 
 [![release](https://github.com/nofairTCM/InstallerPlugin/actions/workflows/publish.yml/badge.svg)](https://github.com/nofairTCM/InstallerPlugin/actions/workflows/publish.yml)
 
-# 목차
-
 # Plugin
 
 ## 설명
