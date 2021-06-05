@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 20:57:56
+    # Modified time : 2021-06-05 21:09:28
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -225,7 +225,9 @@ function module:install(name,log,indent,force)
             log("is latest version already!\n")
             return;
         end
+        log("already installed old version, try to uninstall and update\n");
         self:uninstall(name,elog);
+        log(("# try to update %s\n"):format(tostring(name)));
     end
 
     -- 오브젝트 가져오기
