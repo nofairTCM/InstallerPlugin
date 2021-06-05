@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 21:09:28
+    # Modified time : 2021-06-05 21:18:15
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -60,10 +60,13 @@ local function new(ClassName,Property)
     return this;
 end
 
-local function replace(parent,t)
+local function replace(parent,t,log)
+    log = log or void;
     local str = "";
+    log("decodeing table . . .");
     for _,o in pairs(t) do
         local oName = o.Name;
+        log(("replaced object %s"):format(oName));
         local find = parent:FindFirstChild(oName);
         if find then
             find:Destroy();
@@ -71,7 +74,7 @@ local function replace(parent,t)
         o.Parent = parent;
         str = str .. oName .. ";";
     end
-
+    log("remove task replaced!");
     return str;
 end
 
@@ -95,6 +98,7 @@ local function remove(parent,t,log)
             log(("removed %s\n"):format(v));
         end
     end
+    log("remove task ended!");
 end
 
 -- get server side storage
@@ -163,10 +167,20 @@ function module:uninstall(name,log)
     local server = self:getServerSideStorage();
     local client = self:getClientSideStorage();
 
+    log("check files . . .\n");
     local isInstalled = self:isInstalled(name);
     if not isInstalled then
-        log(("%s not installed! (or not found)"):format(name));
+        log(("%s not installed! (or not found)\n"):format(name));
         return;
+    end
+
+    local __uninstall = isInstalled:FindFirstChild("__uninstall");
+    log("execute __uninstall script (before install) . . .\n");
+    if __uninstall then
+        local before = require(__uninstall).before;
+        if before then
+            before(server,client,log,self);
+        end
     end
 
     local installedClient = isInstalled:FindFirstChild("client");
@@ -183,6 +197,14 @@ function module:uninstall(name,log)
     remove(server.this,installedServer,log);
     remove(client.init,installedClientInit,log);
     remove(server.init,installedServerInit,log);
+
+    log("execute __uninstall script (after install) . . .\n");
+    if __uninstall then
+        local after = require(__uninstall).after;
+        if after then
+            after(server,client,log,self);
+        end
+    end
 
     log("remove meta data . . .\n");
     isInstalled:Destroy();
@@ -255,7 +277,7 @@ function module:install(name,log,indent,force)
     if __setup then
         local before = require(__setup).before;
         if before then
-            before(server,client,self);
+            before(server,client,log,self);
         end
     end
 
@@ -278,7 +300,7 @@ function module:install(name,log,indent,force)
         new("StringValue",{
             Parent = status;
             Name = "client";
-            Value = replace(client.this,clientObj:GetChildren());
+            Value = replace(client.this,clientObj:GetChildren(),log);
         });
     end
 
@@ -288,7 +310,7 @@ function module:install(name,log,indent,force)
         new("StringValue",{
             Parent = status;
             Name = "server";
-            Value = replace(server.this,serverObj:GetChildren());
+            Value = replace(server.this,serverObj:GetChildren(),log);
         });
     end
 
@@ -298,7 +320,7 @@ function module:install(name,log,indent,force)
         new("StringValue",{
             Parent = status;
             Name = "clientInit";
-            Value = replace(client.init,clientInitObj:GetChildren());
+            Value = replace(client.init,clientInitObj:GetChildren(),log);
         });
     end
 
@@ -308,7 +330,7 @@ function module:install(name,log,indent,force)
         new("StringValue",{
             Parent = status;
             Name = "serverInit";
-            Value = replace(server.init,serverInitObj:GetChildren());
+            Value = replace(server.init,serverInitObj:GetChildren(),log);
         });
     end
 
@@ -341,7 +363,7 @@ function module:install(name,log,indent,force)
     if __setup then
         local after = require(__setup).after;
         if after then
-            after(server,client,self);
+            after(server,client,log,self);
         end
     end
 
