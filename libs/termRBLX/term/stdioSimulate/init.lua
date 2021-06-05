@@ -14,7 +14,7 @@ function stdioMeta:updateScreen() -- update screen
     local output = self.output;
     if #output > 13000 then -- it cause overflow, so, force clean output;
         self.output = "";
-        self.updateScreen();
+        self:updateScreen();
         return;
     end
     local withoutInput = output .. (self.lockInput and emptyStr or self.prompt)
