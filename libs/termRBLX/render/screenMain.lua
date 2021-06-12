@@ -36,7 +36,7 @@ return function (env)
         if winHolderSize ~= winsizeY then
             local change = winsizeY - lastWinsizeY;
             if change > 0 then
-                customScroll.Scroll(0,-change -6);
+                customScroll.Scroll(0,-change);
             end
             lastWinsizeY = winsizeY;
         end

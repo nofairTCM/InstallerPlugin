@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 21:28:39
+    # Modified time : 2021-06-12 15:20:45
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -18,7 +18,9 @@ local ServerScript = game:GetService("ServerScriptService");
 local ReplicatedStorage = game:GetService("ReplicatedStorage");
 local ReplicatedFirst = game:GetService("ReplicatedFirst");
 local HTTP = game:GetService("HttpService");
+local selection = game:GetService("Selection");
 local void = function() end;
+local lastExample;
 
 local props = {
     "name",
@@ -74,7 +76,7 @@ local function replace(parent,t,log)
         o.Parent = parent;
         str = str .. oName .. ";";
     end
-    log("remove task replaced!\n");
+    log("replace task ended!\n");
     return str;
 end
 
@@ -183,6 +185,7 @@ function module:uninstall(name,log,indent)
         end
     end
 
+    log("taging files . . .\n");
     local installedClient = isInstalled:FindFirstChild("client");
     local installedServer = isInstalled:FindFirstChild("server");
     local installedClientInit = isInstalled:FindFirstChild("clientInit");
@@ -193,6 +196,7 @@ function module:uninstall(name,log,indent)
     installedClientInit = installedClientInit and installedClientInit.Value;
     installedServerInit = installedServerInit and installedServerInit.Value;
 
+    log("remove files . . .\n");
     remove(client.this,installedClient,log);
     remove(server.this,installedServer,log);
     remove(client.init,installedClientInit,log);
@@ -213,6 +217,7 @@ end
 
 -- install item
 function module:install(name,log,indent,force)
+    local isChild = indent;
     local elog = log or void;
     indent = indent or "";
     log = function(str)
@@ -284,6 +289,7 @@ function module:install(name,log,indent,force)
     local serverObj = obj:FindFirstChild("server");
     local serverInitObj = obj:FindFirstChild("serverInit");
     local clientInitObj = obj:FindFirstChild("clientInit");
+    local exampleObj = obj:FindFirstChild("example");
 
     -- 설치 상태 저장소 만들기
     log("init status objects . . .\n");
@@ -366,7 +372,20 @@ function module:install(name,log,indent,force)
         end
     end
 
+    log(("clean up . . .\n"):format(thisName));
+    if exampleObj and (not isChild) then
+        if lastExample then
+            lastExample:Destroy();
+            lastExample = nil;
+        end
+        exampleObj.Parent = nil;
+        lastExample = exampleObj;
+    end
+    obj:Destroy();
     log(("Install '%s' ended!\n"):format(thisName));
+    if exampleObj and (not isChild) then
+        log("\nthis object has example file! you can get example file by using command 'tcmi getexample'\n");
+    end
 end
 
 -- init
@@ -379,6 +398,18 @@ end;
 -- get installed object
 function module:getInstalledObjs()
     return self.db;
+end
+
+-- get example
+function module:getExample()
+    if not lastExample then
+        error("not found");
+    end
+    lastExample.Parent = workspace;
+    local selectTable = lastExample:GetChildren();
+    table.insert(selectTable,lastExample);
+    selection:set(selectTable);
+    lastExample = nil;
 end
 
 return module;

@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 20:51:53
+    # Modified time : 2021-06-12 15:23:50
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -12,13 +12,6 @@
   ]]
 
 --[[
-    tcmi install <module/libs/plugin Name>
-      install object from rblx asset / github repo
-      THIS ACTION IS CALL FETCHING DATABASE!
-
-    tcmi update <module/libs/plugin Name>
-      same to install, but is update only installed objects
-      THIS ACTION IS CALL FETCHING DATABASE!
 
     tcmi isInstalled <module/libs/plugin Name>
       check object is installed on this map
@@ -60,9 +53,20 @@
 ]]
 
 local runService = game:GetService("RunService");
+local selection = game:GetService("Selection");
 local function waitHeart()
     runService.Heartbeat:Wait();
 end
+
+local header = (
+    "this is tcm installer command,\n" ..
+    "you can install or manage tcm module/library\n\n" ..
+    "이 커맨드는 tcm 설치기를 실행합니다\n" ..
+    "이 커맨드를 이용하면 모듈/라이브러리를 설치하거나 관리 할 수 있습니다\n" ..
+    "명령어에 대한 자세한 사항은 아래의 메시지를 참조해주세요\n\n" ..
+    "tcmi help [commandName]\n" ..
+    "show command info\n\n"
+);
 
 local props = {
     "author";
@@ -78,16 +82,6 @@ local props = {
     "toolboxID";
     "index";
 };
-
-local header = (
-    "this is tcm installer command,\n" ..
-    "you can install or manage tcm module/library\n\n" ..
-    "이 커맨드는 tcm 설치기를 실행합니다\n" ..
-    "이 커맨드를 이용하면 모듈/라이브러리를 설치하거나 관리 할 수 있습니다\n" ..
-    "명령어에 대한 자세한 사항은 아래의 메시지를 참조해주세요\n\n" ..
-    "tcmi help [commandName]\n" ..
-    "show command info\n\n"
-);
 
 local cmds = {
     info = {
@@ -106,11 +100,17 @@ local cmds = {
         };
         exe = function (args,options,content,self)
             if options.fetch then
+                if not options.quiet then
+                    content.output("try to fetching database from github . . .\n");
+                end
                 content.fetchDB();
             end
 
             -- module name in arg
             local id = args[1];
+            if not options.quiet then
+                content.output(("try to index '%s' from database . . .\n"):format(id));
+            end
             if id then
                 local object = content.moduleData[id];
 
@@ -126,12 +126,20 @@ local cmds = {
                 if not isPass then
                     content.output(("ERROR : %s\nan error occurred; ignore and continue . . .\n"):format(isInstalled));
                 end
+                local installedVersion = isInstalled and isInstalled.Value;
                 isInstalled = isInstalled ~= nil;
 
-                content.output("\n" .. object.name .. (" (id : %s)"):format(id)); waitHeart();
+                content.output("\n" .. object.name .. (" (id : %s)"):format(id));
                 content.output("\n  isInstalled : " .. tostring(isInstalled));
+                content.output("\n  installedPubilshVersion : " .. tostring(installedVersion) ..
+                    (installedVersion == nil and "" or (object.publishVersion == installedVersion and "" or " (OUTUPDATED)"))
+                );
                 for _,index in pairs(props) do
-                    content.output("\n  " .. index .. " : " .. tostring(object[index])); waitHeart();
+                    local value = object[index];
+                    if type(value) == "table" then
+                        value = table.concat(value,", ");
+                    end
+                    content.output("\n  " .. index .. " : " .. tostring(value));
                 end
                 content.output("\n\n");
 
@@ -150,7 +158,8 @@ local cmds = {
             "    -f (--fetch) : fetch and show database, (http require)\n" ..
             "    -b : show name only\n" ..
             "    -q (--quiet) : return data only, do not show list on stdout\n" ..
-            "    -i (--installed) : show installed objects only"
+            "    -i (--installed) : show installed objects only\n" ..
+            "    -o (--outdated) : show objects that have new versions only"
         );
         options = {
             ["-f"] = "fetch";
@@ -160,16 +169,26 @@ local cmds = {
             ["--quiet"] = "quiet";
             ["-i"] = "installed";
             ["--installed"] = "installed";
+            ["-o"] = "outdated";
+            ["--outdated"] = "outdated";
         };
         exe = function (args,options,content,self)
+            if options.outdated then
+                options.installed = true;
+            end
+
             if options.fetch then
-              content.fetchDB();
+                if not options.quiet then
+                    content.output("try to fetching database from github . . .\n");
+                end
+                content.fetchDB();
             end
 
             -- not module name in arg
             local nameOnly = options.nameOnly;
             local moduleData = content.moduleData;
             local installedOnly = options.installed;
+            local outupdatedOnly = options.outdated;
 
             if not options.quiet then
                 for id,object in pairs(moduleData) do
@@ -177,14 +196,22 @@ local cmds = {
                     if not isPass then
                         content.output(("ERROR : %s\nan error occurred; ignore and continue . . .\n"):format(isInstalled));
                     end
+                    local installedVersion = isInstalled and isInstalled.Value;
                     isInstalled = isInstalled ~= nil;
 
                     if (not installedOnly) or isInstalled then
                         content.output("\n" .. object.name .. (" (id : %s)"):format(id));
                         if not nameOnly then
                             content.output("\n  isInstalled : " .. tostring(isInstalled));
+                            content.output("\n  installedPubilshVersion : " .. tostring(installedVersion) ..
+                                (installedVersion == nil and "" or (object.publishVersion == installedVersion and "" or " (OUTUPDATED)"))
+                            );
                             for _,index in pairs(props) do
-                                content.output("\n  " .. index .. " : " .. tostring(object[index]));
+                                local value = object[index];
+                                if type(value) == "table" then
+                                    value = table.concat(value,", ");
+                                end
+                                content.output("\n  " .. index .. " : " .. tostring(value));
                             end
                             content.output("\n");
                         end
@@ -223,28 +250,45 @@ local cmds = {
     install = {
         info = (
             "tcmi install [objectId] [options]\n" ..
-            "  install object from rblx asset / github repo\n" ..
+            "  install or update object from rblx asset / github repo\n" ..
             "  THIS ACTION IS CALL FETCHING DATABASE!\n" ..
             "  options :\n" ..
             "    -q (--quiet) : return data only, do not show info on stdout\n" ..
-            "    -f (--force) : ignore version data and force to install objects"
+            "    -f (--force) : ignore version data and force to install objects\n" ..
+            "    -o (--object) : get objects only (show code only)"
         );
         options = {
             ["-q"] = "quiet";
             ["--quiet"] = "quiet";
             ["-f"] = "force";
             ["--force"] = "force";
+            ["-o"] = "object";
+            ["--object"] = "object";
         };
         exe = function (args,options,content,self)
+            if not options.quiet then
+                content.output("try to fetching database from github . . .\n");
+            end
             content.fetchDB();
             -- module name in arg
             local moduleName = args[1];
             local quiet = options.quiet;
             if moduleName then
+                if not quiet then
+                    content.output(("try to index '%s' from database . . .\n"):format(moduleName));
+                end
                 local object = content.moduleData[moduleName];
 
                 if not object then
                     content.output(("object '%s' was not found from database! please check command arg and try again!\n\n"):format(moduleName));
+                    return;
+                end
+
+                if options.object then
+                    local obj = game:GetObjects(object.toolboxID)[1];
+                    obj.Parent = workspace;
+                    selection:set({obj});
+                    content.output("\n");
                     return;
                 end
 
@@ -311,6 +355,21 @@ local cmds = {
         exe = function (args,options,content,self)
             local isPass,errmsg = pcall(content.installer.init,content.installer);
 
+            if not isPass then
+                content.output("ERROR : " .. errmsg .. "\n");
+                return false;
+            end
+            return true;
+        end;
+    };
+    getexample = {
+        info = (
+            "tcmi getexample\n" ..
+            "  get example file by last installed object"
+        );
+        options = {};
+        exe = function (args,options,content,self)
+            local isPass,errmsg = pcall(content.installer.getExample,content.installer);
             if not isPass then
                 content.output("ERROR : " .. errmsg .. "\n");
                 return false;
