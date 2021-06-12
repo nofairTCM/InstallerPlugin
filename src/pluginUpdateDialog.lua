@@ -29,6 +29,11 @@ function module:setAdvancedTween(AdvancedTween)
     return self;
 end
 
+function module:setLang(lang)
+    self.lang = lang;
+    return self;
+end
+
 local padding = UDim.new();
 local globalFont = Enum.Font.Gotham;
 
@@ -53,12 +58,12 @@ function module:render()
     });
 
     new("Button",{ -- 무시 버튼
-        Name = "ignoreButton";
+        Name = "dismissButton";
         Parent = holder;
         Style = MaterialUI.CEnum.ButtonStyle.Text;
         AnchorPoint = Vector2.new(1,1);
         Position = UDim2.fromScale(1,1);
-        Text = "IGNORE";
+        Text = lang("pluginUpdateDialogDismiss");
         Size = UDim2.fromOffset(82,32);
         MouseButton1Click = thisDialog.close;
         ZIndex = 801
@@ -69,7 +74,7 @@ function module:render()
         Position = UDim2.fromOffset(10,10);
         BackgroundTransparency = 1;
         Name = "title";
-        Text = "Update";
+        Text = lang("pluginUpdateDialogTitle");
         TextSize = 18;
         TextXAlignment = Enum.TextXAlignment.Left;
         TextYAlignment = Enum.TextYAlignment.Top;
@@ -83,8 +88,8 @@ function module:render()
         Size = UDim2.new(1,-32,1,-70);
         Position = UDim2.fromOffset(16,38);
         BackgroundTransparency = 1;
-        Name = "title";
-        Text = "설치기 플러그인의 새로운 버전이 감지되었습니다\n플러그인 관리자에서 플러그인을 업데이트 할 수 있습니다";
+        Name = "description";
+        Text = lang("pluginUpdateDialogMsg");
         TextWrapped = true;
         TextSize = 15;
         TextXAlignment = Enum.TextXAlignment.Left;

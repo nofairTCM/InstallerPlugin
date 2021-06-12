@@ -63,7 +63,7 @@ local function main(plugin)
     local tobBarSizeY = 42; -- 탑바 Y 높이
     local tabSizeY = 64; -- 탭 Y 높이
     local white = Color3.fromRGB(255,255,255); -- 흰색
-    local menuSize = UDim2.fromOffset(140,180); -- 메뉴 열린 크기
+    local menuSize = UDim2.fromOffset(140,(14*2) + (32*3)) -- 메뉴 열린 크기
     local menuCloseSize = UDim2.fromOffset(70,70); -- 매뉴 닫히는 크기
 
     -- 터미널 셋업
@@ -320,6 +320,30 @@ local function main(plugin)
             end
         end
 
+        local function menuItem(text,layout,func)
+            return new("TextButton",{
+                Text = text;
+                Size = Udim2.new(1,0,0,32);
+                Position = Udim2.fromOffset(0,14);
+                BackgroundTransparency = 1;
+                LayoutOrder = layout;
+                ZIndex = 801;
+                MouseButton1Click = func;
+            },{
+                new("TextLable",{
+                    Text = "About";
+                    Size = Udim2.fromScale(1,1);
+                    Position = Udim2.fromOffset(8,0);
+                    BackgroundTransparency = 1;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    ZIndex = 801;
+                });
+                new("Rippler",{
+                    ZIndex = 801;
+                });
+            });
+        end
+
         local function openInstallWindow(openPos)
             AdvancedTween:StopTween(store.installScale);
             AdvancedTween:StopTween(store.installHolder);
@@ -472,7 +496,7 @@ local function main(plugin)
                                 );
                             });
                         end);
-                    end;    
+                    end;
                 });
             });
         end
@@ -495,7 +519,6 @@ local function main(plugin)
                 end;
                 AnchorPoint = Vector2.new(1,0);
                 Position = UDim2.new(1,-6,0,6);
-                Size = UDim2.fromOffset(140,180);
                 ZIndex = 801;
                 MouseLeave = function ()
                     store.menuMouseEnter = false;
@@ -505,6 +528,15 @@ local function main(plugin)
                 end;
                 Visible = false;
             },{
+                about = menuItem(lang("about"),0,function ()
+                    
+                end);
+                fetch = menuItem(lang("fetch"),1,function ()
+                    fetchDB();
+                end);
+                reload = menuItem(lang("reload"),2,function ()
+                    reloadList();
+                end);
                 shadow = new("ImageLabel",{
                     AnchorPoint = Vector2.new(0.5, 0);
                     BackgroundTransparency = 1;
