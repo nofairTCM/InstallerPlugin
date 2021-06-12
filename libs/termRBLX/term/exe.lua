@@ -35,6 +35,7 @@ function module.init(data)
                 ) .. "\n\n");
             end
             data.stdioSimulate:setLockInput(false);
+            return errmsg;
         elseif cmd == "" then
             return;
         else

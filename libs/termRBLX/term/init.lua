@@ -82,7 +82,7 @@ function module.new(settings)
     -- execute input
     local exe = require(script.exe).init(settings);
     settings.exe = function (str)
-        exe:run(str);
+        return exe:run(str);
     end
 
     -- catch enter

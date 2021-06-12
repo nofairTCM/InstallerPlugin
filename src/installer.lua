@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-12 15:20:45
+    # Modified time : 2021-06-13 01:23:25
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -161,7 +161,7 @@ function module:uninstall(name,log,indent)
     local elog = log or void;
     indent = indent or "";
     log = function(str)
-        wait();
+        wait(); wait();
         elog(indent .. str);
     end
 
@@ -221,7 +221,7 @@ function module:install(name,log,indent,force)
     local elog = log or void;
     indent = indent or "";
     log = function(str)
-        wait();
+        wait(); wait();
         elog(indent .. str);
     end
 
@@ -385,6 +385,7 @@ function module:install(name,log,indent,force)
     log(("Install '%s' ended!\n"):format(thisName));
     if exampleObj and (not isChild) then
         log("\nthis object has example file! you can get example file by using command 'tcmi getexample'\n");
+        return exampleObj;
     end
 end
 

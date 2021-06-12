@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-12 23:35:52
+    # Modified time : 2021-06-13 01:49:33
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -83,8 +83,16 @@ local function main(plugin)
     end
     local function exeCommand(str)
         termTCM.output(termTCM.stdioSimulate.prompt .. str .. "\n");
-        termTCM.exe(str);
+        return termTCM.exe(str);
     end
+    local outputUpdated do
+        local event = Instance.new("BindableEvent");
+        termTCM.stdioSimulate.outputHook = function (output)
+            event:Fire(output);
+        end;
+        outputUpdated = event.Event;
+    end
+
 
     -- 모듈들이 필요로 하는것들 넘겨줌
     splashScreenRender
@@ -245,7 +253,6 @@ local function main(plugin)
                         AdvancedTween:RunTween(store.tabPointer,tabTrans,{
                             Position = UDim2.fromScale(prop.PositionX,1);
                         });
-
                         AdvancedTween:StopTween(store.holder);
                         AdvancedTween:RunTween(store.holder,tabTrans,{
                             Position = UDim2.new(prop.PagePositionX,0,0,tobBarSizeY + tabSizeY);
@@ -313,6 +320,40 @@ local function main(plugin)
             end
         end
 
+        local function openInstallWindow(openPos)
+            AdvancedTween:StopTween(store.installScale);
+            AdvancedTween:StopTween(store.installHolder);
+            store.installLog.Text = "Waiting for process . . .";
+            store.installScale.Scale = 0.01;
+            store.installHolder.Position = UDim2.fromOffset(openPos.X,openPos.Y);
+            store.installStatus.Disabled = false;
+            store.installOkButton.Disabled = true;
+            store.installOkButtonSetColor();
+            store.installScreen.Visible = true;
+            store.installScreen.BackgroundTransparency = 1;
+            AdvancedTween:RunTween(store.installScale,{
+                Time = 0.68;
+                Easing = AdvancedTween.EasingFunctions.Exp2;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                Scale = 1;
+            });
+            AdvancedTween:RunTween(store.installHolder,{
+                Time = 0.76;
+                Easing = AdvancedTween.EasingFunctions.Exp2;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                Position = UDim2.fromScale(0.5,0.5);
+            });
+            AdvancedTween:RunTween(store.installScreen,{
+                Time = 0.68;
+                Easing = AdvancedTween.EasingFunctions.Linear;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                BackgroundTransparency = 0.595;
+            });
+        end
+
         local listItems = {};
         local function listItem(id,data)
             if data.visible == false then
@@ -337,12 +378,40 @@ local function main(plugin)
                 item.UninstallIcon.Visible = false;
                 item.this.Parent = store.list;
             end
+
+            if not listItems[id] then
+                item.InstallIcon.MouseButton1Click:Connect(function ()
+                    openInstallWindow(item.InstallIcon.AbsolutePosition);
+                    store.installTitle.Text = lang("onInstalling");
+                    wait(0.9);
+                    exeCommand("cls");
+                    exeCommand("tcmi install " .. id .. " -f");
+                    store.installOkButton.Disabled = false;
+                    store.installOkButtonSetColor();
+                    store.installStatus.Disabled = true;
+                    reloadList();
+                end);
+                item.UninstallIcon.MouseButton1Click:Connect(function ()
+                    openInstallWindow(item.InstallIcon.AbsolutePosition);
+                    store.installTitle.Text = lang("onUninstalling");
+                    wait(0.9);
+                    exeCommand("cls");
+                    exeCommand("tcmi uninstall " .. id);
+                    store.installOkButton.Disabled = false;
+                    store.installOkButtonSetColor();
+                    store.installStatus.Disabled = true;
+                    reloadList();
+                end);
+                listItems[id] = item;
+            end
         end
 
         reloadList = function(force)
             if force then
                 for _,v in pairs(listItems) do
-                    v:Destroy();
+                    if v then
+                        v.this:Destroy();
+                    end
                 end
                 listItems = {};
             end
@@ -568,24 +637,38 @@ local function main(plugin)
                     });
                     outdated = makeListPage("outdated","Outdated",0);
                     installed = makeListPage("installed","Installed",1);
-                    list = makeListPage("list","Store",0);
+                    list = makeListPage("list","Store",2);
                 });
             });
             installScreen = new("TextButton",{
                 WhenCreated = function (this)
                     store.installScreen = this;
+                    local lastConnection;
+                    this:GetPropertyChangedSignal("Visible"):Connect(function ()
+                        if lastConnection then
+                            lastConnection:Disconnect();
+                            lastConnection = nil;
+                        end
+                        local log = this.holder.items.log;
+                        if this.Visible then
+                            lastConnection = outputUpdated:Connect(function (text)
+                                log.Text = text;
+                            end);
+                        end
+                    end);
                 end;
                 ZIndex = 200;
                 AutoButtonColor = false;
                 Text = "";
-                Visible = true;
+                Visible = false;
                 Size = UDim2.fromScale(1,1);
-                BackgroundTransparency = 0.68;
+                BackgroundTransparency = 0.595;
                 BackgroundColor3 = Color3.fromRGB(0,0,0);
             },{
                 holder = new("ImageLabel",{
                     ZIndex = 200;
                     WhenCreated = function (this)
+                        store.installHolder = this;
                         MaterialUI:SetRound(this,8);
                     end;
                     Size = UDim2.fromOffset(280,340);
@@ -593,46 +676,122 @@ local function main(plugin)
                     ImageColor3 = MaterialUI:GetColor("Background");
                     Position = UDim2.fromScale(0.5,0.5);
                     AnchorPoint = Vector2.new(0.5,0.5);
-                    ClipsDescendants = true;
                 },{
-                    title = new("TextLabel",{
-                        Text = "Installing . . .";
-                        ZIndex = 200;
-                        TextColor3 = MaterialUI:GetColor("TextColor");
-                        Size = UDim2.new(1,0,0,50);
-                        Position = UDim2.fromOffset(18,0);
-                        TextXAlignment = Enum.TextXAlignment.Left;
-                        BackgroundTransparency = 1;
-                        Font = globalFont;
-                        TextSize = 16;
+                    Scale = new("UIScale",{
+                        Scale = 1;
+                        WhenCreated = function (this)
+                            store.installScale = this;
+                        end;
                     });
-                    log = new("TextBox",{
-                        TextWrapped = true;
-                        ClearTextOnFocus = false;
-                        TextEditable = false;
-                        Font = Enum.Font.Code;
-                        TextSize = 14;
-                        ZIndex = 200;
-                        BackgroundColor3 = MaterialUI.CurrentTheme == "Dark" and Color3.fromRGB(52,52,52) or Color3.fromRGB(244,244,244);
-                        TextYAlignment = Enum.TextYAlignment.Bottom;
-                        TextXAlignment = Enum.TextXAlignment.Left;
-                        TextColor3 = MaterialUI:GetColor("TextColor");
-                        Position = UDim2.new(0.5,0,0,50);
-                        Size = UDim2.new(1,-20,1,-50 -60);
-                        AnchorPoint = Vector2.new(0.5,0);
+                    items = new("Frame",{
+                        BackgroundTransparency = 1;
                         ClipsDescendants = true;
+                        Size = UDim2.fromScale(1,1);
                     },{
-                        padding = new("UIPadding",{
-                            PaddingLeft = UDim.new(0,8);
-                            PaddingRight = UDim.new(0,8);
-                            PaddingBottom = UDim.new(0,8);
-                            PaddingTop = UDim.new(0,8);
+                        title = new("TextLabel",{
+                            Text = "Installing . . .";
+                            ZIndex = 200;
+                            TextColor3 = MaterialUI:GetColor("TextColor");
+                            Size = UDim2.new(1,0,0,50);
+                            Position = UDim2.fromOffset(18,0);
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                            BackgroundTransparency = 1;
+                            Font = globalFont;
+                            TextSize = 16;
+                            WhenCreated = function (this)
+                                store.installTitle = this;
+                            end;
+                        });
+                        log = new("TextBox",{
+                            ClearTextOnFocus = false;
+                            TextEditable = false;
+                            Font = Enum.Font.Code;
+                            TextSize = 14;
+                            ZIndex = 200;
+                            BackgroundColor3 = MaterialUI.CurrentTheme == "Dark" and Color3.fromRGB(52,52,52) or Color3.fromRGB(244,244,244);
+                            TextYAlignment = Enum.TextYAlignment.Bottom;
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                            TextColor3 = MaterialUI:GetColor("TextColor");
+                            Position = UDim2.new(0.5,0,0,50);
+                            Size = UDim2.new(1,-28,1,-50 -60);
+                            AnchorPoint = Vector2.new(0.5,0);
+                            ClipsDescendants = true;
+                            WhenCreated = function (this)
+                                store.installLog = this;
+                            end;
+                        },{
+                            padding = new("UIPadding",{
+                                PaddingLeft = UDim.new(0,8);
+                                PaddingRight = UDim.new(0,8);
+                                PaddingBottom = UDim.new(0,8);
+                                PaddingTop = UDim.new(0,8);
+                            });
+                        });
+                        status = new("IndeterminateProgress",{
+                            BackgroundColor3 = MaterialUI.CurrentTheme == "Dark" and Color3.fromRGB(32,32,32) or Color3.fromRGB(220,220,220);
+                            ZIndex = 200;
+                            Position = UDim2.new(0.5,0,1,-50-6);
+                            AnchorPoint = Vector2.new(0.5,1);
+                            Size = UDim2.new(1,-28,0,4);
+                            Disabled = true;
+                            WhenCreated = function (this)
+                                store.installStatus = this;
+                            end;
+                        });
+                        ok = new("Button",{
+                            TextColor3 = Color3.fromRGB(127,127,127);
+                            ZIndex = 200;
+                            Style = MaterialUI.CEnum.ButtonStyle.Text;
+                            Position = UDim2.new(1,-10,1,-10);
+                            AnchorPoint = Vector2.new(1,1);
+                            Disabled = true;
+                            Text = "Done";
+                            WhenCreated = function (this)
+                                store.installOkButtonSetColor = function ()
+                                    this.TextColor3 = this.Disabled and Color3.fromRGB(127,127,127) or Color3.fromRGB(150,0,255);
+                                end;
+                                store.installOkButton = this;
+                                this.MouseButton1Click:Connect(function ()
+                                    if this.Disabled then
+                                        return;
+                                    end
+                                    AdvancedTween:RunTween(store.installHolder,{
+                                        Time = 0.78;
+                                        Easing = AdvancedTween.EasingFunctions.Exp2;
+                                        Direction = AdvancedTween.EasingDirection.Out;
+                                    },{
+                                        Position = UDim2.new(0.5,0,1.5,26);
+                                    },function ()
+                                        store.installScreen.Visible = false;
+                                    end);
+                                    AdvancedTween:RunTween(store.installScale,{
+                                        Time = 0.6;
+                                        Easing = AdvancedTween.EasingFunctions.Exp2;
+                                        Direction = AdvancedTween.EasingDirection.Out;
+                                    },{
+                                        Scale = 0.6;
+                                    });
+                                    AdvancedTween:RunTween(store.installScreen,{
+                                        Time = 0.58;
+                                        Easing = AdvancedTween.EasingFunctions.Linear;
+                                        Direction = AdvancedTween.EasingDirection.Out;
+                                    },{
+                                        BackgroundTransparency = 1;
+                                    });
+                                end);
+                            end
                         });
                     });
-                    status = new("IndeterminateProgress",{
-                        Position = UDim2.new(0.5,0,1,-50);
-                        AnchorPoint = Vector2.new(0.5,0);
-                        Size = UDim2.new(1,-20,0,6);
+                    shadow = new("ImageLabel",{
+                        AnchorPoint = Vector2.new(0.5, 0);
+                        BackgroundTransparency = 1;
+                        BorderSizePixel = 0;
+                        Position = UDim2.new(0.5, 0, 0, -3);
+                        Size = UDim2.new(1, 18, 1, 18);
+                        ZIndex = 199;
+                        Image = "rbxassetid://1316045217";
+                        ImageColor3 = Color3.fromRGB(0, 0, 0);
+                        ImageTransparency = 0.71;
                     });
                 });
             });

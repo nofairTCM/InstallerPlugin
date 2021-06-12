@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-06-12 15:23:50
+    # Modified time : 2021-06-13 01:23:03
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -300,7 +300,7 @@ local cmds = {
                     content.output("\n");
                 end
 
-                return object;
+                return errmsg;
             else
                 content.output("arg 1 [objectId] is missing! please check command arg and try again!\n\n");
                 return;
