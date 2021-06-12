@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 19:24:06
     # Modified by   : Qwreey
-    # Modified time : 2021-05-16 17:56:45
+    # Modified time : 2021-06-12 22:04:33
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -16,28 +16,48 @@ local module = {};
 
 local UpdateIcon = "http://www.roblox.com/asset/?id=6031225810";
 local InfoIcon = "http://www.roblox.com/asset/?id=6026568210"
-local UnInstallIcon = "http://www.roblox.com/asset/?id=6022668939";
+local UninstallIcon = "http://www.roblox.com/asset/?id=6022668939";
 local InstallIcon = "http://www.roblox.com/asset/?id=6031302931";
 
-local function buttonItem(Icon,LayoutOrder)
+local IconButtonSize = 28;
 
-end
-
-function draw(inData,new)
+return function (id,inData,MaterialUI,lang)
+    local new = MaterialUI.Create;
     local outData = {};
 
-    outData.this = new("Frame",{
+    local function makeIcon(name,icon,tooltip)
+        return new("IconButton",{
+            Name = name;
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+            BackgroundTransparency = 1;
+            Size = UDim2.new(0, IconButtonSize, 0, IconButtonSize);
+            Icon = icon;
+            Style = "WithOutBackground";
+            ToolTipText = tooltip;
+            ToolTipVisible = true;
+            ToolTipBackgroundColor3 = MaterialUI.CurrentTheme == "Dark" and Color3.fromRGB(255,255,255) or Color3.fromRGB(38,38,38);
+            ToolTipTextColor3 = MaterialUI.CurrentTheme == "Dark" and Color3.fromRGB(0,0,0) or Color3.fromRGB(255,255,255);
+            WhenCreated = function (this)
+                outData[name] = this;
+                local ToolTip = this:GetRealInstance().ToolTip;
+                ToolTip.Position = UDim2.new(1,0,1,6);
+                ToolTip.AnchorPoint = Vector2.new(1,0);
+            end;
+        });
+    end
+
+    outData.this = new("ImageLabel",{
         LayoutOrder = inData.index;
-        Name = inData.Name;
+        Name = id;
         BackgroundColor3 = Color3.fromRGB(255, 255, 255);
         BackgroundTransparency = 1;
-        Size = UDim2.new(1, 0, 0, 116);
+        Size = UDim2.new(1, 0, 0, 116 + 4);
     },{
         icon = new("ImageLabel",{
             BackgroundColor3 = Color3.fromRGB(255, 255, 255);
             Size = UDim2.new(0, 80, 0, 80);
             ZIndex = 2;
-            Image = inData.Icon;
+            Image = inData.icon;
         },{
             round = new("UICorner",{
             });
@@ -49,13 +69,14 @@ function draw(inData,new)
                 Size = UDim2.new(1, 8, 1, 10);
                 Image = "rbxassetid://1316045217";
                 ImageColor3 = Color3.fromRGB(0, 0, 0);
-                ImageTransparency = 0.80000001192093;
+                ImageTransparency = MaterialUI.CurrentTheme == "Dark" and 0.8 or 0.92;
             });
         });
         new("UIPadding",{
             PaddingLeft = UDim.new(0, 10);
             PaddingRight = UDim.new(0, 10);
             PaddingTop = UDim.new(0, 10);
+            PaddingBottom = UDim.new(0,4);
         });
         version = new("TextLabel",{
             BackgroundColor3 = Color3.fromRGB(255, 255, 255);
@@ -63,16 +84,9 @@ function draw(inData,new)
             Position = UDim2.new(0, 0, 0, 80);
             Size = UDim2.new(0, 80, 0, 20);
             Font = Enum.Font.SourceSans;
-            Text = tostring(inData.Version);
+            Text = tostring(inData.version);
             TextColor3 = Color3.fromRGB(124, 124, 124);
             TextSize = 14;
-        });
-        div = new("Frame",{
-            AnchorPoint = Vector2.new(0, 1);
-            BackgroundColor3 = Color3.fromRGB(127, 127, 127);
-            BorderSizePixel = 0;
-            Position = UDim2.new(0, 0, 1, 0);
-            Size = UDim2.new(1, 0, 0, 1);
         });
         title = new("TextLabel",{
             BackgroundColor3 = Color3.fromRGB(255, 255, 255);
@@ -80,8 +94,8 @@ function draw(inData,new)
             Position = UDim2.new(0, 88, 0, 0);
             Size = UDim2.new(1, -124, 0, 20);
             Font = Enum.Font.GothamBold;
-            Text = inData.Name;
-            TextColor3 = Color3.fromRGB(255, 255, 255);
+            Text = inData.name .. (inData.name == id and "" or ("(" .. id .. ")"));
+            TextColor3 = MaterialUI:GetColor("TextColor");
             TextSize = 16;
             TextTruncate = Enum.TextTruncate.AtEnd;
             TextXAlignment = Enum.TextXAlignment.Left;
@@ -93,7 +107,7 @@ function draw(inData,new)
             Size = UDim2.new(1, -124, 0, 60);
             Font = Enum.Font.Gotham;
             Text = inData.info;
-            TextColor3 = Color3.fromRGB(255, 255, 255);
+            TextColor3 = MaterialUI:GetColor("TextColor");
             TextSize = 14;
             TextTruncate = Enum.TextTruncate.AtEnd;
             TextWrapped = true;
@@ -106,7 +120,7 @@ function draw(inData,new)
             Position = UDim2.new(0, 88, 0, 80);
             Size = UDim2.new(0, 86, 0, 16);
             Font = Enum.Font.Gotham;
-            Text = "더보기 ...";
+            Text = lang("showMore");
             TextColor3 = Color3.fromRGB(0, 174, 255);
             TextSize = 14;
             TextXAlignment = Enum.TextXAlignment.Left;
@@ -122,42 +136,10 @@ function draw(inData,new)
             Position = UDim2.new(1, 0, 0, 4);
             Size = UDim2.new(0, 26, 1, -14);
         },{
-            UpdateIcon = new("IconButton",{
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-                BackgroundTransparency = 1;
-                Size = UDim2.new(0, 26, 0, 26);
-                Image = UpdateIcon;
-                WhenCreated = function (this)
-                    outData.UpdateIcon = this;
-                end;
-            });
-            UnInstallIcon = new("IconButton",{
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-                BackgroundTransparency = 1;
-                Size = UDim2.new(0, 26, 0, 26);
-                Image = UnInstallIcon;
-                WhenCreated = function (this)
-                    outData.UnInstall = this;
-                end;
-            });
-            InfoIcon = new("IconButton",{
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-                BackgroundTransparency = 1;
-                Size = UDim2.new(0, 26, 0, 26);
-                Image = InfoIcon;
-                WhenCreated = function (this)
-                    outData.Info = this;
-                end;
-            });
-            InstallIcon = new("IconButton",{
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-                BackgroundTransparency = 1;
-                Size = UDim2.new(0, 26, 0, 26);
-                Image = InstallIcon;
-                WhenCreated = function (this)
-                    outData.InstallIcon = this;
-                end;
-            });
+            makeIcon("UpdateIcon",UpdateIcon,lang("updateHoverTip"));
+            makeIcon("UninstallIcon",UninstallIcon,lang("uninstallHoverTip"));
+            makeIcon("InfoIcon",InfoIcon,lang("infoHoverTip"));
+            makeIcon("InstallIcon",InstallIcon,lang("installHoverTip"));
             new("UIListLayout",{
                 SortOrder = Enum.SortOrder.LayoutOrder;
                 VerticalAlignment = Enum.VerticalAlignment.Center;
@@ -167,4 +149,4 @@ function draw(inData,new)
     });
 
     return outData;
-end
+end;

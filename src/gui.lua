@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 17:27:51
+    # Modified time : 2021-06-12 23:35:52
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -54,6 +54,8 @@ local function main(plugin)
     local AdvancedTween = require(script.Parent.libs.AdvancedTween) --[[자동완성]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
     local MaterialUI = require(script.Parent.libs.MaterialUI) --[[자동완성]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
     local pluginUpdateDialogRender = require(script.pluginUpdateDialog) --[[자동완성]] if not true then pluginUpdateDialogRender = require("src.pluginUpdateDialogRender") end
+    local itemRender = require(script.item); --[[자동완성]] if not true then itemRender = require("scr.item"); end
+    local lang = require(script.lang); --[[자동완성]] if not true then lang = require("src.lang.init"); end
     local new = MaterialUI.Create;
 
     -- 기초 설정
@@ -78,6 +80,10 @@ local function main(plugin)
     );
     for _,command in pairs(commands(commandArg.decode)) do -- 커맨드를 불러와서 레지스터에 등록해둠
         termTCM.loadCmd(command);
+    end
+    local function exeCommand(str)
+        termTCM.output(termTCM.stdioSimulate.prompt .. str .. "\n");
+        termTCM.exe(str);
     end
 
     -- 모듈들이 필요로 하는것들 넘겨줌
@@ -107,10 +113,10 @@ local function main(plugin)
             Enum.InitialDockState.Float,
             true,
             false,
-            280,
-            300,
-            280,
-            300
+            320,
+            400,
+            320,
+            400
         )
     );
     uiHolder.Name = pluginID; -- 플러그인 창 이름 정하기
@@ -158,10 +164,10 @@ local function main(plugin)
         installer:setDB(moduleData);
         termTCM.moduleData = moduleData;
         if reloadList then
-            reloadList();
+            reloadList(true);
         end
         return moduleData;
-    end;
+    end
     termTCM.fetchDB = fetch;
     termTCM.installer = installer;
     fetch();
@@ -308,15 +314,98 @@ local function main(plugin)
         end
 
         local listItems = {};
-        local function listItem(data)
-            --data.id : id of item
-            --data.icon : icon of item
-            --data.title : title of item
-            --data.
-            local item = listItem[data.id] or new({
+        local function listItem(id,data)
+            if data.visible == false then
+                return;
+            end
+            local isInstalled = installer:isInstalled(id);
+            local lastVersion = data.publishVersion;
+            local item = listItems[id] or itemRender(id,data,MaterialUI,lang);
+            if isInstalled and lastVersion == isInstalled.Value then
+                item.InstallIcon.Visible = false;
+                item.UpdateIcon.Visible = false;
+                item.UninstallIcon.Visible = true;
+                item.this.Parent = store.installed;
+            elseif isInstalled then
+                item.InstallIcon.Visible = false;
+                item.UpdateIcon.Visible = true;
+                item.UninstallIcon.Visible = true;
+                item.this.Parent = store.outupdated;
+            else
+                item.InstallIcon.Visible = true;
+                item.UpdateIcon.Visible = false;
+                item.UninstallIcon.Visible = false;
+                item.this.Parent = store.list;
+            end
+        end
 
+        reloadList = function(force)
+            if force then
+                for _,v in pairs(listItems) do
+                    v:Destroy();
+                end
+                listItems = {};
+            end
+            for i,v in pairs(moduleData) do
+                listItem(i,v);
+            end
+        end
+
+        local function makeListPage(id,title,layoutOrder)
+            return new("Frame",{
+                LayoutOrder = layoutOrder;
+                Size = UDim2.fromScale(1,0);
+                BackgroundTransparency = 1;
+                ClipsDescendants = true;
+                WhenCreated = function (this)
+                    store[id] = this;
+                end;
+            },{
+                header = new("Frame",{
+                    Size = UDim2.new(1,0,0,36);
+                    BackgroundTransparency = 1;
+                    LayoutOrder = -2147483647;
+                },{
+                    title = new("TextLabel",{
+                        BackgroundTransparency = 1;
+                        TextSize = 18;
+                        Text = title;
+                        Font = globalFont;
+                        TextColor3 = MaterialUI:GetColor("TextColor");
+                        Size = UDim2.new(1,0,1,0);
+                        TextXAlignment = Enum.TextXAlignment.Left;
+                        Position = UDim2.fromOffset(0,-2);
+                    },{
+                        new("UIPadding",{
+                            PaddingLeft = UDim.new(0,8);
+                        });
+                    });
+                    div = new("Frame",{
+                        BackgroundTransparency = 0.18;
+                        BackgroundColor3 = Color3.fromRGB(127,127,127);
+                        Size = UDim2.new(1,-20,0,1);
+                        Position = UDim2.new(0.5,0,1,-3);
+                        AnchorPoint = Vector2.new(0.5,1);
+                    });
+                });
+                listLayout = new("UIListLayout",{
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                    WhenCreated = function (this)
+                        this:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function ()
+                            AdvancedTween:RunTween(this.Parent,{
+                                Time = 0.43;
+                                Easing = AdvancedTween.EasingFunctions.Exp2;
+                                Direction = AdvancedTween.EasingDirection.Out;
+                            },{
+                                Size = UDim2.new(
+                                    1,0,
+                                    0,(#this.Parent:GetChildren() == 2) and 0 or this.AbsoluteContentSize.Y
+                                );
+                            });
+                        end);
+                    end;    
+                });
             });
-
         end
 
         new("Frame",{ -- 보더 부분은 알아서 없어집니다 (MaterialUI 기본 처리)
@@ -461,7 +550,91 @@ local function main(plugin)
                     store.holder = this;
                 end;
             },{
-
+                itemsHolder = new("ScrollingFrame",{
+                    Size = UDim2.fromScale(0.5,1);
+                    BackgroundTransparency = 1;
+                    ScrollBarThickness = 4;
+                },{
+                    padding = new("UIPadding",{
+                        PaddingRight = UDim.new(0,6);
+                    });
+                    listLayout = new("UIListLayout",{
+                        SortOrder = Enum.SortOrder.LayoutOrder;
+                        WhenCreated = function (this)
+                            this:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function ()
+                                this.Parent.CanvasSize = UDim2.fromOffset(0,this.AbsoluteContentSize.Y);
+                            end);
+                        end;
+                    });
+                    outdated = makeListPage("outdated","Outdated",0);
+                    installed = makeListPage("installed","Installed",1);
+                    list = makeListPage("list","Store",0);
+                });
+            });
+            installScreen = new("TextButton",{
+                WhenCreated = function (this)
+                    store.installScreen = this;
+                end;
+                ZIndex = 200;
+                AutoButtonColor = false;
+                Text = "";
+                Visible = true;
+                Size = UDim2.fromScale(1,1);
+                BackgroundTransparency = 0.68;
+                BackgroundColor3 = Color3.fromRGB(0,0,0);
+            },{
+                holder = new("ImageLabel",{
+                    ZIndex = 200;
+                    WhenCreated = function (this)
+                        MaterialUI:SetRound(this,8);
+                    end;
+                    Size = UDim2.fromOffset(280,340);
+                    BackgroundTransparency = 1;
+                    ImageColor3 = MaterialUI:GetColor("Background");
+                    Position = UDim2.fromScale(0.5,0.5);
+                    AnchorPoint = Vector2.new(0.5,0.5);
+                    ClipsDescendants = true;
+                },{
+                    title = new("TextLabel",{
+                        Text = "Installing . . .";
+                        ZIndex = 200;
+                        TextColor3 = MaterialUI:GetColor("TextColor");
+                        Size = UDim2.new(1,0,0,50);
+                        Position = UDim2.fromOffset(18,0);
+                        TextXAlignment = Enum.TextXAlignment.Left;
+                        BackgroundTransparency = 1;
+                        Font = globalFont;
+                        TextSize = 16;
+                    });
+                    log = new("TextBox",{
+                        TextWrapped = true;
+                        ClearTextOnFocus = false;
+                        TextEditable = false;
+                        Font = Enum.Font.Code;
+                        TextSize = 14;
+                        ZIndex = 200;
+                        BackgroundColor3 = MaterialUI.CurrentTheme == "Dark" and Color3.fromRGB(52,52,52) or Color3.fromRGB(244,244,244);
+                        TextYAlignment = Enum.TextYAlignment.Bottom;
+                        TextXAlignment = Enum.TextXAlignment.Left;
+                        TextColor3 = MaterialUI:GetColor("TextColor");
+                        Position = UDim2.new(0.5,0,0,50);
+                        Size = UDim2.new(1,-20,1,-50 -60);
+                        AnchorPoint = Vector2.new(0.5,0);
+                        ClipsDescendants = true;
+                    },{
+                        padding = new("UIPadding",{
+                            PaddingLeft = UDim.new(0,8);
+                            PaddingRight = UDim.new(0,8);
+                            PaddingBottom = UDim.new(0,8);
+                            PaddingTop = UDim.new(0,8);
+                        });
+                    });
+                    status = new("IndeterminateProgress",{
+                        Position = UDim2.new(0.5,0,1,-50);
+                        AnchorPoint = Vector2.new(0.5,0);
+                        Size = UDim2.new(1,-20,0,6);
+                    });
+                });
             });
         });
 
@@ -471,6 +644,7 @@ local function main(plugin)
         termTCM.uiHost.holder.Size = UDim2.fromScale(0.5,1);
         termTCM.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
 
+        reloadList();
         slashScreen:setStatus("wait for rblx ...");
         delay(0.25,function () -- 로블이 알아서 잘 그리고 처리하도록 좀 시간을 줌
             if not slashScreen then
@@ -508,7 +682,6 @@ local function main(plugin)
         thisButton.Icon = (tostring(settings().Studio.Theme) == "Dark") and
             pluginIcon or pluginIconBlack; -- 테마에 맞게 아이콘 수정
     end);
-
 --#endregion
 end
 

@@ -19,8 +19,8 @@
             "getModulesData": {
                 "$path": "src/getModulesData.lua"
             },
-            "holderItem": {
-                "$path": "src/holderItem.lua"
+            "item": {
+                "$path": "src/item.lua"
             },
             "installer": {
                 "$path": "src/installer.lua"
@@ -36,6 +36,9 @@
             },
             "version": {
                 "$path": "src/version.txt"
+            },
+            "lang": {
+                "$path": "src/lang"
             }
         },
         "libs": {
