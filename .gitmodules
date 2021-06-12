@@ -1,0 +1,6 @@
+[submodule "libs/MaterialUI"]
+	path = libs/MaterialUI
+	url = https://github.com/nofairTCM/MaterialUI
+[submodule "libs/AdvancedTween"]
+	path = libs/AdvancedTween
+	url = https://github.com/nofairTCM/AdvancedTween
