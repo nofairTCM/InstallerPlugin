@@ -59,7 +59,12 @@
                 "$ignoreUnknownInstances": true
             },
             "termRBLX": {
-                "$path": "libs/termRBLX"
+                "$path": "libs/termRBLX",
+                "$ignoreUnknownInstances": true
+            },
+            "data": {
+                "$path": "libs/Data/src",
+                "$ignoreUnknownInstances": true
             }
         }
     }

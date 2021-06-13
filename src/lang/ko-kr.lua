@@ -24,9 +24,27 @@ return {
     pluginUpdateDialogDismiss = "무시하기";
     pluginUpdateDialogTitle = "업데이트";
     pluginUpdateDialogMsg = "설치기 플러그인의 새로운 버전이 감지되었습니다\n플러그인 관리자에서 플러그인을 업데이트 할 수 있습니다\n새로운 버전을 설치해 더 많은 기능과 더 많은 경험을 만끽하세요!";
-    outupdates = ":{{count}}: 개의 업데이트가 가능한 모듈이 있습니다";
+    outupdatePromptText = ":{{count}}: 개의 업데이트가 가능한 모듈이 있습니다";
+    outupdatePromptButton = "업데이트";
+    outupdatePromptButtonToolTip = "모든 모듈 업데이트하기";
     updateAll = "모두 업데이트하기";
     docs = "이 모듈은 문서가 있습니다, 확인하려면 아래의 링크를 따라가세요\n:{{url}}:";
+    initYet = "모듈 저장소가 아직 발견되지 않았습니다\n모듈 설치를 위해 모듈 저장소를 초기화 하시겠습니까?";
+    init = "초기화";
+    scrollToOpen = "위로 스크롤 또는 위로 스와이프";
+    information = "세부정보";
+    infoInstall = "설치";
+    infoUpdate = "업데이트";
+    infoUninstall = "제거";
+    ["info.version"] = "버전 : ";
+    ["info.license"] = "라이선스 : ";
+    ["info.github"] = "깃허브 저장소 : ";
+    ["info.buildVersion"] = "빌드 버전 : ";
+    ["info.publishVersion"] = "게시 버전 : ";
+    ["info.majorVersion"] = "시리즈 버전 : ";
+    ["info.publishStatus"] = "배포 상태 : ";
+    ["info.toolboxID"] = "에셋 아이디 : ";
+    ["info.import"] = "포함된(종속성) 모듈 : ";
     about = [[
 nofairTCM / 패키지 관리 시스템
 버전 : :{{version}}:

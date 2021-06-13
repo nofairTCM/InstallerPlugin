@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 01:23:25
+    # Modified time : 2021-06-13 23:09:50
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -27,14 +27,16 @@ local props = {
     "author",
     "import",
     "github",
-    "lic",
+    "license",
     "info",
     "publishStatus",
     "version",
     "buildVersion",
     "majorVersion",
     "toolboxID",
-    "index"
+    "index",
+    "docs",
+    "icon"
 };
 -- check thing's properties
 local function checkThing(thing)
@@ -161,7 +163,7 @@ function module:uninstall(name,log,indent)
     local elog = log or void;
     indent = indent or "";
     log = function(str)
-        wait(); wait();
+        wait();
         elog(indent .. str);
     end
 
@@ -221,7 +223,7 @@ function module:install(name,log,indent,force)
     local elog = log or void;
     indent = indent or "";
     log = function(str)
-        wait(); wait();
+        wait();
         elog(indent .. str);
     end
 

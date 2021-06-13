@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 13:24:26
+    # Modified time : 2021-06-13 23:09:22
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -78,7 +78,7 @@ local props = {
     "majorVersion";
     "import";
     "github";
-    "lic";
+    "license";
     "toolboxID";
     "index";
 };

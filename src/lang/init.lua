@@ -6,7 +6,7 @@ return function (key,format)
     local item = lang[key];
     if format then
         for i,v in pairs(format) do
-            item = string.gsub(item,(":{{%s}}:").format(i),v);
+            item = string.gsub(item,(":{{%s}}:"):format(i),v);
         end
     end
     return item;

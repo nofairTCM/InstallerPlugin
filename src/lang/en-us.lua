@@ -24,9 +24,27 @@ return {
     pluginUpdateDialogDismiss = "Dismiss";
     pluginUpdateDialogTitle = "Update";
     pluginUpdateDialogMsg = "You can update plugin now!\nupdate plugin and receives more options and feel more experience!";
-    outupdates = "You can update :{{count}}: modules now!";
+    outupdatePromptText = "You can update :{{count}}: modules now!";
+    outupdatePromptButton = "Update";
+    outupdatePromptButtonToolTip = "Update all modules";
     updateAll = "Update All";
     docs = "this module has docs, if you want to check it, please follow this link\n:{{url}}:";
+    initYet = "Module space not found from this place\nInit module space now for install some modules?";
+    init = "Init";
+    scrollToOpen = "Scroll or swipe up to open";
+    information = "Information";
+    infoInstall = "Install";
+    infoUpdate = "Update";
+    infoUninstall = "Uninstall";
+    ["info.version"] = "Version : ";
+    ["info.license"] = "License : ";
+    ["info.github"] = "Github REPO : ";
+    ["info.buildVersion"] = "Build Version : ";
+    ["info.publishVersion"] = "Publish Version : ";
+    ["info.majorVersion"] = "Major Version : ";
+    ["info.publishStatus"] = "Publish Status : ";
+    ["info.toolboxID"] = "Asset Id : ";
+    ["info.import"] = "Included Module : ";
     about = [[
 nofairTCM / Package management system
 version : :{{version}}:

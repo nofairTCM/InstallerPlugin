@@ -3,10 +3,15 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 12:37:10
+    # Modified time : 2021-06-13 23:31:22
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
+
+        TODO: 검색 기능 만들기
+        TODO: 자동닫기 설정
+        TODO: 어바웃/ 모듈 정보 완성
+        TODO: 자동 업데이트 설정
 
         모듈 다운로더 / 관리자입니다
         짅자ㅣ안ㄶ희ㅣㄴㄱ깃ㅅ헙브 넘뭏흐ㄴ네
@@ -53,6 +58,7 @@ local function main(plugin)
     local commands = require(script.commands); --[[자동완성]] if not true then commands = require("scr.commands"); end
     local AdvancedTween = require(script.Parent.libs.AdvancedTween) --[[자동완성]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
     local MaterialUI = require(script.Parent.libs.MaterialUI) --[[자동완성]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
+    local pluginData = require(script.Parent.libs.data) --[[자동완성]] if not true then pluginData = require("libs.Data.src.init") end
     local pluginUpdateDialogRender = require(script.pluginUpdateDialog) --[[자동완성]] if not true then pluginUpdateDialogRender = require("src.pluginUpdateDialogRender") end
     local getExampleDialogRender = require(script.getExampleDialog) --[[자동완성]] if not true then getExampleDialogRender = require("src.getExampleDialog") end
     local itemRender = require(script.item); --[[자동완성]] if not true then itemRender = require("scr.item"); end
@@ -65,7 +71,8 @@ local function main(plugin)
     local tabSizeY = 64; -- 탭 Y 높이
     local white = Color3.fromRGB(255,255,255); -- 흰색
     local menuSize = UDim2.fromOffset(140,(14*2) + (32*3)) -- 메뉴 열린 크기
-    local menuCloseSize = UDim2.fromOffset(70,70); -- 매뉴 닫히는 크기
+    --local menuCloseSize = UDim2.fromOffset(70,70); -- 매뉴 닫히는 크기
+    local outupdatePromptSizeY = 48;
 
     -- 터미널 셋업
     local termTCM = termRBLX.init { -- 터미널을 하나 만듬
@@ -94,7 +101,6 @@ local function main(plugin)
         outputUpdated = event.Event;
     end
 
-
     -- 모듈들이 필요로 하는것들 넘겨줌
     splashScreenRender
         :setAdvancedTween(AdvancedTween)
@@ -117,6 +123,9 @@ local function main(plugin)
         :setAdvancedTween(AdvancedTween)
         :setLang(lang);
 
+    -- 데이터 셋업
+    pluginData = pluginData:SetUp(plugin);
+
 --#endregion
 --#region [플러그인 바탕] 플러그인 UI / 플러그인 마우스 / 플러그인 탭 / 플러그인 버튼을 만듬
 
@@ -129,9 +138,9 @@ local function main(plugin)
             true,
             false,
             320,
-            400,
+            420,
             320,
-            400
+            420
         )
     );
     uiHolder.Name = pluginID; -- 플러그인 창 이름 정하기
@@ -232,6 +241,160 @@ local function main(plugin)
             Direction = AdvancedTween.EasingDirection.Out;
         };
 
+        -- local tabClosed = false;
+        -- local tabTweening = false;
+        -- local function showTabs()
+        --     tabClosed = false;
+        --     tabTweening = true;
+        --     AdvancedTween:RunTween(store.header,{
+        --         Time = 0.12;
+        --         Easing = AdvancedTween.EasingFunctions.Exp2;
+        --         Direction = AdvancedTween.EasingDirection.Out;
+        --     },{
+        --         Size = UDim2.new(1,0,0,tabSizeY + tobBarSizeY);
+        --     });
+        --     AdvancedTween:RunTween(store.tabHolder,{
+        --         Time = 0.2;
+        --         Easing = AdvancedTween.EasingFunctions.Exp2;
+        --         Direction = AdvancedTween.EasingDirection.Out;
+        --     },{
+        --         Position = UDim2.new(0,0,0,tobBarSizeY);
+        --     });
+        --     AdvancedTween:RunTween(store.holder,{
+        --         Time = 0.2;
+        --         Easing = AdvancedTween.EasingFunctions.Exp2;
+        --         Direction = AdvancedTween.EasingDirection.Out;
+        --     },{
+        --         Size = UDim2.new(store.holder.Size.X.Scale,0,1,-tobBarSizeY -tabSizeY);
+        --         Position = UDim2.new(0,0,0,tobBarSizeY + tabSizeY);
+        --     });
+        --     delay(0.22,function()
+        --         tabTweening = false;
+        --     end);
+        -- end
+
+        -- local function hideTabs()
+        --     if tobBarSizeY > (store.listItemHolder.CanvasSize.Y.Offset - store.listItemHolder.CanvasPosition.Y) then
+        --         return;
+        --     end
+        --     tabClosed = true;
+        --     tabTweening = true;
+        --     AdvancedTween:RunTween(store.header,{
+        --         Time = 0.12;
+        --         Easing = AdvancedTween.EasingFunctions.Exp2;
+        --         Direction = AdvancedTween.EasingDirection.Out;
+        --     },{
+        --         Size = UDim2.new(1,0,0,tobBarSizeY);
+        --     });
+        --     AdvancedTween:RunTween(store.tabHolder,{
+        --         Time = 0.2;
+        --         Easing = AdvancedTween.EasingFunctions.Exp2;
+        --         Direction = AdvancedTween.EasingDirection.Out;
+        --     },{
+        --         Position = UDim2.new(0,0,0,tobBarSizeY - tabSizeY);
+        --     });
+        --     AdvancedTween:RunTween(store.holder,{
+        --         Time = 0.2;
+        --         Easing = AdvancedTween.EasingFunctions.Exp2;
+        --         Direction = AdvancedTween.EasingDirection.Out;
+        --     },{
+        --         Size = UDim2.new(store.holder.Size.X.Scale,0,1,-tobBarSizeY);
+        --         Position = UDim2.new(0,0,0,tobBarSizeY);
+        --     });
+        --     delay(0.22,function()
+        --         tabTweening = false;
+        --     end);
+        -- end
+
+        -- 인포 화면
+        local closeInfo,moveInfo,getInfoPos,infoIsOpen,infoMouseDown;
+        closeInfo = function()
+            moveInfo(1,true);
+            infoIsOpen = false;
+            AdvancedTween:RunTween(store.infoScreen,{
+                Time = 0.3;
+                Easing = AdvancedTween.EasingFunctions.Linear;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                BackgroundTransparency = 1;
+            },function ()
+                store.infoScreen.Visible = false;
+            end);
+            store.listItemHolder.ScrollingEnabled = true;
+            store.infoId = nil;
+        end
+
+        moveInfo = function(add,noClose)
+            add = add or 0;
+            if not infoIsOpen then
+                return;
+            end
+            local to = store.infoHolder.Position.Y.Scale + add;
+            if not infoMouseDown then
+                if to < 0.3 then -- 완전히 열림
+                    if add > 0 then
+                        to = 0.3;
+                    else
+                        to = 0;
+                    end
+                elseif to > 0.7 then -- 완전히 닫힘
+                    if add < 0 then
+                        to = 0.7;
+                    else
+                        to = 1;
+                    end
+                end
+            end
+
+            store.infoScroll.ScrollingEnabled = to == 0;
+
+            if add == 0 and (not (to == 1 or to == 0)) then
+                return;
+            end
+
+            AdvancedTween:RunTween(store.infoHolder,{
+                Time = 0.3;
+                Easing = AdvancedTween.EasingFunctions.Exp2;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                Position = UDim2.new(0,0,to,to == 1 and 32 or -24);
+            },function ()
+                if to == 1 and (not noClose) then
+                    closeInfo();
+                end
+            end);
+        end
+
+        getInfoPos = function()
+            return store.infoHolder.Position.Y.Scale;
+        end
+
+        local function openInfo(id,data)
+            store.infoHolder.Position = UDim2.fromScale(0,1);
+            infoIsOpen = true;
+            store.infoScreen.Visible = true;
+            moveInfo(0.5 - getInfoPos(),true);
+            AdvancedTween:RunTween(store.infoScreen,{
+                Time = 0.3;
+                Easing = AdvancedTween.EasingFunctions.Linear;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                BackgroundTransparency = 0.68;
+            });
+            store.listItemHolder.ScrollingEnabled = false;
+            store.infoId = id;
+            store.infoText.Text = data.info .. "\n"
+                .. (data.version and ("\n" .. lang("info.version") .. data.version) or "")
+                .. (data.buildVersion and ("\n" .. lang("info.buildVersion") .. data.buildVersion) or "")
+                .. (data.publishVersion and ("\n" .. lang("info.publishVersion") .. data.publishVersion) or "")
+                .. (data.majorVersion and ("\n" .. lang("info.majorVersion") .. data.majorVersion) or "")
+                .. (data.publishStatus and ("\n" .. lang("info.publishStatus") .. data.publishStatus) or "")
+                .. (data.toolboxID and ("\n" .. lang("info.toolboxID") .. data.toolboxID) or "")
+                .. (data.github and ("\n" .. lang("info.github") .. data.github) or "")
+                .. (data.import and ("\n" .. lang("info.import") .. table.concat(data.import,", ")) or "")
+                .. (data.license and ("\n" .. lang("info.license") .. data.license) or "");
+        end
+
         local function newTabButton(prop) -- 탭 버튼 클레싱
             return new("TextButton",{
                 TextTransparency = prop.Enabled
@@ -250,6 +413,9 @@ local function main(plugin)
                 WhenCreated = function (this)
                     store.tabButtons[prop.Name] = this;
                     this.MouseButton1Click:Connect(function ()
+                        -- if tabClosed then
+                        --     return;
+                        -- end
                         for _,item in pairs(store.tabButtons) do
                             AdvancedTween:StopTween(item.icon);
                             AdvancedTween:StopTween(item);
@@ -283,7 +449,7 @@ local function main(plugin)
                     PaddingBottom = UDim.new(0,10);
                 });
                 new("Rippler",{
-                    ZIndex = 82;
+                    ZIndex = 83;
                     Size = UDim2.new(1,0,1,10)
                 });
             });
@@ -345,8 +511,8 @@ local function main(plugin)
                         return
                     end
                     menuClicked = true;
-                    func();
                     delay(0.07,closeMenu);
+                    func();
                 end;
             },{
                 new("TextLabel",{
@@ -403,9 +569,17 @@ local function main(plugin)
             store.installTitle.Text = title;
             wait(0.9);
             exeCommand("cls");
-            local example = exeCommand("tcmi install " .. id .. " -f");
+            local example;
+            if type(id) == "table" then
+                for _,v in pairs(id) do
+                    exeCommand("cls");
+                    exeCommand("tcmi install " .. v);
+                end
+            else
+                example = exeCommand("tcmi install " .. id);
+            end
             store.installOkButton.Disabled = false;
-            store.installOkButton:Ripple(store.installOkButton.AbsolutePosition + (0.5 * (store.installOkButton.AbsoluteSize)));
+            store.installOkButton:Ripple(store.installOkButton.AbsolutePosition + (0.5 * store.installOkButton.AbsoluteSize));
             store.installOkButtonSetColor();
             store.installStatus.Disabled = true;
             reloadList();
@@ -423,7 +597,7 @@ local function main(plugin)
             exeCommand("cls");
             exeCommand("tcmi uninstall " .. id);
             store.installOkButton.Disabled = false;
-            store.installOkButton:Ripple(store.installOkButton.AbsolutePosition + (0.5 * (store.installOkButton.AbsoluteSize)));
+            store.installOkButton:Ripple(store.installOkButton.AbsolutePosition + (0.5 * store.installOkButton.AbsoluteSize));
             store.installOkButtonSetColor();
             store.installStatus.Disabled = true;
             reloadList();
@@ -434,9 +608,36 @@ local function main(plugin)
             if data.visible == false then
                 return;
             end
+
             local isInstalled = installer:isInstalled(id);
             local lastVersion = data.publishVersion;
             local item = listItems[id] or itemRender(id,data,MaterialUI,lang);
+
+            local function openThisInfo()
+                isInstalled = installer:isInstalled(id);
+                lastVersion = data.publishVersion;
+                if isInstalled and lastVersion == isInstalled.Value then
+                    store.infoUninstall.Visible = true;
+                    store.infoInstall.Visible = false;
+                    store.infoUpdate.Visible = false;
+                elseif isInstalled then
+                    store.infoUninstall.Visible = true;
+                    store.infoInstall.Visible = false;
+                    store.infoUpdate.Visible = true;
+                else
+                    store.infoUninstall.Visible = false;
+                    store.infoInstall.Visible = true;
+                    store.infoUpdate.Visible = false;
+                end
+                store.infoTitle.Text = data.name or id;
+                store.infoIcon.Image = data.icon or "";
+                store.infoAuthor.Text = ("by " .. data.author) or "none";
+                openInfo(id,data);
+            end
+            if store.infoId == id then
+                openThisInfo();
+            end
+
             if isInstalled and lastVersion == isInstalled.Value then
                 item.InstallIcon.Visible = false;
                 item.UpdateIcon.Visible = false;
@@ -446,7 +647,7 @@ local function main(plugin)
                 item.InstallIcon.Visible = false;
                 item.UpdateIcon.Visible = true;
                 item.UninstallIcon.Visible = true;
-                item.this.Parent = store.outupdated;
+                item.this.Parent = store.outdated;
             else
                 item.InstallIcon.Visible = true;
                 item.UpdateIcon.Visible = false;
@@ -464,6 +665,8 @@ local function main(plugin)
                 item.UpdateIcon.MouseButton1Click:Connect(function ()
                     install(id,item.InstallIcon.AbsolutePosition,lang("onUpdateing"));
                 end);
+                item.InfoIcon.MouseButton1Click:Connect(openThisInfo);
+                item.showMore.MouseButton1Click:Connect(openThisInfo);
                 listItems[id] = item;
             end
         end
@@ -479,6 +682,37 @@ local function main(plugin)
             end
             for i,v in pairs(moduleData) do
                 listItem(i,v);
+            end
+            local outupdateList = {};
+            store.outupdateList = outupdateList;
+            for id,v in pairs(moduleData) do
+                local isInstalled = installer:isInstalled(id);
+                local lastVersion = v.publishVersion;
+                if isInstalled and isInstalled.Value ~= lastVersion then
+                    table.insert(outupdateList,id);
+                end
+            end
+
+            local lenList = #outupdateList;
+            if lenList ~= 0 then
+                store.outupdatePromptText.Text = lang("outupdatePromptText",{count = tostring(lenList)});
+                store.outupdatePrompt.ClipsDescendants = false;
+                AdvancedTween:RunTween(store.outupdatePrompt,{
+                    Time = 0.48;
+                    Easing = AdvancedTween.EasingFunctions.Exp2;
+                    Direction = AdvancedTween.EasingDirection.Out;
+                },{
+                    Size = UDim2.new(1,0,0,outupdatePromptSizeY);
+                });
+            else
+                store.outupdatePrompt.ClipsDescendants = true;
+                AdvancedTween:RunTween(store.outupdatePrompt,{
+                    Time = 0.48;
+                    Easing = AdvancedTween.EasingFunctions.Exp2;
+                    Direction = AdvancedTween.EasingDirection.Out;
+                },{
+                    Size = UDim2.fromScale(1,0);
+                });
             end
         end
 
@@ -605,14 +839,24 @@ local function main(plugin)
                 BackgroundColor3 = MaterialUI:GetColor("TopBar");
                 Size = UDim2.new(1,0,0,tobBarSizeY + tabSizeY);
                 ZIndex = 80;
+                WhenCreated = function (this)
+                    store.header = this;
+                end
             },{
+                background = new("TextButton",{
+                    Text = "";
+                    AutoButtonColor = false;
+                    BackgroundColor3 = MaterialUI:GetColor("TopBar");
+                    ZIndex = 89;
+                    Size = UDim2.new(1,0,0,tobBarSizeY);
+                });
                 shadow = new("Shadow",{
                     ZIndex = 80;
                 });
                 icon = new("ImageLabel",{
                     Position = UDim2.fromOffset((tobBarSizeY - 28)/2, (tobBarSizeY - 28)/2);
                     Size = UDim2.new(0, 28, 0, 28);
-                    ZIndex = 80;
+                    ZIndex = 90;
                     BackgroundTransparency = 1;
                     Image = pluginIcon;
                     ImageColor3 = white;
@@ -621,7 +865,7 @@ local function main(plugin)
                     BackgroundTransparency = 1;
                     Position = UDim2.new(0, 42, 0, 0);
                     Size = UDim2.new(1, 0, 0, tobBarSizeY);
-                    ZIndex = 80;
+                    ZIndex = 90;
                     Font = Enum.Font.SourceSans;
                     Text = "TCM 설치기";
                     TextColor3 = white;
@@ -631,7 +875,7 @@ local function main(plugin)
                 });
                 openMenu = new("IconButton",{
                     Style = MaterialUI.CEnum.IconButtonStyle.WithOutBackground;
-                    ZIndex = 81;
+                    ZIndex = 90;
                     Icon = "http://www.roblox.com/asset/?id=6031104648";
                     Position = UDim2.new(1,-4,0,4);
                     AnchorPoint = Vector2.new(1,0);
@@ -647,7 +891,7 @@ local function main(plugin)
                 Text = "";
                 Visible = false;
                 Size = UDim2.fromScale(1,1);
-                ZIndex = 85;
+                ZIndex = 800;
                 BackgroundTransparency = 1;
                 WhenCreated = function (this)
                     store.menuBG = this;
@@ -659,6 +903,9 @@ local function main(plugin)
                 BackgroundTransparency = 1;
                 Size = UDim2.new(1,0,0,tabSizeY);
                 Position = UDim2.fromOffset(0,tobBarSizeY);
+                WhenCreated = function (this)
+                    store.tabHolder = this;
+                end;
             },{
                 tabPointer = new("Frame",{
                     ZIndex = 85;
@@ -707,6 +954,22 @@ local function main(plugin)
                     Size = UDim2.fromScale(0.5,1);
                     BackgroundTransparency = 1;
                     ScrollBarThickness = 4;
+                    WhenCreated = function (this)
+                        store.listItemHolder = this;
+                        -- this:GetPropertyChangedSignal("CanvasPosition"):Connect(function ()
+                        --     local CanvasPosY = this.CanvasPosition.Y;
+                        --     local lastCanvasPosY = store.lastCanvasPosY;
+                        --     if lastCanvasPosY and (not tabTweening) then
+                        --         local moved = CanvasPosY - lastCanvasPosY;
+                        --         if moved > 0 and (not tabClosed) then
+                        --             hideTabs();
+                        --         elseif moved < 0 and tabClosed then
+                        --             showTabs();
+                        --         end
+                        --     end
+                        --     store.lastCanvasPosY = CanvasPosY;
+                        -- end);
+                    end;
                 },{
                     padding = new("UIPadding",{
                         PaddingRight = UDim.new(0,6);
@@ -719,9 +982,59 @@ local function main(plugin)
                             end);
                         end;
                     });
+                    outupdatePrompt = new("Frame",{
+                        LayoutOrder = 1;
+                        BackgroundTransparency = 1;
+                        Size = UDim2.fromScale(1,0);
+                        WhenCreated = function (this)
+                            store.outupdatePrompt = this;
+                        end;
+                        ClipsDescendants = true;
+                    },{
+                        text = new("TextLabel",{
+                            TextWrapped = true;
+                            BackgroundTransparency = 1;
+                            Size = UDim2.new(1,-92 -12,1,0);
+                            Position = UDim2.fromOffset(12,0);
+                            TextSize = 14;
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                            WhenCreated = function (this)
+                                store.outupdatePromptText = this;
+                            end;
+                            Text = "";
+                            Font = globalFont;
+                            TextColor3 = MaterialUI:GetColor("TextColor");
+                        });
+                        updateButton = new("Button",{
+                            Icon = "http://www.roblox.com/asset/?id=6031302931";
+                            IconVisible = true;
+                            IconColor3 = MaterialUI:GetColor("TextColor");
+                            TextColor3 = MaterialUI:GetColor("TextColor");
+                            ToolTipText = lang("outupdatePromptButtonToolTip");
+                            Style = "Outlined";
+                            OutlineColor3 = MaterialUI:GetColor("TextColor");
+                            ToolTipVisible = true;
+                            Text = lang("outupdatePromptButton");
+                            Size = UDim2.new(0,92,0,32);
+                            Position = UDim2.fromScale(1,0.5);
+                            AnchorPoint = Vector2.new(1,0.5);
+                            ToolTipBackgroundColor3 = MaterialUI.CurrentTheme == "Dark" and Color3.fromRGB(255,255,255) or Color3.fromRGB(38,38,38);
+                            ToolTipTextColor3 = MaterialUI.CurrentTheme == "Dark" and Color3.fromRGB(0,0,0) or Color3.fromRGB(255,255,255);
+                            WhenCreated = function (this)
+                                local ToolTip = this:GetRealInstance().ToolTip;
+                                ToolTip.Position = UDim2.new(1,0,1,6);
+                                ToolTip.AnchorPoint = Vector2.new(1,0);
+                                ToolTip.ZIndex = 98;
+                                ToolTip.TextLabel.ZIndex = 98;
+                                this.MouseButton1Click:Connect(function ()
+                                    install(store.outupdateList,this.AbsolutePosition + (this.AbsoluteSize * 0.5),lang("onUpdateing"));
+                                end);
+                            end;
+                        });
+                    });
                     outdated = makeListPage("outdated","Outdated",0);
-                    installed = makeListPage("installed","Installed",1);
-                    list = makeListPage("list","Store",2);
+                    installed = makeListPage("installed","Installed",2);
+                    list = makeListPage("list","Store",3);
                 });
             });
             installScreen = new("TextButton",{
@@ -879,6 +1192,281 @@ local function main(plugin)
                     });
                 });
             });
+            infoScreen = new("TextButton",{
+                Size = UDim2.fromScale(1,1);
+                ZIndex = 100;
+                BackgroundColor3 = Color3.fromRGB(0,0,0);
+                BackgroundTransparency = 0.68;
+                AutoButtonColor = false;
+                Text = "";
+                Visible = false;
+                WhenCreated = function (this)
+                    store.infoScreen = this;
+                end;
+                MouseWheelBackward = function()
+                    if getInfoPos() < 0.01 then
+                        return;
+                    end
+                    moveInfo(0.2);
+                end;
+                MouseWheelForward = function()
+                    if getInfoPos() < 0.01 then
+                        return;
+                    end
+                    moveInfo(-0.2);
+                end;
+                MouseButton1Down = function ()
+                    closeInfo();
+                end;
+                MouseButton1Up = function ()
+                    infoMouseDown = false;
+                    moveInfo();
+                end;
+                MouseLeave = function ()
+                    infoMouseDown = false;
+                    moveInfo();
+                end;
+                MouseMoved = function (_,y)
+                    local InfoPos = getInfoPos()
+                    if infoMouseDown and infoIsOpen and InfoPos > 0.01 then
+                        y = y / uiHolder.AbsoluteSize.Y;
+                        moveInfo(y - InfoPos);
+                    end
+                end;
+            },{
+                infoScreen = new("ImageButton",{
+                    Size = UDim2.new(1,0,1,44);
+                    BackgroundTransparency = 1;
+                    ImageColor3 = MaterialUI:GetColor("Background");
+                    ZIndex = 100;
+                    Position = UDim2.fromScale(0,0.5);
+                    WhenCreated = function (this)
+                        store.infoHolder = this;
+                        MaterialUI:SetRound(this,24);
+                    end;
+                    MouseButton1Up = function ()
+                        infoMouseDown = false;
+                        moveInfo();
+                    end;
+                    MouseButton1Down = function ()
+                        infoMouseDown = true;
+                    end;
+                },{
+                    bar = new("TextButton",{
+                        Position = UDim2.fromOffset(0,12);
+                        Size = UDim2.new(1,0,0,52);
+                        BackgroundTransparency = 1;
+                        ZIndex = 100;
+                        AnchorPoint = Vector2.new(0,1);
+                        Text = lang("scrollToOpen");
+                        TextColor3 = Color3.fromRGB(255,255,255);
+                        AutoButtonColor = false;
+                        Font = globalFont;
+                        TextSize = 16;
+                        MouseButton1Up = function ()
+                            infoMouseDown = false;
+                            moveInfo();
+                        end;
+                        MouseButton1Down = function ()
+                            infoMouseDown = true;
+                        end;
+                    },{
+                        icon = new("ImageLabel",{
+                            ZIndex = 100;
+                            Size = UDim2.fromOffset(120,4);
+                            Position = UDim2.fromScale(0.5,1);
+                            AnchorPoint = Vector2.new(0.5,1);
+                            BackgroundTransparency = 1;
+                            ImageColor3 = MaterialUI:GetColor("TextColor");
+                            WhenCreated = function (this)
+                                MaterialUI:SetRound(this,128);
+                            end;
+                            ImageTransparency = 0.42;
+                        });
+                    });
+                    header = new("Frame",{
+                        Size = UDim2.new(1,0,0,42);
+                        Position = UDim2.fromOffset(0,24);
+                        ZIndex = 100;
+                        BackgroundTransparency = 1;
+                    },{
+                        back = new("IconButton",{
+                            Size = UDim2.fromOffset(36,36);
+                            Icon = "http://www.roblox.com/asset/?id=6031091000";
+                            Position = UDim2.new(0,(42-36)/2,0.5,0);
+                            AnchorPoint = Vector2.new(0,0.5);
+                            IconColor3 = MaterialUI:GetColor("TextColor");--Color3.fromRGB(255,255,255);
+                            ZIndex = 100;
+                            IconSizeScale = 0.82;
+                            Style = "WithOutBackground";
+                            MouseButton1Click = closeInfo;
+                        });
+                        title = new("TextLabel",{
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                            BackgroundTransparency = 1;
+                            Font = globalFont;
+                            TextSize = 17;
+                            Text = lang("information");
+                            Size = UDim2.fromScale(1,1);
+                            Position = UDim2.new(0,36 + 8,0.5,0);
+                            AnchorPoint = Vector2.new(0,0.5);
+                            ZIndex = 100;
+                            TextColor3 = MaterialUI:GetColor("TextColor");--Color3.fromRGB(255,255,255);
+                        });
+                    });
+                    scroll = new("ScrollingFrame",{
+                        Size = UDim2.new(1,0,1,-68-24);
+                        Position = UDim2.fromOffset(0,68);
+                        BackgroundTransparency = 1;
+                        ScrollingEnabled = false;
+                        ZIndex = 100;
+                        WhenCreated = function (this)
+                            store.infoScroll = this;
+                        end;
+                    },{
+                        head = new("Frame",{
+                            Size = UDim2.new(1,0,0,130);
+                            BackgroundTransparency = 1;
+                            ZIndex = 100;
+                        },{
+                            text = new("TextLabel",{
+                                ZIndex = 100;
+                                BackgroundTransparency = 1;
+                                TextSize = 18;
+                                Font = Enum.Font.GothamBold;
+                                Text = "Title";
+                                TextXAlignment = Enum.TextXAlignment.Left;
+                                Size = UDim2.new(1,-132,0,38);
+                                Position = UDim2.fromOffset(132,6);
+                                TextColor3 = MaterialUI:GetColor("TextColor");
+                                WhenCreated = function (this)
+                                    store.infoTitle = this;
+                                end;
+                            });
+                            author = new("TextLabel",{
+                                ZIndex = 100;
+                                BackgroundTransparency = 1;
+                                TextSize = 15;
+                                Font = globalFont;
+                                Text = "by ";
+                                TextXAlignment = Enum.TextXAlignment.Left;
+                                Size = UDim2.new(1,-132,0,38);
+                                Position = UDim2.fromOffset(132,34);
+                                TextColor3 = MaterialUI:GetColor("TextColor");
+                                TextTransparency = 0.62;
+                                WhenCreated = function (this)
+                                    store.infoAuthor = this;
+                                end;
+                            });
+                            install = new("Button",{
+                                TextColor3 = MaterialUI:GetColor("TextColor");
+                                ZIndex = 100;
+                                Style = "Outlined";
+                                OutlineColor3 = MaterialUI:GetColor("TextColor");
+                                Size = UDim2.new(0,58,0,32);
+                                Text = lang("infoInstall");
+                                Position = UDim2.fromOffset(132,76);
+                                WhenCreated = function(this)
+                                    store.infoInstall = this;
+                                    this.MouseButton1Click:Connect(function ()
+                                        install(store.infoId,this.AbsolutePosition + (this.AbsoluteSize * 0.5),lang("onInstalling"));
+                                    end);
+                                end;
+                            });
+                            uninstall = new("Button",{
+                                TextColor3 = MaterialUI:GetColor("TextColor");
+                                ZIndex = 100;
+                                Style = "Outlined";
+                                OutlineColor3 = MaterialUI:GetColor("TextColor");
+                                Size = UDim2.new(0,58,0,32);
+                                Text = lang("infoUninstall");
+                                Position = UDim2.fromOffset(132,76);
+                                WhenCreated = function(this)
+                                    store.infoUninstall = this;
+                                    this.MouseButton1Click:Connect(function ()
+                                        uninstall(store.infoId,this.AbsolutePosition + (this.AbsoluteSize * 0.5),lang("onUninstalling"));
+                                    end);
+                                end;
+                            });
+                            update = new("Button",{
+                                TextColor3 = MaterialUI:GetColor("TextColor");
+                                ZIndex = 100;
+                                Style = "Outlined";
+                                OutlineColor3 = MaterialUI:GetColor("TextColor");
+                                Size = UDim2.new(0,58,0,32);
+                                Text = lang("infoUpdate");
+                                Position = UDim2.fromOffset(132 + 58 + 6,76);
+                                WhenCreated = function(this)
+                                    store.infoUpdate = this;
+                                    this.MouseButton1Click:Connect(function ()
+                                        install(store.infoId,this.AbsolutePosition + (this.AbsoluteSize * 0.5),lang("onUpdateing"));
+                                    end);
+                                end;
+                            });
+                            icon = new("ImageLabel",{
+                                Position = UDim2.fromOffset(5,5);
+                                BackgroundColor3 = Color3.fromRGB(255, 255, 255);
+                                Size = UDim2.new(0, 110, 0, 110);
+                                ZIndex = 101;
+                                WhenCreated = function (this)
+                                    store.infoIcon = this;
+                                end;
+                            },{
+                                round = new("UICorner",{
+                                });
+                                shadow = new("ImageLabel",{
+                                    AnchorPoint = Vector2.new(0.5, 0);
+                                    ZIndex = 100;
+                                    BackgroundTransparency = 1;
+                                    BorderSizePixel = 0;
+                                    Position = UDim2.new(0.5, 0, 0, -3);
+                                    Size = UDim2.new(1, 8, 1, 10);
+                                    Image = "rbxassetid://1316045217";
+                                    ImageColor3 = Color3.fromRGB(0, 0, 0);
+                                    ImageTransparency = MaterialUI.CurrentTheme == "Dark" and 0.8 or 0.92;
+                                });
+                            });
+                        });
+                        info = new("TextBox",{
+                            Size = UDim2.new(1,0,0,15+16+12+2);
+                            TextEditable = false;
+                            ClearTextOnFocus = false;
+                            LayoutOrder = 1;
+                            ZIndex = 100;
+                            Text = "";
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                            TextYAlignment = Enum.TextYAlignment.Top;
+                            TextSize = 15;
+                            TextWrapped = true;
+                            Font = globalFont;
+                            BackgroundTransparency = 1;
+                            TextColor3 = MaterialUI:GetColor("TextColor");
+                            WhenCreated = function (this)
+                                store.infoText = this;
+                                this:GetPropertyChangedSignal("TextBounds"):Connect(function ()
+                                    this.Size = UDim2.new(1,0,0,this.TextBounds.Y+16+12+2);
+                                end);
+                            end;
+                        },{
+                            new("UIPadding",{
+                                PaddingLeft = UDim.new(0,12);
+                                PaddingRight = UDim.new(0,12);
+                                PaddingTop = UDim.new(0,12);
+                            });
+                        });
+                        new("UIListLayout",{
+                            WhenCreated = function (this)
+                                this:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function ()
+                                    this.Parent.CanvasSize = UDim2.fromOffset(0,this.AbsoluteContentSize.Y);
+                                end);
+                            end;
+                        });
+                    });
+                });
+            });
+            search = new("Frame",{
+                
+            });
         });
 
         -- 터미널 창을 가져옴
@@ -887,22 +1475,16 @@ local function main(plugin)
         termTCM.uiHost.holder.Size = UDim2.fromScale(0.5,1);
         termTCM.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
 
-        reloadList();
-        slashScreen:setStatus("wait for rblx ...");
-        delay(0.25,function () -- 로블이 알아서 잘 그리고 처리하도록 좀 시간을 줌
-            if not slashScreen then
-                return;
-            end
+        if slashScreen then
             slashScreen:close();
             slashScreen = nil;
             termTCM.output("Plugin Core : loaded!\n----------------------------------------\n\n");
-
             -- 만약 플러그인이 업데이트가 필요하면 확인창을 띄워줌
             if showUpdateDialog then
                 showUpdateDialog = false;
                 pluginUpdateDialogRender:render(); -- 다이어로그 렌더러를 부름
             end
-        end);
+        end
 
         killRender = function () -- 렌더 해제하는 함수 지정
             if mouse and mouse.Obj then -- 마우스가 있으면 지움
@@ -912,6 +1494,47 @@ local function main(plugin)
             MaterialUI:CleanUp(); -- 한번 싹 클린업함
             termTCM.output("-----------------Reload-----------------");
         end;
+
+        if (not game:GetService("ServerStorage"):FindFirstChild("nofairTCM_Server"))
+        or (not game:GetService("ServerScriptService"):FindFirstChild("nofairTCM_ServerInit"))
+        or (not game:GetService("ReplicatedStorage"):FindFirstChild("nofairTCM_Client"))
+        or (not game:GetService("ReplicatedFirst"):FindFirstChild("nofairTCM_ClientInit")) then
+            local initButton;
+            local frame = new("Frame",{
+                Parent = store.holder;
+                BackgroundTransparency = 1;
+                Size = UDim2.fromScale(0.5,1);
+            },{
+                text = new("TextLabel",{
+                    TextWrapped = true;
+                    Text = lang("initYet");
+                    BackgroundTransparency = 1;
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                    Size = UDim2.new(1,0,0,50);
+                    Position = UDim2.new(0.5,0,0.5,-34);
+                    AnchorPoint = Vector2.new(0.5,0.5);
+                    TextSize = 16;
+                    Font = globalFont;
+                });
+                initButton = new("Button",{
+                    Style = "Outlined";
+                    Position = UDim2.new(0.5,0,0.5,18);
+                    AnchorPoint = Vector2.new(0.5,0.5);
+                    Size = UDim2.fromOffset(82,38);
+                    Text = lang("init");
+                    OutlineColor3 = MaterialUI:GetColor("TextColor");
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                    WhenCreated = function (this)
+                        initButton = this;
+                    end;
+                });
+            });
+            initButton.MouseButton1Click:Wait();
+            exeCommand("tcmi init");
+            initButton:Destroy();
+            frame:Destroy();
+        end
+        reloadList();
     end
 
     render(); -- 렌더를 한번 돌림
