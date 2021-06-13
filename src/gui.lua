@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 01:49:33
+    # Modified time : 2021-06-13 12:37:10
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -54,6 +54,7 @@ local function main(plugin)
     local AdvancedTween = require(script.Parent.libs.AdvancedTween) --[[자동완성]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
     local MaterialUI = require(script.Parent.libs.MaterialUI) --[[자동완성]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
     local pluginUpdateDialogRender = require(script.pluginUpdateDialog) --[[자동완성]] if not true then pluginUpdateDialogRender = require("src.pluginUpdateDialogRender") end
+    local getExampleDialogRender = require(script.getExampleDialog) --[[자동완성]] if not true then getExampleDialogRender = require("src.getExampleDialog") end
     local itemRender = require(script.item); --[[자동완성]] if not true then itemRender = require("scr.item"); end
     local lang = require(script.lang); --[[자동완성]] if not true then lang = require("src.lang.init"); end
     local new = MaterialUI.Create;
@@ -108,7 +109,13 @@ local function main(plugin)
     pluginUpdateDialogRender
         :setDialog(dialog)
         :setMaterialUI(MaterialUI)
-        :setAdvancedTween(AdvancedTween);
+        :setAdvancedTween(AdvancedTween)
+        :setLang(lang);
+    getExampleDialogRender
+        :setDialog(dialog)
+        :setMaterialUI(MaterialUI)
+        :setAdvancedTween(AdvancedTween)
+        :setLang(lang);
 
 --#endregion
 --#region [플러그인 바탕] 플러그인 UI / 플러그인 마우스 / 플러그인 탭 / 플러그인 버튼을 만듬
@@ -283,16 +290,19 @@ local function main(plugin)
         end
 
         -- 메뉴 함수 생성
+        local menuClicked = false;
         local function closeMenu() -- 메뉴 닫기 함수
             if AdvancedTween:IsTweening(store.menu) then
                 return;
             end
             store.menu.shadow.Visible = false;
             store.menuBG.Visible = false;
-            store.menu.Size = menuSize;
+            store.menuScale.Scale = 1;
             store.menu.ImageTransparency = 0;
+            AdvancedTween:RunTween(store.menuScale,menuTrans,{
+                Scale = 0.25;
+            });
             AdvancedTween:RunTween(store.menu,menuTrans,{
-                Size = menuCloseSize;
                 ImageTransparency = 1;
             },function ()
                 store.menu.Visible = false;
@@ -300,16 +310,19 @@ local function main(plugin)
         end
 
         local function openMenu() -- 메뉴 열기 함수
+            menuClicked = false;
             if AdvancedTween:IsTweening(store.menu) then
                 return;
             end
             store.menu.shadow.Visible = true;
             store.menu.Visible = true;
             store.menuBG.Visible = true;
-            store.menu.Size = menuCloseSize;
+            store.menuScale.Scale = 0.25;
             store.menu.ImageTransparency = 1;
+            AdvancedTween:RunTween(store.menuScale,menuTrans,{
+                Scale = 1;
+            });
             AdvancedTween:RunTween(store.menu,menuTrans,{
-                Size = menuSize;
                 ImageTransparency = 0;
             });
         end
@@ -322,18 +335,25 @@ local function main(plugin)
 
         local function menuItem(text,layout,func)
             return new("TextButton",{
-                Text = text;
-                Size = Udim2.new(1,0,0,32);
-                Position = Udim2.fromOffset(0,14);
+                Text = "";
+                Size = UDim2.new(1,0,0,32);
+                Position = UDim2.fromOffset(0,14 + (layout * 32));
                 BackgroundTransparency = 1;
-                LayoutOrder = layout;
                 ZIndex = 801;
-                MouseButton1Click = func;
+                MouseButton1Click = function ()
+                    if menuClicked then
+                        return
+                    end
+                    menuClicked = true;
+                    func();
+                    delay(0.07,closeMenu);
+                end;
             },{
-                new("TextLable",{
-                    Text = "About";
-                    Size = Udim2.fromScale(1,1);
-                    Position = Udim2.fromOffset(8,0);
+                new("TextLabel",{
+                    TextSize = 9;
+                    Text = text;
+                    Size = UDim2.fromScale(1,1);
+                    Position = UDim2.fromOffset(10,0);
                     BackgroundTransparency = 1;
                     TextXAlignment = Enum.TextXAlignment.Left;
                     ZIndex = 801;
@@ -378,6 +398,37 @@ local function main(plugin)
             });
         end
 
+        local function install(id,popupPos,title)
+            openInstallWindow(popupPos);
+            store.installTitle.Text = title;
+            wait(0.9);
+            exeCommand("cls");
+            local example = exeCommand("tcmi install " .. id .. " -f");
+            store.installOkButton.Disabled = false;
+            store.installOkButton:Ripple(store.installOkButton.AbsolutePosition + (0.5 * (store.installOkButton.AbsoluteSize)));
+            store.installOkButtonSetColor();
+            store.installStatus.Disabled = true;
+            reloadList();
+            if example then
+                getExampleDialogRender:render(function ()
+                    exeCommand("tcmi getexample");
+                end);
+            end
+        end
+
+        local function uninstall(id,popupPos,title)
+            openInstallWindow(popupPos);
+            store.installTitle.Text = title;
+            wait(0.9);
+            exeCommand("cls");
+            exeCommand("tcmi uninstall " .. id);
+            store.installOkButton.Disabled = false;
+            store.installOkButton:Ripple(store.installOkButton.AbsolutePosition + (0.5 * (store.installOkButton.AbsoluteSize)));
+            store.installOkButtonSetColor();
+            store.installStatus.Disabled = true;
+            reloadList();
+        end
+
         local listItems = {};
         local function listItem(id,data)
             if data.visible == false then
@@ -405,26 +456,13 @@ local function main(plugin)
 
             if not listItems[id] then
                 item.InstallIcon.MouseButton1Click:Connect(function ()
-                    openInstallWindow(item.InstallIcon.AbsolutePosition);
-                    store.installTitle.Text = lang("onInstalling");
-                    wait(0.9);
-                    exeCommand("cls");
-                    exeCommand("tcmi install " .. id .. " -f");
-                    store.installOkButton.Disabled = false;
-                    store.installOkButtonSetColor();
-                    store.installStatus.Disabled = true;
-                    reloadList();
+                    install(id,item.InstallIcon.AbsolutePosition,lang("onInstalling"));
                 end);
                 item.UninstallIcon.MouseButton1Click:Connect(function ()
-                    openInstallWindow(item.InstallIcon.AbsolutePosition);
-                    store.installTitle.Text = lang("onUninstalling");
-                    wait(0.9);
-                    exeCommand("cls");
-                    exeCommand("tcmi uninstall " .. id);
-                    store.installOkButton.Disabled = false;
-                    store.installOkButtonSetColor();
-                    store.installStatus.Disabled = true;
-                    reloadList();
+                    uninstall(id,item.InstallIcon.AbsolutePosition,lang("onUninstalling"));
+                end);
+                item.UpdateIcon.MouseButton1Click:Connect(function ()
+                    install(id,item.InstallIcon.AbsolutePosition,lang("onUpdateing"));
                 end);
                 listItems[id] = item;
             end
@@ -516,7 +554,16 @@ local function main(plugin)
                 WhenCreated = function (this)
                     MaterialUI:SetRound(this,12);
                     store.menu = this;
+                    this:GetPropertyChangedSignal("ImageTransparency"):Connect(function ()
+                        local trans = this.ImageTransparency;
+                        for _,v in pairs(this:GetChildren()) do
+                            if v:IsA("TextButton") then
+                                v.TextLabel.TextTransparency = trans;
+                            end
+                        end
+                    end);
                 end;
+                Size = menuSize;
                 AnchorPoint = Vector2.new(1,0);
                 Position = UDim2.new(1,-6,0,6);
                 ZIndex = 801;
@@ -528,15 +575,11 @@ local function main(plugin)
                 end;
                 Visible = false;
             },{
-                about = menuItem(lang("about"),0,function ()
+                about = menuItem(lang("aboutButton"),0,function ()
                     
                 end);
-                fetch = menuItem(lang("fetch"),1,function ()
-                    fetchDB();
-                end);
-                reload = menuItem(lang("reload"),2,function ()
-                    reloadList();
-                end);
+                fetch = menuItem(lang("fetchButton"),1,fetch);
+                reload = menuItem(lang("reloadButton"),2,reloadList);
                 shadow = new("ImageLabel",{
                     AnchorPoint = Vector2.new(0.5, 0);
                     BackgroundTransparency = 1;
@@ -547,6 +590,15 @@ local function main(plugin)
                     Image = "rbxassetid://1316045217";
                     ImageColor3 = Color3.fromRGB(0, 0, 0);
                     ImageTransparency = 0.71;
+                    WhenCreated = function (this)
+                        store.menuShadow = this;
+                    end;
+                });
+                scale = new("UIScale",{
+                    Scale = 1;
+                    WhenCreated = function (this)
+                        store.menuScale = this;
+                    end;
                 });
             });
             topbar = new("Frame",{

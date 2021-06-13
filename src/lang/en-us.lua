@@ -9,15 +9,21 @@ return {
     uninstallHoverTip = "uninstall this module completely";
     onInstalling = "Installing . . .";
     onUninstalling = "Uninstalling . . .";
-    about = "About Plugin";
-    reload = "Reload List";
-    fetch = "Fetch Database";
+    onUpdateing = "Updateing . . .";
+    aboutButton = "About Plugin";
+    reloadButton = "Reload List";
+    fetchButton = "Fetch Database";
+    settingsButton = "Settings";
+    back = "Back";
+    exampleDialogSizeY = 142;
+    exampleDialogTitle = "Get Example";
     exampleDialogMsg = "an example file found!\nmove to workspace and show it?";
     exampleDialogYes = "Show";
     exampleDialogNo = "Cancel";
+    pluginUpdateDialogSizeY = 188;
     pluginUpdateDialogDismiss = "Dismiss";
     pluginUpdateDialogTitle = "Update";
-    pluginUpdateDialogMsg = "You can update plugin now!\nupdate plugin and receives more options and feel more experience!"
+    pluginUpdateDialogMsg = "You can update plugin now!\nupdate plugin and receives more options and feel more experience!";
     outupdates = "You can update :{{count}}: modules now!";
     updateAll = "Update All";
     about = [[
@@ -52,6 +58,11 @@ license : Mit
 
 termRBXL : terminal simulater for rbxl
 https://github.com/qwreey75/termRBLX
+author : qwreey (qwreey75@gmail.com)
+license : Mit
+
+data : data service for rbxl plugin
+https://github.com/qwreey75/RBX_UI_PROJECT/blob/master/PluginUtil/Data.lua
 author : qwreey (qwreey75@gmail.com)
 license : Mit
 

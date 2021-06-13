@@ -37,6 +37,9 @@
             "version": {
                 "$path": "src/version.txt"
             },
+            "getExampleDialog": {
+                "$path": "src/getExampleDialog.lua"
+            },
             "lang": {
                 "$path": "src/lang"
             }
