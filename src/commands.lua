@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 01:23:03
+    # Modified time : 2021-06-13 13:24:26
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -297,6 +297,9 @@ local cmds = {
                     content.output("ERROR : " .. errmsg .. "\n");
                 end
                 if not quiet then
+                    if object.docs and object.docs ~= "" then
+                        content.output(content.lang and content.lang("docs",{url = object.docs}) or ("this module has docs, if you want to check it, please follow this link\n" .. object.docs .. "\n"));
+                    end
                     content.output("\n");
                 end
 

@@ -26,6 +26,7 @@ return {
     pluginUpdateDialogMsg = "You can update plugin now!\nupdate plugin and receives more options and feel more experience!";
     outupdates = "You can update :{{count}}: modules now!";
     updateAll = "Update All";
+    docs = "this module has docs, if you want to check it, please follow this link\n:{{url}}:";
     about = [[
 nofairTCM / Package management system
 version : :{{version}}:

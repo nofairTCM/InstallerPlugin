@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 19:24:06
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 01:45:23
+    # Modified time : 2021-06-13 14:04:04
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -106,7 +106,7 @@ return function (id,inData,MaterialUI,lang)
             BackgroundColor3 = Color3.fromRGB(255, 255, 255);
             BackgroundTransparency = 1;
             Position = UDim2.new(0, 88, 0, 22);
-            Size = UDim2.new(1, -124, 0, 60);
+            Size = UDim2.new(1, -124, 0, 57);
             Font = Enum.Font.Gotham;
             Text = inData.info;
             TextColor3 = MaterialUI:GetColor("TextColor");
@@ -115,6 +115,7 @@ return function (id,inData,MaterialUI,lang)
             TextWrapped = true;
             TextXAlignment = Enum.TextXAlignment.Left;
             TextYAlignment = Enum.TextYAlignment.Top;
+            ClipsDescendants = true;
         });
         showMore = new("TextButton",{
             BackgroundColor3 = Color3.fromRGB(255, 255, 255);
