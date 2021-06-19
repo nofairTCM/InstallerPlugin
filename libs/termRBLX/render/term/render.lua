@@ -29,6 +29,10 @@ end
 local storage = {};
 module.Storage = {};
 
+function module.getObject(name)
+	return storage[name];
+end
+
 function module.Import(ClassName)
 	return function (prop)
 		if type(prop) == "string" then
