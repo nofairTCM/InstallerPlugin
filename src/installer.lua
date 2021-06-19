@@ -35,8 +35,8 @@ local props = {
     "majorVersion",
     "toolboxID",
     "index",
-    "docs",
-    "icon"
+    --"docs",
+    --"icon"
 };
 -- check thing's properties
 local function checkThing(thing)
