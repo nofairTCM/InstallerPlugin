@@ -14,6 +14,7 @@ return {
     reloadButton = "목록 다시 불러오기";
     fetchButton = "데이터베이스 다시 받아오기";
     settingsButton = "설정";
+    reloadPluginButton = "플러그인 다시로드";
     back = "뒤로가기";
     exampleDialogSizeY = 142;
     exampleDialogTitle = "예시 얻기";

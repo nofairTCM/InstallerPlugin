@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-20 16:31:39
+    # Modified time : 2021-06-20 17:45:35
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -33,7 +33,7 @@ local function main(plugin)
         "http://www.roblox.com/asset/?id=6031104648",
         "http://www.roblox.com/asset/?id=6031302931",
         "http://www.roblox.com/asset/?id=4668069300",
-        "rbxassetid://1316045217",
+        "rbxassetid://1316045217"
     };
 
     -- 로블록스 서비스
@@ -72,7 +72,7 @@ local function main(plugin)
     local tobBarSizeY = 42; -- 탑바 Y 높이
     local tabSizeY = 64; -- 탭 Y 높이
     local white = Color3.fromRGB(255,255,255); -- 흰색
-    local menuSize = UDim2.fromOffset(140,(14*2) + (32*3)) -- 메뉴 열린 크기
+    local menuSize = UDim2.fromOffset(160,(14*2) + (32*4)) -- 메뉴 열린 크기
     --local menuCloseSize = UDim2.fromOffset(70,70); -- 매뉴 닫히는 크기
     local outupdatePromptSizeY = 48;
 
@@ -177,11 +177,11 @@ local function main(plugin)
     if not uiHolder.Enabled then -- 창이 열릴 때 까지 기다림
         uiHolder:GetPropertyChangedSignal("Enabled"):Wait();
     end
-    local slashScreen = splashScreenRender:render(); -- 스플레시 스크린을 만듬 (로드중을 띄우기 위해)
-    slashScreen:setStatus("initialize ...");
+    local splashScreen = splashScreenRender:render(); -- 스플레시 스크린을 만듬 (로드중을 띄우기 위해)
+    splashScreen:setStatus("initialize ...");
 
     -- 모듈 정보를 깃허브에서 읽어옴
-    slashScreen:setStatus("fetch data from github ...");
+    splashScreen:setStatus("fetch data from github ...");
     local moduleData;
     local reloadList;
     local function fetch()
@@ -212,17 +212,17 @@ local function main(plugin)
         end
 
         MaterialUI.CurrentTheme = tostring(settings().Studio.Theme); -- 테마 설정함
-        slashScreen = slashScreen or splashScreenRender:render(); -- 스플레시 스크린을 가져옴 (없으면 만듬)
+        splashScreen = splashScreen or splashScreenRender:render(); -- 스플레시 스크린을 가져옴 (없으면 만듬)
 
-        slashScreen:setStatus("load plugin assets ...");
+        splashScreen:setStatus("load plugin assets ...");
         game.ContentProvider:PreloadAsync(assets) -- 에셋을 프리로드해옴
-        slashScreen:setStatus("startup rendering ...");
+        splashScreen:setStatus("startup rendering ...");
 
         -- 마우스를 만듬
         local mouse = MaterialUI:UseDockWidget(uiHolder,plugin:GetMouse()); -- 위젯 등록함 (마우스 가져옴)
         lastMouse = mouse;
 
-        slashScreen:setStatus("rendering ui ...");
+        splashScreen:setStatus("rendering ui ...");
         local store = {tabButtons = {}};
 
         -- 탭 설정 생성
@@ -372,6 +372,24 @@ local function main(plugin)
         end
 
         local function openInfo(id,data)
+            local isInstalled = installer:isInstalled(id);
+            local lastVersion = data.publishVersion;
+            if isInstalled and lastVersion == isInstalled.Value then
+                store.infoUninstall.Visible = true;
+                store.infoInstall.Visible = false;
+                store.infoUpdate.Visible = false;
+            elseif isInstalled then
+                store.infoUninstall.Visible = true;
+                store.infoInstall.Visible = false;
+                store.infoUpdate.Visible = true;
+            else
+                store.infoUninstall.Visible = false;
+                store.infoInstall.Visible = true;
+                store.infoUpdate.Visible = false;
+            end
+            store.infoTitle.Text = data.name or id;
+            store.infoIcon.Image = data.icon or "";
+            store.infoAuthor.Text = ("by " .. data.author) or "none";
             store.infoHolder.Position = UDim2.fromScale(0,1);
             infoIsOpen = true;
             store.infoScreen.Visible = true;
@@ -458,10 +476,27 @@ local function main(plugin)
             });
         end
 
+        local TweenService = game:GetService("TweenService");
+        local function scrollInfoHolder(to)
+            local infoScroll = store.infoScroll;
+            local lastInfoScrollPos = store.lastInfoScrollPos or store.infoScroll.CanvasPosition.Y;
+            local scrollPos = lastInfoScrollPos + (150*to);
+            lastInfoScrollPos = scrollPos;
+            AdvancedTween:RunTween(infoScroll,{
+                Time = 0.45;
+                Easing = function (index)
+                    return TweenService:GetValue(index,Enum.EasingStyle.Quad,Enum.EasingDirection.Out);
+                end;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                CanvasPosition = Vector2.new(0,scrollPos);
+            });
+        end
+
         -- 메뉴 함수 생성
         local menuClicked = false;
         local function closeMenu() -- 메뉴 닫기 함수
-            if AdvancedTween:IsTweening(store.menu) then
+            if (not store) or AdvancedTween:IsTweening(store.menu) then
                 return;
             end
             store.menu.shadow.Visible = false;
@@ -520,7 +555,7 @@ local function main(plugin)
             },{
                 new("TextLabel",{
                     TextColor3 = MaterialUI:GetColor("TextColor");
-                    TextSize = 9;
+                    TextSize = 10;
                     Text = text;
                     Size = UDim2.fromScale(1,1);
                     Position = UDim2.fromOffset(10,0);
@@ -618,24 +653,6 @@ local function main(plugin)
             local item = listItems[id] or itemRender(id,data,MaterialUI,lang);
 
             local function openThisInfo()
-                isInstalled = installer:isInstalled(id);
-                lastVersion = data.publishVersion;
-                if isInstalled and lastVersion == isInstalled.Value then
-                    store.infoUninstall.Visible = true;
-                    store.infoInstall.Visible = false;
-                    store.infoUpdate.Visible = false;
-                elseif isInstalled then
-                    store.infoUninstall.Visible = true;
-                    store.infoInstall.Visible = false;
-                    store.infoUpdate.Visible = true;
-                else
-                    store.infoUninstall.Visible = false;
-                    store.infoInstall.Visible = true;
-                    store.infoUpdate.Visible = false;
-                end
-                store.infoTitle.Text = data.name or id;
-                store.infoIcon.Image = data.icon or "";
-                store.infoAuthor.Text = ("by " .. data.author) or "none";
                 openInfo(id,data);
             end
             if store.infoId == id then
@@ -814,10 +831,15 @@ local function main(plugin)
                 Visible = false;
             },{
                 about = menuItem(lang("aboutButton"),0,function ()
-                    
+                    openInfo("InstallerPlugin",{
+                        info = lang("about",{version = verInfo.version or "unknown"});
+                        icon = "";
+                        author = "Qwreey";
+                    });
                 end);
                 fetch = menuItem(lang("fetchButton"),1,fetch);
                 reload = menuItem(lang("reloadButton"),2,reloadList);
+                reloadPlugin = menuItem(lang("reloadPluginButton"),3,render);
                 shadow = new("ImageLabel",{
                     AnchorPoint = Vector2.new(0.5, 0);
                     BackgroundTransparency = 1;
@@ -1264,6 +1286,17 @@ local function main(plugin)
                         infoMouseDown = true;
                     end;
                 },{
+                    shadow = new("ImageLabel",{
+                        AnchorPoint = Vector2.new(0.5, 0);
+                        BackgroundTransparency = 1;
+                        BorderSizePixel = 0;
+                        Position = UDim2.new(0.5, 0, 0, -8);
+                        Size = UDim2.new(1, 22, 0, 280);
+                        ZIndex = 99;
+                        Image = "rbxassetid://1316045217";
+                        ImageColor3 = Color3.fromRGB(0, 0, 0);
+                        ImageTransparency = 0.71;
+                    });
                     bar = new("TextButton",{
                         Position = UDim2.fromOffset(0,12);
                         Size = UDim2.new(1,0,0,52);
@@ -1468,6 +1501,16 @@ local function main(plugin)
                             BackgroundTransparency = 1;
                             TextColor3 = MaterialUI:GetColor("TextColor");
                             WhenCreated = function (this)
+                                this.MouseWheelForward:Connect(function ()
+                                    if this:IsFocused() then
+                                        scrollInfoHolder(-1);
+                                    end
+                                end);
+                                this.MouseWheelBackward:Connect(function ()
+                                    if this:IsFocused() then
+                                        scrollInfoHolder(1);
+                                    end
+                                end);
                                 store.infoText = this;
                                 this:GetPropertyChangedSignal("TextBounds"):Connect(function ()
                                     this.Size = UDim2.new(1,0,0,this.TextBounds.Y+16+12+2);
@@ -1512,30 +1555,23 @@ local function main(plugin)
         termTCM.uiHost.holder.Size = UDim2.fromScale(0.5,1);
         termTCM.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
 
-        if slashScreen then
-            slashScreen:close();
-            slashScreen = nil;
-            termTCM.output("Plugin Core : loaded!\n----------------------------------------\n\n");
-            -- 만약 플러그인이 업데이트가 필요하면 확인창을 띄워줌
-            if showUpdateDialog then
-                showUpdateDialog = false;
-                pluginUpdateDialogRender:render(); -- 다이어로그 렌더러를 부름
-            end
-        end
-
         local saveConnection;
         killRender = function () -- 렌더 해제하는 함수 지정
             saveConnection:Disconnect();
             data:Save("listItemHolder_scrollPos",store.listItemHolder.CanvasPosition.Y);
-            if mouse and mouse.Obj then -- 마우스가 있으면 지움
-                mouse.Obj:Destroy();
-            end
-            termTCM.uiHost.holder.Parent = plugin; -- termTCM 을 옮김
-            MaterialUI:CleanUp(); -- 한번 싹 클린업함
-            termTCM.output("-----------------Reload-----------------");
+            data:Save("lastInfoId",infoIsOpen and store.infoId);
+            pcall(function ()
+                if mouse and mouse.Obj then -- 마우스가 있으면 지움
+                    mouse.Obj:Destroy();
+                end
+                termTCM.uiHost.holder.Parent = plugin; -- termTCM 을 옮김
+                MaterialUI:CleanUp(); -- 한번 싹 클린업함
+                termTCM.output("-----------------Reload-----------------");
+            end);
+            store = nil;
         end;
         saveConnection = plugin.Unloading:Connect(killRender);
-        
+
         if (not game:GetService("ServerStorage"):FindFirstChild("nofairTCM_Server"))
         or (not game:GetService("ServerScriptService"):FindFirstChild("nofairTCM_ServerInit"))
         or (not game:GetService("ReplicatedStorage"):FindFirstChild("nofairTCM_Client"))
@@ -1584,6 +1620,24 @@ local function main(plugin)
             },{
                 CanvasPosition = Vector2.new(0,data:ForceLoad("listItemHolder_scrollPos") or 0);
             });
+
+            local lastInfoId = data:ForceLoad("lastInfoId");
+            local lastInfoData = moduleData and moduleData[lastInfoId];
+            if lastInfoId and lastInfoData then
+                openInfo(lastInfoId,lastInfoData);
+            end
+            if splashScreen then
+                splashScreen:setStatus("load plugin data");
+                wait(0.12);
+                splashScreen:close();
+                splashScreen = nil;
+                termTCM.output("Plugin Core : loaded!\n----------------------------------------\n\n");
+                -- 만약 플러그인이 업데이트가 필요하면 확인창을 띄워줌
+                if showUpdateDialog then
+                    showUpdateDialog = false;
+                    pluginUpdateDialogRender:render(); -- 다이어로그 렌더러를 부름
+                end
+            end
         end);
     end
 

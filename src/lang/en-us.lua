@@ -14,6 +14,7 @@ return {
     reloadButton = "Reload List";
     fetchButton = "Fetch Database";
     settingsButton = "Settings";
+    reloadPluginButton = "Reload Plugin";
     back = "Back";
     exampleDialogSizeY = 142;
     exampleDialogTitle = "Get Example";
