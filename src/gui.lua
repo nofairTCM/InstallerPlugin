@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-20 19:46:11
+    # Modified time : 2021-06-20 21:48:56
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -1685,6 +1685,34 @@ local function main(plugin)
         end;
         saveConnection = plugin.Unloading:Connect(killRender);
 
+        delay(0.22,function ()
+            AdvancedTween:RunTween(store.listItemHolder,{
+                Time = 0.18;
+                Easing = AdvancedTween.EasingFunctions.Exp2;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                CanvasPosition = Vector2.new(0,data:ForceLoad("listItemHolder_scrollPos") or 0);
+            });
+
+            local lastInfoId = data:ForceLoad("lastInfoId");
+            local lastInfoData = moduleData and moduleData[lastInfoId];
+            if lastInfoId and lastInfoData and lastInfoId ~= "InstallerPlugin" then
+                openInfo(lastInfoId,lastInfoData);
+            end
+            if splashScreen then
+                splashScreen:setStatus("load plugin data");
+                wait(0.12);
+                splashScreen:close();
+                splashScreen = nil;
+                termTCM.output("Plugin Core : loaded!\n----------------------------------------\n\n");
+                -- 만약 플러그인이 업데이트가 필요하면 확인창을 띄워줌
+                if showUpdateDialog then
+                    showUpdateDialog = false;
+                    pluginUpdateDialogRender:render(); -- 다이어로그 렌더러를 부름
+                end
+            end
+        end);
+
         if (not game:GetService("ServerStorage"):FindFirstChild("nofairTCM_Server"))
         or (not game:GetService("ServerScriptService"):FindFirstChild("nofairTCM_ServerInit"))
         or (not game:GetService("ReplicatedStorage"):FindFirstChild("nofairTCM_Client"))
@@ -1725,33 +1753,6 @@ local function main(plugin)
             frame:Destroy();
         end
         reloadList();
-        delay(0.22,function ()
-            AdvancedTween:RunTween(store.listItemHolder,{
-                Time = 0.18;
-                Easing = AdvancedTween.EasingFunctions.Exp2;
-                Direction = AdvancedTween.EasingDirection.Out;
-            },{
-                CanvasPosition = Vector2.new(0,data:ForceLoad("listItemHolder_scrollPos") or 0);
-            });
-
-            local lastInfoId = data:ForceLoad("lastInfoId");
-            local lastInfoData = moduleData and moduleData[lastInfoId];
-            if lastInfoId and lastInfoData and lastInfoId ~= "InstallerPlugin" then
-                openInfo(lastInfoId,lastInfoData);
-            end
-            if splashScreen then
-                splashScreen:setStatus("load plugin data");
-                wait(0.12);
-                splashScreen:close();
-                splashScreen = nil;
-                termTCM.output("Plugin Core : loaded!\n----------------------------------------\n\n");
-                -- 만약 플러그인이 업데이트가 필요하면 확인창을 띄워줌
-                if showUpdateDialog then
-                    showUpdateDialog = false;
-                    pluginUpdateDialogRender:render(); -- 다이어로그 렌더러를 부름
-                end
-            end
-        end);
     end
 
     render(); -- 렌더를 한번 돌림
