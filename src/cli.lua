@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-05 18:06:11
+    # Modified time : 2021-06-20 15:59:29
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -33,10 +33,11 @@ local function main(plugin)
 --#region [모듈 임포팅] 플러그인 모듈들을 불러옴 / 기초 설정을 만듬
 
     -- 플러그인 모듈들을 가져옴
+    local libs = script.Parent.libs;
     local commandArg = require(script.commandArg) --[[자동완성]] if not true then commandArg = require("src.commandArg"); end
-    local toolbar = require(script.Parent.libs.ToolbarCombiner); --[[자동완성]] if not true then toolbar = require("libs.ToolbarCombiner.src"); end
+    local toolbar = require(libs.toolbarCombiner); --[[auto]] if not true then toolbar = require("libs.toolbarCombiner"); end
     local installer = require(script.installer); --[[자동완성]] if not true then installer = require("src.installer"); end
-    local termRBLX = require(script.Parent.libs.termRBLX); --[[자동완성]] if not true then termRBLX = require("libs.termRBLX"); end
+    local termRBLX = require(libs.termRBLX); --[[자동완성]] if not true then termRBLX = require("libs.termRBLX"); end
     local commands = require(script.commands); --[[자동완성]] if not true then commands = require("scr.commands"); end
 
     -- 터미널 셋업

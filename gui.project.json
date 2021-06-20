@@ -47,24 +47,20 @@
         "libs": {
             "$className": "Folder",
             "AdvancedTween": {
-                "$path": "libs/AdvancedTween/src/client/AdvancedTween",
-                "$ignoreUnknownInstances": true
+                "$path": "libs/AdvancedTween/src/client/AdvancedTween"
             },
             "MaterialUI": {
                 "$path": "libs/MaterialUI/src/client/MaterialUI",
                 "$ignoreUnknownInstances": true
             },
-            "ToolbarCombiner": {
-                "$path": "libs/ToolbarCombiner/src",
-                "$ignoreUnknownInstances": true
+            "toolbarCombiner": {
+                "$path": "libs/toolbarCombiner.lua"
             },
             "termRBLX": {
-                "$path": "libs/termRBLX",
-                "$ignoreUnknownInstances": true
+                "$path": "libs/termRBLX"
             },
             "data": {
-                "$path": "libs/Data/src",
-                "$ignoreUnknownInstances": true
+                "$path": "libs/data.lua"
             }
         }
     }
