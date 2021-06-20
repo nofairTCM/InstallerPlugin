@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-20 17:45:35
+    # Modified time : 2021-06-20 19:46:11
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -72,7 +72,6 @@ local function main(plugin)
     local tobBarSizeY = 42; -- 탑바 Y 높이
     local tabSizeY = 64; -- 탭 Y 높이
     local white = Color3.fromRGB(255,255,255); -- 흰색
-    local menuSize = UDim2.fromOffset(160,(14*2) + (32*4)) -- 메뉴 열린 크기
     --local menuCloseSize = UDim2.fromOffset(70,70); -- 매뉴 닫히는 크기
     local outupdatePromptSizeY = 48;
 
@@ -481,16 +480,18 @@ local function main(plugin)
             local infoScroll = store.infoScroll;
             local lastInfoScrollPos = store.lastInfoScrollPos or store.infoScroll.CanvasPosition.Y;
             local scrollPos = lastInfoScrollPos + (150*to);
-            lastInfoScrollPos = scrollPos;
+            store.lastInfoScrollPos = scrollPos;
             AdvancedTween:RunTween(infoScroll,{
                 Time = 0.45;
                 Easing = function (index)
-                    return TweenService:GetValue(index,Enum.EasingStyle.Quad,Enum.EasingDirection.Out);
+                    return TweenService:GetValue(index,Enum.EasingStyle.Quint,Enum.EasingDirection.Out);
                 end;
                 Direction = AdvancedTween.EasingDirection.Out;
             },{
                 CanvasPosition = Vector2.new(0,scrollPos);
-            });
+            },function ()
+                store.lastInfoScrollPos = nil;
+            end);
         end
 
         -- 메뉴 함수 생성
@@ -794,6 +795,56 @@ local function main(plugin)
             });
         end
 
+        local function closeSettings()
+            AdvancedTween:RunTween(store.settingsHolder,{
+                Time = 0.4;
+                Easing = AdvancedTween.EasingFunctions.Exp2;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                Position = UDim2.fromScale(0,1);
+            });
+            AdvancedTween:RunTween(store.settingsScreen,{
+                Time = 0.5;
+                Easing = AdvancedTween.EasingFunctions.Linear;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                BackgroundTransparency = 1;
+            },function ()
+                store.settingsScreen.Visible = false;
+            end);
+        end
+
+        local function openSettings()
+            AdvancedTween:StopTween(store.settingsHolder);
+            store.settingsHolder.Size = UDim2.fromScale(1,0);
+            store.settingsHolder.Position = UDim2.fromScale(0,1);
+            AdvancedTween:RunTween(store.settingsHolder,{
+                Time = 0.7;
+                Easing = AdvancedTween.EasingFunctions.Exp2;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                Size = UDim2.fromScale(1,1);
+            });
+            AdvancedTween:RunTween(store.settingsHolder,{
+                Time = 0.5;
+                Easing = AdvancedTween.EasingFunctions.Exp2Max4;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                Position = UDim2.fromScale(0,0);
+            });
+
+            AdvancedTween:StopTween(store.settingsScreen);
+            store.settingsScreen.BackgroundTransparency = 1;
+            store.settingsScreen.Visible = true;
+            AdvancedTween:RunTween(store.settingsScreen,{
+                Time = 0.2;
+                Easing = AdvancedTween.EasingFunctions.Linear;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                BackgroundTransparency = 0.68;
+            });
+        end
+
         new("Frame",{ -- 보더 부분은 알아서 없어집니다 (MaterialUI 기본 처리)
             Parent = uiHolder;
             BackgroundColor3 = MaterialUI:GetColor("Background");
@@ -818,7 +869,7 @@ local function main(plugin)
                         end
                     end);
                 end;
-                Size = menuSize;
+                Size = UDim2.fromOffset(160,(14*2) + (32*5));
                 AnchorPoint = Vector2.new(1,0);
                 Position = UDim2.new(1,-6,0,6);
                 ZIndex = 801;
@@ -840,6 +891,7 @@ local function main(plugin)
                 fetch = menuItem(lang("fetchButton"),1,fetch);
                 reload = menuItem(lang("reloadButton"),2,reloadList);
                 reloadPlugin = menuItem(lang("reloadPluginButton"),3,render);
+                settings = menuItem(lang("settingsButton"),4,openSettings);
                 shadow = new("ImageLabel",{
                     AnchorPoint = Vector2.new(0.5, 0);
                     BackgroundTransparency = 1;
@@ -1268,7 +1320,7 @@ local function main(plugin)
                     end
                 end;
             },{
-                infoScreen = new("ImageButton",{
+                infoHolder = new("ImageButton",{
                     Size = UDim2.new(1,0,1,44);
                     BackgroundTransparency = 1;
                     ImageColor3 = MaterialUI:GetColor("Background");
@@ -1533,6 +1585,67 @@ local function main(plugin)
                     });
                 });
             });
+            settingsScreen = new("TextButton",{
+                Size = UDim2.fromScale(1,1);
+                Visible = false;
+                Text = "";
+                AutoButtonColor = true;
+                BackgroundTransparency = 0.68;
+                BackgroundColor3 = Color3.fromRGB(0,0,0);
+                ZIndex = 1200;
+                WhenCreated = function (this)
+                    store.settingsScreen = this;
+                end;
+            },{
+                settingsHolder = new("Frame",{
+                    BackgroundColor3 = MaterialUI:GetColor("Background");
+                    Size = UDim2.fromScale(1,0);
+                    WhenCreated = function (this)
+                        store.settingsHolder = this;
+                    end;
+                    ZIndex = 1200;
+                },{
+                    header = new("Frame",{
+                        Size = UDim2.new(1,0,0,42);
+                        ZIndex = 1200;
+                        BackgroundColor3 = MaterialUI:GetColor("TopBar");
+                    },{
+                        shadow = new("ImageLabel",{
+                            Image = "rbxassetid://2715137474";
+                            Size = UDim2.new(1,0,0,8);
+                            Position = UDim2.fromScale(0,1);
+                            BackgroundTransparency = 1;
+                            ImageColor3 = Color3.fromRGB(0,0,0);
+                            ImageTransparency = 0.65;
+                            ZIndex = 1200;
+                        });
+                        back = new("IconButton",{
+                            Size = UDim2.fromOffset(36,36);
+                            Icon = "http://www.roblox.com/asset/?id=6031091000";
+                            Position = UDim2.new(0,(42-36)/2,0.5,0);
+                            AnchorPoint = Vector2.new(0,0.5);
+                            IconColor3 = MaterialUI:GetColor("TextColor");--Color3.fromRGB(255,255,255);
+                            ZIndex = 1200;
+                            IconSizeScale = 0.82;
+                            Style = "WithOutBackground";
+                            MouseButton1Click = closeSettings;
+                        });
+                        title = new("TextLabel",{
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                            BackgroundTransparency = 1;
+                            Font = globalFont;
+                            TextSize = 17;
+                            Text = lang("settings");
+                            Size = UDim2.fromScale(1,1);
+                            Position = UDim2.new(0,36 + 8,0.5,0);
+                            AnchorPoint = Vector2.new(0,0.5);
+                            ZIndex = 1200;
+                            TextColor3 = MaterialUI:GetColor("TextColor");--Color3.fromRGB(255,255,255);
+                        });
+                    });
+                    shadow = new("Shadow");
+                });
+            });
             search = new("Frame",{
                 
             });
@@ -1623,7 +1736,7 @@ local function main(plugin)
 
             local lastInfoId = data:ForceLoad("lastInfoId");
             local lastInfoData = moduleData and moduleData[lastInfoId];
-            if lastInfoId and lastInfoData then
+            if lastInfoId and lastInfoData and lastInfoId ~= "InstallerPlugin" then
                 openInfo(lastInfoId,lastInfoData);
             end
             if splashScreen then

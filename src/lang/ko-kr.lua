@@ -37,6 +37,7 @@ return {
     infoInstall = "설치";
     infoUpdate = "업데이트";
     infoUninstall = "제거";
+    settings = "설정";
     ["info.version"] = "버전 : ";
     ["info.license"] = "라이선스 : ";
     ["info.github"] = "깃허브 저장소 : ";

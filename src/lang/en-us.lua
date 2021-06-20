@@ -37,6 +37,7 @@ return {
     infoInstall = "Install";
     infoUpdate = "Update";
     infoUninstall = "Uninstall";
+    settings = "Settings";
     ["info.version"] = "Version : ";
     ["info.license"] = "License : ";
     ["info.github"] = "Github REPO : ";
