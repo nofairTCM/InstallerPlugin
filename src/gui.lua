@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 23:31:22
+    # Modified time : 2021-06-20 16:31:39
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -48,21 +48,23 @@ local function main(plugin)
 --#region [모듈 임포팅] 플러그인 모듈들을 불러옴 / 기초 설정을 만듬
 
     -- 플러그인 모듈들을 가져옴
-    local commandArg = require(script.commandArg) --[[자동완성]] if not true then commandArg = require("src.commandArg"); end
-    local dialog = require(script.dialog); --[[자동완성]] if not true then dialog = require("scr.dialog"); end
-    local getModulesData = require(script.getModulesData); --[[자동완성]] if not true then getModulesData = require("src.getModulesData"); end
-    local splashScreenRender = require(script.splashScreen); --[[자동완성]] if not true then splashScreenRender = require("src.splashScreen"); end
-    local toolbar = require(script.Parent.libs.ToolbarCombiner); --[[자동완성]] if not true then toolbar = require("libs.ToolbarCombiner.src"); end
-    local installer = require(script.installer); --[[자동완성]] if not true then installer = require("src.installer"); end
-    local termRBLX = require(script.Parent.libs.termRBLX); --[[자동완성]] if not true then termRBLX = require("libs.termRBLX"); end
-    local commands = require(script.commands); --[[자동완성]] if not true then commands = require("scr.commands"); end
-    local AdvancedTween = require(script.Parent.libs.AdvancedTween) --[[자동완성]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
-    local MaterialUI = require(script.Parent.libs.MaterialUI) --[[자동완성]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
-    local pluginData = require(script.Parent.libs.data) --[[자동완성]] if not true then pluginData = require("libs.Data.src.init") end
-    local pluginUpdateDialogRender = require(script.pluginUpdateDialog) --[[자동완성]] if not true then pluginUpdateDialogRender = require("src.pluginUpdateDialogRender") end
-    local getExampleDialogRender = require(script.getExampleDialog) --[[자동완성]] if not true then getExampleDialogRender = require("src.getExampleDialog") end
-    local itemRender = require(script.item); --[[자동완성]] if not true then itemRender = require("scr.item"); end
-    local lang = require(script.lang); --[[자동완성]] if not true then lang = require("src.lang.init"); end
+    local libs = script.Parent.libs;
+    local commandArg = require(script.commandArg) --[[auto]] if not true then commandArg = require("src.commandArg"); end
+    local dialog = require(script.dialog); --[[auto]] if not true then dialog = require("src.dialog"); end
+    local getModulesData = require(script.getModulesData); --[[auto]] if not true then getModulesData = require("src.getModulesData"); end
+    local splashScreenRender = require(script.splashScreen); --[[auto]] if not true then splashScreenRender = require("src.splashScreen"); end
+    local toolbar = require(libs.toolbarCombiner); --[[auto]] if not true then toolbar = require("libs.toolbarCombiner"); end
+    local installer = require(script.installer); --[[auto]] if not true then installer = require("src.installer"); end
+    local termRBLX = require(libs.termRBLX); --[[auto]] if not true then termRBLX = require("libs.termRBLX"); end
+    local commands = require(script.commands); --[[auto]] if not true then commands = require("src.commands"); end
+    local AdvancedTween = require(libs.AdvancedTween) --[[auto]] if not true then AdvancedTween = require("libs.AdvancedTween.src.client.AdvancedTween") end
+    local MaterialUI = require(libs.MaterialUI) --[[auto]] if not true then MaterialUI = require("libs.MaterialUI.src.client.MaterialUI") end
+    local pluginData = require(libs.data) --[[auto]] if not true then pluginData = require("libs.Data.src.init") end
+    local pluginUpdateDialogRender = require(script.pluginUpdateDialog) --[[auto]] if not true then pluginUpdateDialogRender = require("src.pluginUpdateDialog") end
+    local getExampleDialogRender = require(script.getExampleDialog) --[[auto]] if not true then getExampleDialogRender = require("src.getExampleDialog") end
+    local itemRender = require(script.item); --[[auto]] if not true then itemRender = require("src.item"); end
+    local lang = require(script.lang); --[[auto]] if not true then lang = require("src.lang.init"); end
+    local data = require(libs.data):SetUp(plugin); --[[auto]] if not true then data = require("libs.data"):SetUp(plugin); end
     local new = MaterialUI.Create;
 
     -- 기초 설정
@@ -393,6 +395,7 @@ local function main(plugin)
                 .. (data.github and ("\n" .. lang("info.github") .. data.github) or "")
                 .. (data.import and ("\n" .. lang("info.import") .. table.concat(data.import,", ")) or "")
                 .. (data.license and ("\n" .. lang("info.license") .. data.license) or "");
+            store.infoScroll.CanvasPosition = Vector2.new(0,0);
         end
 
         local function newTabButton(prop) -- 탭 버튼 클레싱
@@ -516,6 +519,7 @@ local function main(plugin)
                 end;
             },{
                 new("TextLabel",{
+                    TextColor3 = MaterialUI:GetColor("TextColor");
                     TextSize = 9;
                     Text = text;
                     Size = UDim2.fromScale(1,1);
@@ -850,9 +854,17 @@ local function main(plugin)
                     ZIndex = 89;
                     Size = UDim2.new(1,0,0,tobBarSizeY);
                 });
-                shadow = new("Shadow",{
-                    ZIndex = 80;
+                shadow = new("ImageLabel",{
+                    Image = "rbxassetid://2715137474";
+                    Size = UDim2.new(1,0,0,8);
+                    Position = UDim2.fromScale(0,1);
+                    BackgroundTransparency = 1;
+                    ImageColor3 = Color3.fromRGB(0,0,0);
+                    ImageTransparency = 0.65;
                 });
+                --shadow = new("Shadow",{
+                --    ZIndex = 80;
+                --});
                 icon = new("ImageLabel",{
                     Position = UDim2.fromOffset((tobBarSizeY - 28)/2, (tobBarSizeY - 28)/2);
                     Size = UDim2.new(0, 28, 0, 28);
@@ -953,7 +965,7 @@ local function main(plugin)
                 itemsHolder = new("ScrollingFrame",{
                     Size = UDim2.fromScale(0.5,1);
                     BackgroundTransparency = 1;
-                    ScrollBarThickness = 4;
+                    ScrollBarThickness = 3;
                     WhenCreated = function (this)
                         store.listItemHolder = this;
                         -- this:GetPropertyChangedSignal("CanvasPosition"):Connect(function ()
@@ -1313,6 +1325,18 @@ local function main(plugin)
                             ZIndex = 100;
                             TextColor3 = MaterialUI:GetColor("TextColor");--Color3.fromRGB(255,255,255);
                         });
+                        shadow = new("ImageLabel",{
+                            ZIndex = 101;
+                            Image = "rbxassetid://2715137474";
+                            Size = UDim2.new(1,0,0,12);
+                            Position = UDim2.fromScale(0,1);
+                            BackgroundTransparency = 1;
+                            ImageColor3 = Color3.fromRGB(0,0,0);
+                            ImageTransparency = 1;
+                            WhenCreated = function (this)
+                                store.infoHeaderShadow = this;
+                            end;
+                        });
                     });
                     scroll = new("ScrollingFrame",{
                         Size = UDim2.new(1,0,1,-68-24);
@@ -1320,6 +1344,8 @@ local function main(plugin)
                         BackgroundTransparency = 1;
                         ScrollingEnabled = false;
                         ZIndex = 100;
+                        ScrollBarThickness = 3;
+                        ScrollBarImageColor3 = MaterialUI:GetColor("TextColor3");
                         WhenCreated = function (this)
                             store.infoScroll = this;
                         end;
@@ -1469,6 +1495,17 @@ local function main(plugin)
             });
         });
 
+        local infoHeaderShadowTransparency = MaterialUI.CurrentTheme == "Dark" and 0.66 or 0.75;
+        store.infoScroll:GetPropertyChangedSignal("CanvasPosition"):Connect(function ()
+            AdvancedTween:RunTween(store.infoHeaderShadow,{
+                Time = 0.2;
+                Easing = AdvancedTween.EasingFunctions.Exp2;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                ImageTransparency = store.infoScroll.CanvasPosition.Y <= 10 and 1 or infoHeaderShadowTransparency;
+            });
+        end);
+
         -- 터미널 창을 가져옴
         termTCM.uiHost.holder.Parent = store.holder;
         termTCM.uiHost.holder.Position = UDim2.fromScale(0.5,0);
@@ -1486,7 +1523,10 @@ local function main(plugin)
             end
         end
 
+        local saveConnection;
         killRender = function () -- 렌더 해제하는 함수 지정
+            saveConnection:Disconnect();
+            data:Save("listItemHolder_scrollPos",store.listItemHolder.CanvasPosition.Y);
             if mouse and mouse.Obj then -- 마우스가 있으면 지움
                 mouse.Obj:Destroy();
             end
@@ -1494,7 +1534,8 @@ local function main(plugin)
             MaterialUI:CleanUp(); -- 한번 싹 클린업함
             termTCM.output("-----------------Reload-----------------");
         end;
-
+        saveConnection = plugin.Unloading:Connect(killRender);
+        
         if (not game:GetService("ServerStorage"):FindFirstChild("nofairTCM_Server"))
         or (not game:GetService("ServerScriptService"):FindFirstChild("nofairTCM_ServerInit"))
         or (not game:GetService("ReplicatedStorage"):FindFirstChild("nofairTCM_Client"))
@@ -1535,6 +1576,15 @@ local function main(plugin)
             frame:Destroy();
         end
         reloadList();
+        delay(0.22,function ()
+            AdvancedTween:RunTween(store.listItemHolder,{
+                Time = 0.18;
+                Easing = AdvancedTween.EasingFunctions.Exp2;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                CanvasPosition = Vector2.new(0,data:ForceLoad("listItemHolder_scrollPos") or 0);
+            });
+        end);
     end
 
     render(); -- 렌더를 한번 돌림
