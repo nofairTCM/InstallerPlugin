@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-26 23:51:51
+    # Modified time : 2021-06-27 00:27:09
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -1971,10 +1971,11 @@ local function main(plugin)
                 if mouse and mouse.Obj then -- 마우스가 있으면 지움
                     mouse.Obj:Destroy();
                 end
+                wait();
                 termTCM.uiHost.holder.Parent = plugin; -- termTCM 을 옮김
-                MaterialUI:CleanUp(); -- 한번 싹 클린업함
                 termTCM.output("-----------------Reload-----------------\n");
             end);
+            MaterialUI:CleanUp(); -- 한번 싹 클린업함
             store = nil;
         end;
         saveConnection = plugin.Unloading:Connect(killRender);
