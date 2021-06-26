@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 23:09:22
+    # Modified time : 2021-06-26 20:25:01
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -373,6 +373,23 @@ local cmds = {
         options = {};
         exe = function (args,options,content,self)
             local isPass,errmsg = pcall(content.installer.getExample,content.installer);
+            if not isPass then
+                content.output("ERROR : " .. errmsg .. "\n");
+                return false;
+            end
+            return true;
+        end;
+    };
+    uninit = {
+        info = (
+            "tcmi uninit\n" ..
+            "  uninit tcmi storage\n" ..
+            "  THIS ACTION REMOVES ALL OF MODULES"
+        );
+        options = {};
+        exe = function (args,options,content,self)
+            local isPass,errmsg = pcall(content.installer.uninit,content.installer);
+
             if not isPass then
                 content.output("ERROR : " .. errmsg .. "\n");
                 return false;

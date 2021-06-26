@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 19:24:06
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 21:58:58
+    # Modified time : 2021-06-26 20:08:57
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -40,7 +40,7 @@ return function (id,inData,MaterialUI,lang)
             WhenCreated = function (this)
                 outData[name] = this;
                 local ToolTip = this:GetRealInstance().ToolTip;
-                ToolTip.Position = UDim2.new(1,0,1,6);
+                ToolTip.Position = UDim2.fromOffset(-6,0);
                 ToolTip.AnchorPoint = Vector2.new(1,0);
                 ToolTip.ZIndex = 98;
                 ToolTip.TextLabel.ZIndex = 98;

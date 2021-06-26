@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-20 21:48:56
+    # Modified time : 2021-06-26 23:51:51
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -16,6 +16,9 @@
         모듈 다운로더 / 관리자입니다
         짅자ㅣ안ㄶ희ㅣㄴㄱ깃ㅅ헙브 넘뭏흐ㄴ네
         ㄷ돋덷ㅊ채 몇ㅊㅊ벊흘ㄹㄹ실ㄿ펱ㅌ뜬ㄴㄴㄷㄴ냑ㄱㄱ오
+
+        TODO: 컨트롤 Z 부분 만들기
+        TODO: 모듈이 삭제되면 무언가 잘못되었다면서 다시 설치시키는 다이어로그 띄우기 (손상되었습니다)
   ]]
 
 local function main(plugin)
@@ -199,6 +202,22 @@ local function main(plugin)
 
     local showUpdateDialog = moduleData.InstallerPlugin.publishVersion > publishVersion; -- 플러그인이 업데이트가 필요한지 확인하기 위함
 
+    -- 데이터
+    if data:Load("settings_autoInit") == nil then
+        data:Save("settings_autoInit",false);
+    end
+
+    if data:Load("settings_autoUpdate") == nil then
+        data:Save("settings_autoUpdate",false);
+    end
+
+    local settings_language = data:Load("settings_language");
+    if settings_language == nil then
+        data:Save("settings_language","default");
+    else
+        lang.setLang(settings_language);
+    end
+
 --#endregion
 --#region [UI 렌더] ui 렌더하기 / 테마 변경 이밴트 캐칭
 
@@ -371,7 +390,7 @@ local function main(plugin)
         end
 
         local function openInfo(id,data)
-            local isInstalled = installer:isInstalled(id);
+            local isInstalled = id ~= "InstallerPlugin" and installer:isInstalled(id);
             local lastVersion = data.publishVersion;
             if isInstalled and lastVersion == isInstalled.Value then
                 store.infoUninstall.Visible = true;
@@ -605,6 +624,46 @@ local function main(plugin)
         end
 
         local function install(id,popupPos,title)
+            if id == "InstallerPlugin" then
+                local e = new("TextButton",{
+                    BackgroundColor3 = Color3.fromRGB(0,0,0);
+                    Size = UDim2.fromScale(1,1);
+                    Parent = uiHolder;
+                    ZIndex = 9000;
+                    Text = "";
+                    TextSize = 12;
+                    TextColor3 = Color3.fromRGB(255,255,255);
+                    AutoButtonColor = false;
+                },{
+                    new("Frame",{
+                        Name = "Pointer";
+                    });
+                });
+                wait(1)
+                local d = data:ForceLoad("easterN") or 0;
+                for str in string.gmatch(lang("easterEgg" .. d),"[^\\]+") do
+                    for str2 in string.gmatch(str,".") do
+                        e.Text = e.Text .. str2;
+                        wait(0.05);
+                    end
+                    wait(1.5);
+                    e.Text = "";
+                end
+                AdvancedTween:RunTween(e,{
+                    Time = 0.6;
+                    Easing = AdvancedTween.EasingFunctions.Linear;
+                    Direction = AdvancedTween.EasingDirection.Out;
+                },{
+                    BackgroundTransparency = 1;
+                },function ()
+                    e:Destroy();
+                end);
+                if d == 4 then
+                    return;
+                end
+                data:Save("easterN",d + 1);
+                return;
+            end
             openInstallWindow(popupPos);
             store.installTitle.Text = title;
             wait(0.9);
@@ -814,17 +873,10 @@ local function main(plugin)
             end);
         end
 
+        local connectionOpenSettings = {};
         local function openSettings()
             AdvancedTween:StopTween(store.settingsHolder);
-            store.settingsHolder.Size = UDim2.fromScale(1,0);
             store.settingsHolder.Position = UDim2.fromScale(0,1);
-            AdvancedTween:RunTween(store.settingsHolder,{
-                Time = 0.7;
-                Easing = AdvancedTween.EasingFunctions.Exp2;
-                Direction = AdvancedTween.EasingDirection.Out;
-            },{
-                Size = UDim2.fromScale(1,1);
-            });
             AdvancedTween:RunTween(store.settingsHolder,{
                 Time = 0.5;
                 Easing = AdvancedTween.EasingFunctions.Exp2Max4;
@@ -843,6 +895,158 @@ local function main(plugin)
             },{
                 BackgroundTransparency = 0.68;
             });
+
+            for _,v in pairs(connectionOpenSettings) do
+                v();
+            end
+        end
+
+        local function settings_switch(index,title,info,id)
+            local check;
+            return new("TextButton",{
+                LayoutOrder = index;
+                Text = "";
+                AutoButtonColor = false;
+                ZIndex = 1200;
+                BackgroundTransparency = 1;
+                Size = UDim2.new(1,0,0,18 + 20);
+                MouseButton1Click = function ()
+                    check.Value = not check.Value;
+                end
+            },{
+                new("Rippler",{ZIndex = 1200});
+                new("TextLabel",{
+                    Size = UDim2.new(1,0,0,28);
+                    TextSize = 15;
+                    Font = Enum.Font.GothamBold;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    Position = UDim2.fromOffset(10,8);
+                    ZIndex = 1200;
+                    BackgroundTransparency = 1;
+                    Text = title;
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                });
+                new("Frame",{
+                    Size = UDim2.new(1,-20,0,1);
+                    Position = UDim2.new(0.5,0,0,0);
+                    AnchorPoint = Vector2.new(0.5,1);
+                    BackgroundColor3 = Color3.fromRGB(127,127,127);
+                    ZIndex = 1200;
+                    BackgroundTransparency = 0.3;
+                });
+                new("TextLabel",{
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                    BackgroundTransparency = 1;
+                    ZIndex = 1200;
+                    Font = globalFont;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    TextWrapped = true;
+                    Text = info;
+                    TextSize = 13;
+                    Size = UDim2.new(1,-18-68,1,-28);
+                    Position = UDim2.fromOffset(18,26 + 8);
+                    WhenCreated = function (this)
+                        local function refresh()
+                            this.Parent.Size = UDim2.new(1,0,0,this.TextBounds.Y + 60);
+                        end
+                        this:GetPropertyChangedSignal("TextBounds"):Connect(refresh);
+                    end;
+                });
+                new("Switch",{
+                    WhenCreated = function (this)
+                        check = this;
+                        check.ValueChanged:Connect(function (v)
+                            data:Save(id,v);
+                        end);
+                        table.insert(connectionOpenSettings,function ()
+                            this.Value = data:ForceLoad(id);
+                        end);
+                    end;
+                    ZIndex = 1201;
+                    Position = UDim2.new(1,-18,0.5,0);
+                    AnchorPoint = Vector2.new(1,0.5);
+                });
+            });
+        end
+
+        local function settings_radio(index,title,info,id,items)
+            return new("Frame",{
+                LayoutOrder = index;
+                ZIndex = 1200;
+                BackgroundTransparency = 1;
+                Size = UDim2.new(1,0,0,18 + 20 + (#items * 40));
+            },{
+                new("TextLabel",{
+                    Size = UDim2.new(1,0,0,28);
+                    TextSize = 15;
+                    Font = Enum.Font.GothamBold;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    Position = UDim2.fromOffset(10,8);
+                    ZIndex = 1200;
+                    BackgroundTransparency = 1;
+                    Text = title;
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                });
+                new("Frame",{
+                    Size = UDim2.new(1,-20,0,1);
+                    Position = UDim2.new(0.5,0,0,0);
+                    AnchorPoint = Vector2.new(0.5,1);
+                    BackgroundColor3 = Color3.fromRGB(127,127,127);
+                    ZIndex = 1200;
+                    BackgroundTransparency = 0.3;
+                });
+                new("TextLabel",{
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                    BackgroundTransparency = 1;
+                    ZIndex = 1200;
+                    Font = globalFont;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    TextWrapped = true;
+                    Text = info;
+                    TextSize = 13;
+                    Size = UDim2.new(1,-18-68,1,-34 - (#items * 40));
+                    Position = UDim2.fromOffset(18,34 + (#items * 40));
+                    WhenCreated = function (this)
+                        local function refresh()
+                            this.Parent.Size = UDim2.new(1,0,0,this.TextBounds.Y + 54 + (#items * 40));
+                        end
+                        this:GetPropertyChangedSignal("TextBounds"):Connect(refresh);
+                    end;
+                });
+                new("RadioButton",{
+                    ZIndex = 1200;
+                    BackgroundTransparency = 1;
+                    Size = UDim2.new(1,0,0,#items * 40);
+                    Position = UDim2.fromOffset(0,34);
+                    WhenCreated = function (this)
+                        local load = data:Load(id);
+                        local index = 1;
+                        for i,v in pairs(items) do
+                            local id = v[1];
+                            if load == id then
+                                index = i;
+                            end
+                            this:AddItem(i,id,v[2],nil,40);
+                        end
+                        this.Index = index;
+                        this.ValueChanged:Connect(function (v)
+                            data:Save(id,v);
+                        end)
+                    end;
+                });
+            });
+        end
+
+        local function initSettings()
+            return {
+                settings_switch(1,lang("settings_autoInit_Title"),lang("settings_autoInit_Info"),"settings_autoInit");
+                settings_switch(2,lang("settings_autoUpdate_Title"),lang("settings_autoUpdate_Info"),"settings_autoUpdate");
+                settings_radio(3,lang("settings_language_Title"),lang("settings_language_Info"),"settings_language",{
+                    {"default","Default"};
+                    {"ko-kr","한국어"};
+                    {"en-us","English"};
+                });
+            };
         end
 
         new("Frame",{ -- 보더 부분은 알아서 없어집니다 (MaterialUI 기본 처리)
@@ -883,8 +1087,8 @@ local function main(plugin)
             },{
                 about = menuItem(lang("aboutButton"),0,function ()
                     openInfo("InstallerPlugin",{
+                        icon = "http://www.roblox.com/asset/?id=7005879593";
                         info = lang("about",{version = verInfo.version or "unknown"});
-                        icon = "";
                         author = "Qwreey";
                     });
                 end);
@@ -935,6 +1139,7 @@ local function main(plugin)
                     BackgroundTransparency = 1;
                     ImageColor3 = Color3.fromRGB(0,0,0);
                     ImageTransparency = 0.65;
+                    ZIndex = 90;
                 });
                 --shadow = new("Shadow",{
                 --    ZIndex = 80;
@@ -953,7 +1158,7 @@ local function main(plugin)
                     Size = UDim2.new(1, 0, 0, tobBarSizeY);
                     ZIndex = 90;
                     Font = Enum.Font.SourceSans;
-                    Text = "TCM 설치기";
+                    Text = lang("app_title");
                     TextColor3 = white;
                     TextSize = 18;
                     TextXAlignment = Enum.TextXAlignment.Left;
@@ -969,6 +1174,9 @@ local function main(plugin)
                     MouseButton1Click = function ()
                         store.menuMouseEnter = true;
                         openMenu();
+                    end;
+                    WhenCreated = function (this)
+                        store.menuOpen = this;
                     end;
                     IconColor3 = white;
                 });
@@ -997,47 +1205,47 @@ local function main(plugin)
                     ZIndex = 85;
                     BackgroundColor3 = tabColor;
                     Position = UDim2.fromScale(0,1);
-                    Size = UDim2.new(0.5,0,0,3);
+                    Size = UDim2.new(0.3333,0,0,3);
                     AnchorPoint = Vector2.new(0,1);
                     WhenCreated = function (this)
                         store.tabPointer = this;
                     end;
                 });
                 newTabButton({
-                    Name = "modules";
-                    SizeX = 0.5;
+                    Name = lang("contentTab_market");
+                    SizeX = 0.3333;
                     PositionX = 0;
                     PagePositionX = 0;
-                    Image = "http://www.roblox.com/asset/?id=6804829062";
+                    Image = "http://www.roblox.com/asset/?id=6031265968";
                     Enabled = true;
                 });
---[[                 newTabButton({
-                    Name = "libs";
+                newTabButton({
+                    Name = lang("contentTab_github");
                     SizeX = 0.3333;
                     PositionX = 0.3333;
                     PagePositionX = -1;
-                    Image = "http://www.roblox.com/asset/?id=6804829958";
+                    Image = "http://www.roblox.com/asset/?id=6026568213";
                     Enabled = false;
-                }); ]]
+                });
                 newTabButton({
-                    Name = "terminal";
-                    SizeX = 0.5;
-                    PositionX = 0.5;
-                    PagePositionX = -1;
+                    Name = lang("contentTab_terminal");
+                    SizeX = 0.3333;
+                    PositionX = 0.6666;
+                    PagePositionX = -2;
                     Image = "http://www.roblox.com/asset/?id=6804828747";
                     Enabled = false;
                 });
             });
             holder = new("Frame",{
                 BackgroundTransparency = 1;
-                Size = UDim2.new(2,0,1,-tobBarSizeY + -tabSizeY);
+                Size = UDim2.new(3,0,1,-tobBarSizeY + -tabSizeY);
                 Position = UDim2.fromOffset(0,tobBarSizeY + tabSizeY);
                 WhenCreated = function (this)
                     store.holder = this;
                 end;
             },{
                 itemsHolder = new("ScrollingFrame",{
-                    Size = UDim2.fromScale(0.5,1);
+                    Size = UDim2.fromScale(0.3333,1);
                     BackgroundTransparency = 1;
                     ScrollBarThickness = 3;
                     WhenCreated = function (this)
@@ -1118,9 +1326,79 @@ local function main(plugin)
                             end;
                         });
                     });
-                    outdated = makeListPage("outdated","Outdated",0);
-                    installed = makeListPage("installed","Installed",2);
-                    list = makeListPage("list","Store",3);
+                    outdated = makeListPage("outdated",lang("market_Outdated"),0);
+                    installed = makeListPage("installed",lang("market_Installed"),2);
+                    list = makeListPage("list",lang("market_Store"),3);
+                });
+                github = new("ScrollingFrame",{
+                    Position = UDim2.fromScale(0.3333,0);
+                    Size = UDim2.fromScale(0.3333,1);
+                    BackgroundTransparency = 1;
+                    ScrollBarThickness = 3;
+                    WhenCreated = function (this)
+                        store.githubHolder = this;
+                    end;
+                },{
+                    padding = new("UIPadding",{
+                        PaddingRight = UDim.new(0,6);
+                    });
+                    listLayout = new("UIListLayout",{
+                        SortOrder = Enum.SortOrder.LayoutOrder;
+                        WhenCreated = function (this)
+                            this:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function ()
+                                this.Parent.CanvasSize = UDim2.fromOffset(0,this.AbsoluteContentSize.Y);
+                            end);
+                        end;
+                    });
+                    search = new("Frame",{
+                        LayoutOrder = -1;
+                        Size = UDim2.new(1,0,0,122);
+                        BackgroundTransparency = 1;
+                    },{
+                        new("TextLabel",{
+                            BackgroundTransparency = 1;
+                            Size = UDim2.new(1,0,0,32);
+                            TextSize = 18;
+                            Font = Enum.Font.GothamBold;
+                            Position = UDim2.fromOffset(8,0);
+                            Text = lang("githubSearch_Title");
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                            TextColor3 = MaterialUI:GetColor("TextColor");
+                        });
+                        new("TextLabel",{
+                            TextColor3 = MaterialUI:GetColor("TextColor");
+                            BackgroundTransparency = 1;
+                            Size = UDim2.new(1,-12 -8,0,32);
+                            TextSize = 14;
+                            TextWrapped = true;
+                            Font = Enum.Font.GothamBold;
+                            Position = UDim2.fromOffset(12,32);
+                            Text = lang("githubSearch_Info");
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                        });
+                        new("TextField",{
+                            Size = UDim2.new(1,-24 -72,0,32);
+                            Position = UDim2.fromOffset(12,78);
+                            PlaceholderText = lang("githubSearch_Placeholder");
+                            --Style = "Filled";
+                            WhenCreated = function (this)
+                                store.githubSearchTextBox = this;
+                            end;
+                        });
+                        new("Button",{
+                            Style = "Outlined";
+                            Size = UDim2.new(0,68,0,38);
+                            Position = UDim2.new(1,-6,0,75);
+                            AnchorPoint = Vector2.new(1,0);
+                            Text = lang("githubSearch_Install");
+                        });
+                        new("Frame",{
+                            BackgroundColor3 = Color3.fromRGB(127,127,127);
+                            Size = UDim2.new(1,-20,0,1);
+                            Position = UDim2.fromScale(0.5,1);
+                            AnchorPoint = Vector2.new(0.5,1);
+                        });
+                    });
                 });
             });
             installScreen = new("TextButton",{
@@ -1586,10 +1864,10 @@ local function main(plugin)
                 });
             });
             settingsScreen = new("TextButton",{
+                AutoButtonColor = false;
                 Size = UDim2.fromScale(1,1);
                 Visible = false;
                 Text = "";
-                AutoButtonColor = true;
                 BackgroundTransparency = 0.68;
                 BackgroundColor3 = Color3.fromRGB(0,0,0);
                 ZIndex = 1200;
@@ -1599,12 +1877,28 @@ local function main(plugin)
             },{
                 settingsHolder = new("Frame",{
                     BackgroundColor3 = MaterialUI:GetColor("Background");
-                    Size = UDim2.fromScale(1,0);
+                    Size = UDim2.fromScale(1,1);
                     WhenCreated = function (this)
                         store.settingsHolder = this;
                     end;
                     ZIndex = 1200;
                 },{
+                    scroll = new("ScrollingFrame",{
+                        BackgroundTransparency = 1;
+                        Size = UDim2.new(1,0,1,-42);
+                        Position = UDim2.new(0,0,0,42);
+                        ZIndex = 1200;
+                    },{
+                        listLayout = new("UIListLayout",{
+                            SortOrder = Enum.SortOrder.LayoutOrder;
+                            WhenCreated = function (this)
+                                this:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function ()
+                                    this.Parent.CanvasSize = UDim2.fromOffset(0,this.AbsoluteContentSize.Y);
+                                end);
+                            end;
+                        });
+                        unpack(initSettings());
+                    });
                     header = new("Frame",{
                         Size = UDim2.new(1,0,0,42);
                         ZIndex = 1200;
@@ -1646,9 +1940,9 @@ local function main(plugin)
                     shadow = new("Shadow");
                 });
             });
-            search = new("Frame",{
-                
-            });
+--            search = new("Frame",{
+--                
+--            });
         });
 
         local infoHeaderShadowTransparency = MaterialUI.CurrentTheme == "Dark" and 0.66 or 0.75;
@@ -1664,8 +1958,8 @@ local function main(plugin)
 
         -- 터미널 창을 가져옴
         termTCM.uiHost.holder.Parent = store.holder;
-        termTCM.uiHost.holder.Position = UDim2.fromScale(0.5,0);
-        termTCM.uiHost.holder.Size = UDim2.fromScale(0.5,1);
+        termTCM.uiHost.holder.Position = UDim2.fromScale(0.6666,0);
+        termTCM.uiHost.holder.Size = UDim2.fromScale(0.3333,1);
         termTCM.uiHost.TextScreen.TextColor3 = MaterialUI:GetColor("TextColor");
 
         local saveConnection;
@@ -1679,7 +1973,7 @@ local function main(plugin)
                 end
                 termTCM.uiHost.holder.Parent = plugin; -- termTCM 을 옮김
                 MaterialUI:CleanUp(); -- 한번 싹 클린업함
-                termTCM.output("-----------------Reload-----------------");
+                termTCM.output("-----------------Reload-----------------\n");
             end);
             store = nil;
         end;
@@ -1717,12 +2011,33 @@ local function main(plugin)
         or (not game:GetService("ServerScriptService"):FindFirstChild("nofairTCM_ServerInit"))
         or (not game:GetService("ReplicatedStorage"):FindFirstChild("nofairTCM_Client"))
         or (not game:GetService("ReplicatedFirst"):FindFirstChild("nofairTCM_ClientInit")) then
-            local initButton;
-            local frame = new("Frame",{
-                Parent = store.holder;
-                BackgroundTransparency = 1;
-                Size = UDim2.fromScale(0.5,1);
+            if data:ForceLoad("settings_autoInit") then
+                exeCommand("tcmi init");
+                return;
+            end
+            store.menuOpen.Visible = false;
+            local initButton,text,shadow;
+            local frame = new("TextButton",{
+                Size = UDim2.new(1,0,1,-tobBarSizeY);
+                Position = UDim2.fromOffset(0,tobBarSizeY);
+                ZIndex = 101;
+                Text = "";
+                Parent = uiHolder;
+                BackgroundTransparency = 0;
+                AutoButtonColor = false;
+                BackgroundColor3 = MaterialUI:GetColor("Background");
             },{
+                shadow = new("ImageLabel",{
+                    Image = "rbxassetid://2715137474";
+                    Size = UDim2.new(1,0,0,8);
+                    BackgroundTransparency = 1;
+                    ImageColor3 = Color3.fromRGB(0,0,0);
+                    ImageTransparency = 0.65;
+                    ZIndex = 101;
+                    WhenCreated = function (this)
+                        shadow = this;
+                    end;
+                });
                 text = new("TextLabel",{
                     TextWrapped = true;
                     Text = lang("initYet");
@@ -1733,6 +2048,10 @@ local function main(plugin)
                     AnchorPoint = Vector2.new(0.5,0.5);
                     TextSize = 16;
                     Font = globalFont;
+                    ZIndex = 101;
+                    WhenCreated = function (this)
+                        text = this;
+                    end;
                 });
                 initButton = new("Button",{
                     Style = "Outlined";
@@ -1742,6 +2061,7 @@ local function main(plugin)
                     Text = lang("init");
                     OutlineColor3 = MaterialUI:GetColor("TextColor");
                     TextColor3 = MaterialUI:GetColor("TextColor");
+                    ZIndex = 101;
                     WhenCreated = function (this)
                         initButton = this;
                     end;
@@ -1750,9 +2070,32 @@ local function main(plugin)
             initButton.MouseButton1Click:Wait();
             exeCommand("tcmi init");
             initButton:Destroy();
-            frame:Destroy();
+            AdvancedTween:RunTweens({frame,text},{
+                Time = 0.3;
+                Easing = AdvancedTween.EasingFunctions.Linear;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                BackgroundTransparency = 1;
+                TextTransparency = 1;
+            },function ()
+                frame:Destroy();
+            end);
+            AdvancedTween:RunTween(shadow,{
+                Time = 0.3;
+                Easing = AdvancedTween.EasingFunctions.Linear;
+                Direction = AdvancedTween.EasingDirection.Out;
+            },{
+                ImageTransparency = 1;
+            });
+            store.menuOpen.Visible = true;
         end
         reloadList();
+        if data:Load("settings_autoUpdate") then
+            for _,v in pairs(store.outupdateList) do
+                exeCommand("tcmi install " .. v);
+            end
+            reloadList();
+        end
     end
 
     render(); -- 렌더를 한번 돌림
@@ -1765,6 +2108,11 @@ local function main(plugin)
         thisButton.Icon = ""; wait();
         thisButton.Icon = (tostring(settings().Studio.Theme) == "Dark") and
             pluginIcon or pluginIconBlack; -- 테마에 맞게 아이콘 수정
+    end);
+    -- 언어가 변경됨에 따라 다시 한번 리로드
+    data:BindChanged("settings_language",function (v)
+        lang.setLang(v);
+        render();
     end);
 --#endregion
 end
