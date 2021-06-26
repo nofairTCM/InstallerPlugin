@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-05-19 19:44:56
+    # Modified time : 2021-06-26 18:44:53
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -72,8 +72,8 @@ function module:render()
         icon = new("ImageLabel",{
             AnchorPoint = Vector2.new(0.5, 0.5);
             BackgroundTransparency = 1;
-            Position = UDim2.new(0.5, 0, 0.5, -30);
-            Size = UDim2.new(0, 60, 0, 60);
+            Position = UDim2.fromScale(0.5,0.5);
+            Size = UDim2.fromOffset(52,52);
             Image = pluginIcon;
             ImageColor3 = MaterialUI:GetColor("TextColor");
             ZIndex = 7000;
@@ -98,44 +98,19 @@ function module:render()
                 store.ver = this;
             end;
         });
-        infoHolder = new("Frame",{
-            Size = UDim2.new(1,0,0,32);
+        info = new("TextLabel",{
+            Text = "";
+            Size = UDim2.new(1,0,0,18);
+            WhenCreated = function (this)
+                store.info = this;
+            end;
+            TextColor3 = Color3.fromRGB(93, 93, 93);
             BackgroundTransparency = 1;
-            Position = UDim2.new(0,0,0.5,32);
-            AnchorPoint = Vector2.new(0,0.5);
             NotTagging = true;
             ZIndex = 7001;
-        },{
-            ls = new("UIListLayout",{
-                FillDirection = Enum.FillDirection.Horizontal;
-                HorizontalAlignment = Enum.HorizontalAlignment.Center;
-                VerticalAlignment = Enum.VerticalAlignment.Center;
-                NotTagging = true;
-                Padding = UDim.new(0,8);
-            });
-            circle = new("IndeterminateCircle",{
-                Disabled = false;
-                Size = UDim2.fromOffset(22,22);
-                Position = UDim2.new(0.5,0,0.5,32);
-                AnchorPoint = Vector2.new(0.5,0.5);
-                ZIndex = 7001;
-                NotTagging = true;
-                WhenCreated = function (this)
-                    store.circle = this;
-                end;
-            });
-            info = new("TextLabel",{
-                Text = "";
-                Size = UDim2.new(0,0,1,0);
-                TextColor3 = MaterialUI:GetColor("TextColor");
-                TextTransparency = 0.2;
-                WhenCreated = function (this)
-                    store.info = this;
-                end;
-                BackgroundTransparency = 1;
-                NotTagging = true;
-                ZIndex = 7001;
-            });
+            TextSize = 9;
+            AnchorPoint = Vector2.new(0,1);
+            Position = UDim2.fromScale(0,1);
         });
     });
 
@@ -144,14 +119,13 @@ function module:render()
         if (not store.this) or (not store.this.Parent) then
             return;
         end
-        store.circle.Disabled = true;
         AdvancedTween:RunTween(store.this,tweenData,{
             BackgroundTransparency = 1;
         });
         AdvancedTween:RunTweens({store.info,store.ver},tweenData,{
             TextTransparency = 1;
         });
-        AdvancedTween:RunTweens({store.icon,store.circle:GetRealInstance().Holder},tweenData,{
+        AdvancedTween:RunTween(store.icon,tweenData,{
             ImageTransparency = 1;
         });
         delay(time+0.1,function ()
@@ -165,7 +139,6 @@ function module:render()
             return;
         end
         info.Text = str;
-        info.Size = UDim2.new(0,info.TextBounds.X,1,0);
         termTCM.output("Plugin Core : " .. str .. "\n");
         wait();
     end

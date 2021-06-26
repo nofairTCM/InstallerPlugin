@@ -1,4 +1,23 @@
 return {
+    settings_autoInit_Title = "Auto Init";
+    settings_autoInit_Info = "auto init storage for new place";
+    settings_language_Title = "Display Language";
+    settings_language_Info = "select language that will displays on plugin window";
+    settings_autoUpdate_Title = "Auto update";
+    settings_autoUpdate_Info = "update all modules on loading place (loading plugin)";
+    settings_uninit_Title = "Remove module space";
+    settings_uninit_Info = "Remove module space from this place, this will removes all modules and reload the plugin, you can undo this!";
+    app_title = "Module Installer";
+    contentTab_github = "Github";
+    contentTab_market = "Market";
+    contentTab_terminal = "Terminal";
+    market_Outdated = "Outdated";
+    market_Installed = "Installed";
+    market_Store = "Store";
+    githubSearch_Title = "Search From Github";
+    githubSearch_Info = "Search modules from github and install these modules, you can install user generated module by this";
+    githubSearch_Placeholder = "UserName/RepoName";
+    githubSearch_Install = "Install";
     showMore = "show more . . .";
     store = "Store";
     installed = "Installed";
@@ -92,4 +111,9 @@ https://fonts.google.com/icons
 author : Google
 license : Apache license 2.0
 ]];
+    easterEgg0 = [[did you.... What??\you install this plugin with itself?\h..how\ ]];
+    easterEgg1 = [[do not joke me\i'm seriously\you break the rule\ ]];
+    easterEgg2 = [[ERROR: SYSTEM/CORE/INIT IS NOT EXIST\what's happened?\oh no what\ \ \ ]];
+    easterEgg3 = [[\ \ \ \ \ \ \ \ \ \ system shut down by unexpected error]];
+    easterEgg4 = [[\ \ \ system couldn't started cause unknown error\killing system process . . .\ \ ]];
 };

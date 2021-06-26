@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-13 23:09:50
+    # Modified time : 2021-06-26 21:47:47
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -413,6 +413,17 @@ function module:getExample()
     table.insert(selectTable,lastExample);
     selection:set(selectTable);
     lastExample = nil;
+end
+
+function module:uninit()
+    local s = ServerStorage:FindFirstChild("nofairTCM_Server");
+    local si = ServerScript:FindFirstChild("nofairTCM_ServerInit");
+    local c = ReplicatedStorage:FindFirstChild("nofairTCM_Client");
+    local ci = ReplicatedFirst:FindFirstChild("nofairTCM_ClientInit");
+    if s then s:Destroy(); end
+    if si then si:Destroy(); end
+    if c then c:Destroy(); end
+    if ci then ci:Destroy(); end
 end
 
 return module;

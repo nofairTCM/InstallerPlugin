@@ -1,4 +1,23 @@
 return {
+    settings_autoInit_Title = "자동 초기화";
+    settings_autoInit_Info = "새로운 장소를 열 때 자동으로 저장소를 초기화합니다";
+    settings_language_Title = "표시 언어";
+    settings_language_Info = "화면에 표시될 언어를 결정합니다";
+    settings_autoUpdate_Title = "자동 업데이트";
+    settings_autoUpdate_Info = "장소가 열릴 때 (플러그인이 로드 될 때) 자동으로 모듈들을 업데이트 합니다";
+    settings_uninit_Title = "모듈 저장소 제거하기";
+    settings_uninit_Info = "이 장소에서 모듈 저장소를 제거합니다, 이 작업은 모든 모듈을 삭제시키고 플러그인을 다시 시작시킵니다, 이 작업은 되돌릴 수 없습니다!";
+    app_title = "모듈 설치 관리자";
+    contentTab_github = "유저생성";
+    contentTab_market = "마켓";
+    contentTab_terminal = "터미널";
+    market_Outdated = "업데이트 필요";
+    market_Installed = "설치됨";
+    market_Store = "스토어";
+    githubSearch_Title = "Github 에서 찾기";
+    githubSearch_Info = "Github 에서 모듈들을 찾고 설치합니다, 이것을 이용해서 유저 생성 모듈들을 설치 할 수 있습니다";
+    githubSearch_Placeholder = "유저명/저장소명";
+    githubSearch_Install = "설치";
     showMore = "더보기 . . .";
     store = "스토어";
     installed = "설치됨";
@@ -92,4 +111,9 @@ https://fonts.google.com/icons
 저자 : Google
 사용조건 : 아파치 라이선스 2.0
 ]];
+    easterEgg0 = [[너 지금.... 뭐??\지금 이 플러그인을 이 플러그인으로 설치한거야?\어... 어떻게\ ]];
+    easterEgg1 = [[장난치지마\난 진지해\너는 규칙을 부셨어\ ]];
+    easterEgg2 = [[오류: SYSTEM/CORE/INIT 가 존재하지 않습니다\무슨일이야??\오 이런\ \ \ ]];
+    easterEgg3 = [[\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 예상치 못한 오류로 시스템을 종료합니다]];
+    easterEgg4 = [[예상치 못한 오류로 시스템을 시작하지 못했습니다\시스템 프로세스를 종료합니다 . . .\ \ ]];
 };
