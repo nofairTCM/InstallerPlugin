@@ -3,10 +3,16 @@ return {
     settings_autoInit_Info = "새로운 장소를 열 때 자동으로 저장소를 초기화합니다";
     settings_language_Title = "표시 언어";
     settings_language_Info = "화면에 표시될 언어를 결정합니다";
+    settings_language_Default = "사용자의 컴퓨터 언어에 따라 결정";
     settings_autoUpdate_Title = "자동 업데이트";
     settings_autoUpdate_Info = "장소가 열릴 때 (플러그인이 로드 될 때) 자동으로 모듈들을 업데이트 합니다";
     settings_uninit_Title = "모듈 저장소 제거하기";
     settings_uninit_Info = "이 장소에서 모듈 저장소를 제거합니다, 이 작업은 모든 모듈을 삭제시키고 플러그인을 다시 시작시킵니다, 이 작업은 되돌릴 수 없습니다!";
+    settings_theme_Title = "표시 테마";
+    settings_theme_Info = "플러그인 창에 적용될 테마를 결정합니다 (툴바 아이콘의 색깔을 결정하지 않습니다)";
+    settings_theme_Default = "사용자의 설정에 따라 결정";
+    settings_theme_Dark = "어두운 테마";
+    settings_theme_Light = "밝은 테마";
     app_title = "모듈 설치 관리자";
     contentTab_github = "유저생성";
     contentTab_market = "마켓";

@@ -3,10 +3,16 @@ return {
     settings_autoInit_Info = "auto init storage for new place";
     settings_language_Title = "Display Language";
     settings_language_Info = "select language that will displays on plugin window";
+    settings_language_Default = "Auto select by user`s pc language";
     settings_autoUpdate_Title = "Auto update";
     settings_autoUpdate_Info = "update all modules on loading place (loading plugin)";
     settings_uninit_Title = "Remove module space";
     settings_uninit_Info = "Remove module space from this place, this will removes all modules and reload the plugin, you can undo this!";
+    settings_theme_Title = "Display Theme";
+    settings_theme_Info = "select theme that will apply on plugin window (not toolbar icon color)";
+    settings_theme_Default = "Auto select by user`s setting";
+    settings_theme_Dark = "Dark Theme";
+    settings_theme_Light = "Light Theme";
     app_title = "Module Installer";
     contentTab_github = "Github";
     contentTab_market = "Market";

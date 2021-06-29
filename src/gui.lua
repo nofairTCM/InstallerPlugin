@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-27 00:27:09
+    # Modified time : 2021-06-29 18:55:58
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -218,6 +218,10 @@ local function main(plugin)
         lang.setLang(settings_language);
     end
 
+    if data:Load("settings_theme") == nil then
+        data:Save("settings_theme","default");
+    end
+
 --#endregion
 --#region [UI 렌더] ui 렌더하기 / 테마 변경 이밴트 캐칭
 
@@ -229,8 +233,9 @@ local function main(plugin)
             killRender = nil;
         end
 
-        MaterialUI.CurrentTheme = tostring(settings().Studio.Theme); -- 테마 설정함
         splashScreen = splashScreen or splashScreenRender:render(); -- 스플레시 스크린을 가져옴 (없으면 만듬)
+        local settings_theme = data:ForceLoad("settings_theme");
+        MaterialUI.CurrentTheme = tostring((settings_theme == "default") and (settings().Studio.Theme) or settings_theme); -- 테마 설정함
 
         splashScreen:setStatus("load plugin assets ...");
         game.ContentProvider:PreloadAsync(assets) -- 에셋을 프리로드해옴
@@ -1042,9 +1047,14 @@ local function main(plugin)
                 settings_switch(1,lang("settings_autoInit_Title"),lang("settings_autoInit_Info"),"settings_autoInit");
                 settings_switch(2,lang("settings_autoUpdate_Title"),lang("settings_autoUpdate_Info"),"settings_autoUpdate");
                 settings_radio(3,lang("settings_language_Title"),lang("settings_language_Info"),"settings_language",{
-                    {"default","Default"};
+                    {"default",lang("settings_language_Default")};
                     {"ko-kr","한국어"};
                     {"en-us","English"};
+                });
+                settings_radio(4,lang("settings_theme_Title"),lang("settings_theme_Info"),"settings_theme",{
+                    {"default",lang("settings_theme_Default")};
+                    {"Dark",lang("settings_theme_Dark")};
+                    {"Light",lang("settings_theme_Light")};
                 });
             };
         end
@@ -1157,7 +1167,7 @@ local function main(plugin)
                     Position = UDim2.new(0, 42, 0, 0);
                     Size = UDim2.new(1, 0, 0, tobBarSizeY);
                     ZIndex = 90;
-                    Font = Enum.Font.SourceSans;
+                    Font = globalFont;
                     Text = lang("app_title");
                     TextColor3 = white;
                     TextSize = 18;
@@ -1884,6 +1894,7 @@ local function main(plugin)
                     ZIndex = 1200;
                 },{
                     scroll = new("ScrollingFrame",{
+                        ScrollBarThickness = 3;
                         BackgroundTransparency = 1;
                         Size = UDim2.new(1,0,1,-42);
                         Position = UDim2.new(0,0,0,42);
@@ -1918,7 +1929,7 @@ local function main(plugin)
                             Icon = "http://www.roblox.com/asset/?id=6031091000";
                             Position = UDim2.new(0,(42-36)/2,0.5,0);
                             AnchorPoint = Vector2.new(0,0.5);
-                            IconColor3 = MaterialUI:GetColor("TextColor");--Color3.fromRGB(255,255,255);
+                            IconColor3 = Color3.fromRGB(255,255,255);
                             ZIndex = 1200;
                             IconSizeScale = 0.82;
                             Style = "WithOutBackground";
@@ -1934,7 +1945,7 @@ local function main(plugin)
                             Position = UDim2.new(0,36 + 8,0.5,0);
                             AnchorPoint = Vector2.new(0,0.5);
                             ZIndex = 1200;
-                            TextColor3 = MaterialUI:GetColor("TextColor");--Color3.fromRGB(255,255,255);
+                            TextColor3 = Color3.fromRGB(255,255,255);
                         });
                     });
                     shadow = new("Shadow");
@@ -2103,16 +2114,24 @@ local function main(plugin)
     -- 테마 변경됨에 따라 다시 한번 리로드
     settings().Studio.ThemeChanged:Connect(function ()
         -- 다시 렌더 돌림
-        render();
+        if data:ForceLoad("settings_theme") == "default" then
+            render();
+        end
 
         -- 툴바 아이콘 리컬러링
         thisButton.Icon = ""; wait();
         thisButton.Icon = (tostring(settings().Studio.Theme) == "Dark") and
             pluginIcon or pluginIconBlack; -- 테마에 맞게 아이콘 수정
     end);
+
     -- 언어가 변경됨에 따라 다시 한번 리로드
     data:BindChanged("settings_language",function (v)
         lang.setLang(v);
+        render();
+    end);
+
+    -- 사용자 선택 테마 변경
+    data:BindChanged("settings_theme",function (v)
         render();
     end);
 --#endregion
