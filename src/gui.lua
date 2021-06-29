@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-29 18:58:26
+    # Modified time : 2021-06-29 19:01:43
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -179,7 +179,7 @@ local function main(plugin)
     if not uiHolder.Enabled then -- 창이 열릴 때 까지 기다림
         uiHolder:GetPropertyChangedSignal("Enabled"):Wait();
     end
-    local splashScreen = splashScreenRender:render(); -- 스플레시 스크린을 만듬 (로드중을 띄우기 위해)
+    local splashScreen = splashScreenRender:render(data:Load("settings_theme")); -- 스플레시 스크린을 만듬 (로드중을 띄우기 위해)
     splashScreen:setStatus("initialize ...");
 
     -- 모듈 정보를 깃허브에서 읽어옴
@@ -233,7 +233,7 @@ local function main(plugin)
             killRender = nil;
         end
 
-        splashScreen = splashScreen or splashScreenRender:render(); -- 스플레시 스크린을 가져옴 (없으면 만듬)
+        splashScreen = splashScreen or splashScreenRender:render(data:ForceLoad("settings_theme")); -- 스플레시 스크린을 가져옴 (없으면 만듬)
         local settings_theme = data:ForceLoad("settings_theme");
         MaterialUI.CurrentTheme = tostring((settings_theme == "default") and (settings().Studio.Theme) or settings_theme); -- 테마 설정함
 

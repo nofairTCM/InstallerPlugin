@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-26 18:44:53
+    # Modified time : 2021-06-29 19:02:16
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -44,10 +44,10 @@ function module:setTermTCM(termTCM)
 end
 
 local time = 0.28;
-function module:render()
+function module:render(settings_theme)
     local UIHolder,pluginIcon,version,termTCM,MaterialUI,AdvancedTween = self.UIHolder,self.pluginIcon,self.version,self.termTCM,self.MaterialUI,self.AdvancedTween;
     local new = MaterialUI.Create;
-    MaterialUI.CurrentTheme = tostring(settings().Studio.Theme);
+    MaterialUI.CurrentTheme = tostring((settings_theme == "default") and (settings().Studio.Theme) or settings_theme);
 
     local tweenData = {
         Easing = AdvancedTween.EasingFunctions.Linear;
