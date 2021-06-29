@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-29 18:55:58
+    # Modified time : 2021-06-29 18:58:26
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -1258,6 +1258,7 @@ local function main(plugin)
                     Size = UDim2.fromScale(0.3333,1);
                     BackgroundTransparency = 1;
                     ScrollBarThickness = 3;
+                    ScrollBarImageColor3 = MaterialUI:GetColor("TextColor3");
                     WhenCreated = function (this)
                         store.listItemHolder = this;
                         -- this:GetPropertyChangedSignal("CanvasPosition"):Connect(function ()
@@ -1345,6 +1346,7 @@ local function main(plugin)
                     Size = UDim2.fromScale(0.3333,1);
                     BackgroundTransparency = 1;
                     ScrollBarThickness = 3;
+                    ScrollBarImageColor3 = MaterialUI:GetColor("TextColor3");
                     WhenCreated = function (this)
                         store.githubHolder = this;
                     end;
@@ -1895,6 +1897,7 @@ local function main(plugin)
                 },{
                     scroll = new("ScrollingFrame",{
                         ScrollBarThickness = 3;
+                        ScrollBarImageColor3 = MaterialUI:GetColor("TextColor3");
                         BackgroundTransparency = 1;
                         Size = UDim2.new(1,0,1,-42);
                         Position = UDim2.new(0,0,0,42);
