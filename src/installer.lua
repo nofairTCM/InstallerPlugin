@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-07-03 22:27:30
+    # Modified time : 2021-07-03 22:47:26
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -136,7 +136,7 @@ end
 
 -- get item
 function module:getThing(name)
-    local thing = self.db[name];
+    local thing = self.db[name] or self:getUserGenModule(name);
     if not thing then error(("module/plugin/lib %s was not found from database!"):format(name)) end
     checkThing(thing);
     return thing;

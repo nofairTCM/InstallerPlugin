@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-16 17:12:32
     # Modified by   : Qwreey
-    # Modified time : 2021-06-26 20:25:01
+    # Modified time : 2021-07-03 22:59:48
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -153,7 +153,7 @@ local cmds = {
     ls = {
         info = (
             "tcmi ls [options]\n" ..
-            "  show list of objects from database\n" ..
+            "  show list of objects from database (only marketplace modules and installed usergen modules)\n" ..
             "  options :\n" ..
             "    -f (--fetch) : fetch and show database, (http require)\n" ..
             "    -b : show name only\n" ..
