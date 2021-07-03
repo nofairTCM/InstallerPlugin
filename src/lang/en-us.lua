@@ -117,9 +117,5 @@ https://fonts.google.com/icons
 author : Google
 license : Apache license 2.0
 ]];
-    easterEgg0 = [[did you.... What??\you install this plugin with itself?\h..how\ ]];
-    easterEgg1 = [[do not joke me\i'm seriously\you break the rule\ ]];
-    easterEgg2 = [[ERROR: SYSTEM/CORE/INIT IS NOT EXIST\what's happened?\oh no what\ \ \ ]];
-    easterEgg3 = [[\ \ \ \ \ \ \ \ \ \ system shut down by unexpected error]];
-    easterEgg4 = [[\ \ \ system couldn't started cause unknown error\killing system process . . .\ \ ]];
+    easterEgg0 = [[What??]];
 };

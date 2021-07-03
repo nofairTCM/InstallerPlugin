@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 20:24:44
     # Modified by   : Qwreey
-    # Modified time : 2021-06-26 21:47:47
+    # Modified time : 2021-07-03 22:27:30
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -217,8 +217,25 @@ function module:uninstall(name,log,indent)
     log(("Remove %s ended!\n"):format(name));
 end
 
+local invRequest = "400: Invalid request";
+function module:getUserGenModule(url)
+    if url:find("https?://") then
+        if url:find("https?://github") then
+            local user,repo = url:match("^https?://github.com/([^/]+)/([^/]+)");
+
+            local rep = HTTP:GetAsync(("https://raw.githubusercontent.com/%s/%s/release/packageinfo.json"):format(user,repo));
+            rep = rep ~= invRequest and rep or HTTP:GetAsync(("https://raw.githubusercontent.com/%s/%s/master/packageinfo.json"):format(user,repo));
+            rep = rep ~= invRequest and rep or HTTP:GetAsync(("https://raw.githubusercontent.com/%s/%s/main/packageinfo.json"):format(user,repo));
+
+            return HTTP:JSONDecode(rep);
+        end
+    else
+        return nil;
+    end
+end
+
 -- install item
-function module:install(name,log,indent,force)
+function module:install(name,log,indent,force,safemode)
     local isChild = indent;
     local elog = log or void;
     indent = indent or "";
@@ -227,9 +244,14 @@ function module:install(name,log,indent,force)
         elog(indent .. str);
     end
 
+    local userGen = self:getUserGenModule(name);
+    safemode = safemode or userGen;
+    if userGen then
+        log("# this module seem like user generated, turn on safemode to install (for security)\n");
+    end
     log(("# try to install %s\n"):format(tostring(name)));
     log("find object from database . . .\n")
-    local thing = self:getThing(name);
+    local thing = userGen or self:getThing(name);
 
     log("init server/client storage . . .\n");
     local server = self:getServerSideStorage();
@@ -278,12 +300,14 @@ function module:install(name,log,indent,force)
     end
 
     -- setup 이 있으면 실행
-    log("execute __setup script (before install) . . .\n");
-    local __setup = obj:FindFirstChild("__setup");
-    if __setup then
-        local before = require(__setup).before;
-        if before then
-            before(server,client,log,self);
+    if not safemode then
+        log("execute __setup script (before install) . . .\n");
+        local __setup = obj:FindFirstChild("__setup");
+        if __setup then
+            local before = require(__setup).before;
+            if before then
+                before(server,client,log,self);
+            end
         end
     end
 
@@ -356,21 +380,32 @@ function module:install(name,log,indent,force)
     });
 
     -- 지울때 쓰이는 __uninstall 저장하기
-    log("saving __uninstall script . . .\n");
-    local __uninstall = obj:FindFirstChild("__uninstall");
-    if __uninstall then
-        __uninstall.Parent = status;
+    if not safemode then
+        log("saving __uninstall script . . .\n");
+        local __uninstall = obj:FindFirstChild("__uninstall");
+        if __uninstall then
+            __uninstall.Parent = status;
+        end
+    else
+        -- safe 모드에서 설치됨을 기록 (github 에서 받은거용)
+        new("IntValue",{
+            Parent = status;
+            Name = "safemode";
+            Value = 0;
+        });
     end
 
     -- version 파일 이동
     versionObj.Parent = status;
 
     -- setup 이 있으면 실행
-    log("execute __setup script (after install) . . .\n");
-    if __setup then
-        local after = require(__setup).after;
-        if after then
-            after(server,client,log,self);
+    if not safemode then
+        log("execute __setup script (after install) . . .\n");
+        if __setup then
+            local after = require(__setup).after;
+            if after then
+                after(server,client,log,self);
+            end
         end
     end
 

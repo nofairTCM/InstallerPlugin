@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-06-29 19:01:43
+    # Modified time : 2021-07-03 18:11:08
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -1403,6 +1403,8 @@ local function main(plugin)
                             Position = UDim2.new(1,-6,0,75);
                             AnchorPoint = Vector2.new(1,0);
                             Text = lang("githubSearch_Install");
+                            TextColor3 = MaterialUI:GetColor("TextColor");
+                            OutlineColor3 = MaterialUI:GetColor("TextColor");
                         });
                         new("Frame",{
                             BackgroundColor3 = Color3.fromRGB(127,127,127);
@@ -1764,7 +1766,7 @@ local function main(plugin)
                                 ZIndex = 100;
                                 Style = "Outlined";
                                 OutlineColor3 = MaterialUI:GetColor("TextColor");
-                                Size = UDim2.new(0,58,0,32);
+                                Size = UDim2.new(0,72,0,32);
                                 Text = lang("infoInstall");
                                 Position = UDim2.fromOffset(132,76);
                                 WhenCreated = function(this)
@@ -1779,7 +1781,7 @@ local function main(plugin)
                                 ZIndex = 100;
                                 Style = "Outlined";
                                 OutlineColor3 = MaterialUI:GetColor("TextColor");
-                                Size = UDim2.new(0,58,0,32);
+                                Size = UDim2.new(0,72,0,32);
                                 Text = lang("infoUninstall");
                                 Position = UDim2.fromOffset(132,76);
                                 WhenCreated = function(this)
@@ -1794,9 +1796,9 @@ local function main(plugin)
                                 ZIndex = 100;
                                 Style = "Outlined";
                                 OutlineColor3 = MaterialUI:GetColor("TextColor");
-                                Size = UDim2.new(0,58,0,32);
+                                Size = UDim2.new(0,72,0,32);
                                 Text = lang("infoUpdate");
-                                Position = UDim2.fromOffset(132 + 58 + 6,76);
+                                Position = UDim2.fromOffset(132 + 72 + 6,76);
                                 WhenCreated = function(this)
                                     store.infoUpdate = this;
                                     this.MouseButton1Click:Connect(function ()
