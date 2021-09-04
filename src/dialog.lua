@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-21 19:34:57
     # Modified by   : Qwreey
-    # Modified time : 2021-05-21 21:36:56
+    # Modified time : 2021-09-04 20:18:27
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -50,7 +50,7 @@ end
 --        holder = store.popup; -- 팝업 아이템 들어가는곳
 --    };
 function module:render(data)
-    local data = data or {};
+    data = data or {};
     local UIHolder,MaterialUI,AdvancedTween = self.UIHolder,self.MaterialUI,self.AdvancedTween;
     local new = MaterialUI.Create;
 

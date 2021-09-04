@@ -3,7 +3,7 @@
     # Author        : Qwreey / qwreey75@gmail.com / github:qwreey75
     # Create Time   : 2021-05-11 18:57:26
     # Modified by   : Qwreey
-    # Modified time : 2021-07-03 18:11:08
+    # Modified time : 2021-07-10 19:49:06
     # Description   : |
         Time format = yyy-mm-dd hh:mm:ss
         Time zone = GMT+9
@@ -1042,6 +1042,58 @@ local function main(plugin)
             });
         end
 
+        local function settings_button(index,title,info,callback)
+            return new("TextButton",{
+                LayoutOrder = index;
+                BackgroundTransparency = 1;
+                Size = UDim2.new(1,0,0,18 + 20);
+                Text = "";
+                ZIndex = 1200;
+                MouseButton1Click = callback;
+            },{
+                new("TextLabel",{
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                    BackgroundTransparency = 1;
+                    ZIndex = 1200;
+                    Font = globalFont;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    TextWrapped = true;
+                    Text = info;
+                    TextSize = 13;
+                    Size = UDim2.new(1,-18-68,1,-28);
+                    Position = UDim2.fromOffset(18,26 + 8);
+                    WhenCreated = function (this)
+                        local function refresh()
+                            this.Parent.Size = UDim2.new(1,0,0,this.TextBounds.Y + 60);
+                        end
+                        this:GetPropertyChangedSignal("TextBounds"):Connect(refresh);
+                    end;
+                });
+                new("Frame",{
+                    Size = UDim2.new(1,-20,0,1);
+                    Position = UDim2.new(0.5,0,0,0);
+                    AnchorPoint = Vector2.new(0.5,1);
+                    BackgroundColor3 = Color3.fromRGB(127,127,127);
+                    ZIndex = 1200;
+                    BackgroundTransparency = 0.3;
+                });
+                new("Rippler",{
+                    ZIndex = 1200;
+                });
+                new("TextLabel",{
+                    Size = UDim2.new(1,0,0,28);
+                    TextSize = 15;
+                    Font = Enum.Font.GothamBold;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    Position = UDim2.fromOffset(10,8);
+                    ZIndex = 1200;
+                    BackgroundTransparency = 1;
+                    Text = title;
+                    TextColor3 = MaterialUI:GetColor("TextColor");
+                });
+            });
+        end
+
         local function initSettings()
             return {
                 settings_switch(1,lang("settings_autoInit_Title"),lang("settings_autoInit_Info"),"settings_autoInit");
@@ -1056,6 +1108,13 @@ local function main(plugin)
                     {"Dark",lang("settings_theme_Dark")};
                     {"Light",lang("settings_theme_Light")};
                 });
+                settings_button(9999,lang("settings_about_Title") or "About Plugin",lang("settings_about_Info") or "Open license infomation and plugin infomation",function ()
+                    openInfo("InstallerPlugin",{
+                        icon = "http://www.roblox.com/asset/?id=7005879593";
+                        info = lang("about",{version = verInfo.version or "unknown"});
+                        author = "Qwreey";
+                    });
+                end);
             };
         end
 
