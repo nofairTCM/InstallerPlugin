@@ -13,8 +13,8 @@
 
 ---@diagnostic disable:undefined-global
 local module = {};
+local ServerScriptService = game:GetService("ServerScriptService");
 local ServerStorage = game:GetService("ServerStorage");
-local ServerScript = game:GetService("ServerScriptService");
 local ReplicatedStorage = game:GetService("ReplicatedStorage");
 local ReplicatedFirst = game:GetService("ReplicatedFirst");
 local HTTP = game:GetService("HttpService");
@@ -22,28 +22,7 @@ local selection = game:GetService("Selection");
 local void = function() end;
 local lastExample;
 
-local props = {
-    "name",
-    "author",
-    "import",
-    "github",
-    "license",
-    "info",
-    "publishStatus",
-    "version",
-    "buildVersion",
-    "majorVersion",
-    "toolboxID",
-    "index",
-    --"docs",
-    --"icon"
-};
--- check thing's properties
-local function checkThing(thing)
-    for _,property in pairs(props) do
-        assert(thing[property],property .. " is not exist!");
-    end
-end
+local module = {};
 
 -- make new instance
 local function new(ClassName,Property)
